@@ -34,6 +34,7 @@ import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import io.swagger.util.ReferenceSerializationConfigurer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +98,7 @@ public final class DataFormatParser {
 			module.addSerializer(Date.class, new DateSerializer());
 			module.addDeserializer(Date.class, new DateDeserializer());
 			mapper.registerModule(module);
+			ReferenceSerializationConfigurer.serializeAsComputedRef(mapper);
 		}
 		return mapper;
 	}

@@ -49,11 +49,11 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
-		<spring.version>5.1.6.RELEASE</spring.version>
-		<tomcat.version>9.0.17</tomcat.version>
-		<jackson.version>2.9.8</jackson.version>
-		<swagger.version>1.5.20</swagger.version>
-		<swagger.parser.version>1.0.36</swagger.parser.version>
+		<spring.version>5.1.8.RELEASE</spring.version>
+		<tomcat.version>9.0.21</tomcat.version>
+		<jackson.version>2.9.9</jackson.version>
+		<swagger.version>2.0.8</swagger.version>
+		<swagger.parser.version>2.0.12</swagger.parser.version>
 		<json-schema-validator.version>2.2.6</json-schema-validator.version>
 
 		<slf4j.version>1.7.26</slf4j.version>
