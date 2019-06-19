@@ -1,0 +1,46 @@
+<project xmlns="http://www.w3schools.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+
+  	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-fluido-skin</artifactId>
+		<version>1.6</version>
+	</skin>
+
+	<custom>
+		<fluidoSkin>
+			<topBarEnabled>true</topBarEnabled>
+			<sideBarEnabled>true</sideBarEnabled>
+			<topBarIcon>
+		        <name>VFK PLATFORM</name>
+		        <alt>VFK PLATFORM</alt>
+		        <src>https://research.virtualfortknox.de/static/cms/img/vfk_research_logo.png</src>
+		        <href>/index.html</href>
+        	</topBarIcon>
+        	<!-- <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled> -->
+		</fluidoSkin>
+	</custom>
+
+
+	<poweredBy>
+		<logo name="Powered by VFK Research" href="https://research.virtualfortknox.de/"
+			img=""/>
+	</poweredBy>
+
+	<body>
+	  	<!-- Currently not used
+		<menu name="Overview" inherit="top">
+			<item name="Introduction" href="introduction.html"/>
+		</menu>
+		-->
+
+		<menu ref="parent" inherit="top"/>
+
+		<menu ref="modules" inherit="top"/>
+
+		<menu ref="reports" inherit="top"/>
+
+		<footer><![CDATA[Copyright © 2019 Fraunhofer IPA - All rights reserved.]]></footer>
+
+	</body>
+
+</project>

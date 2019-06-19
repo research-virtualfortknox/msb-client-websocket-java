@@ -1,0 +1,4 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+# This ensures that all files that Git considers to be text will have normalized (LF) line endings in the repository.
+* text=auto
+
