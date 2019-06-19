@@ -9,8 +9,15 @@ env:
     - TESTENV_SO_URL=https://so.15xr.msb.oss.cell.vfk.fraunhofer.de/
     - TESTENV_FLOW_URL=https://flow.15xr.msb.oss.cell.vfk.fraunhofer.de/
 
+cache:
+  directories:
+    - $HOME/.m2
+
+install: true
+
 script:
-  - mvn test
+  - ./mvnw clean install
+  - bash <(curl -s https://codecov.io/bash)
 
 deploy:
   provider: releases
