@@ -17,8 +17,7 @@ script:
 
 deploy:
   provider: releases
-  #api_key: # travis secure - to be updated per travis repo
-  #  secure: gKxsJNA57Y54C5BWMPXGwtafJejkWvR/V02N5CnB3qyxdgu
+  api_key: ${GH_TOKEN}
   file:
     - msb-client-api/target/msb-client-api-$project_version.jar
     - msb-client-websocket/target/msb-client-websocket-$project_version.jar
