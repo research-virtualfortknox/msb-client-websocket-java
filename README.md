@@ -7,6 +7,8 @@
 
 # MSB websocket client library for Java
 
+[![Build Status](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java.svg?branch=master)](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java)
+
 **Compatibility Matrix**
 
 Client version compatibility to MSB versions:

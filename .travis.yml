@@ -16,7 +16,7 @@ cache:
 install: true
 
 script:
-  - mvnw clean install -DskipITs
+  - mvn clean install -DskipITs
   - bash <(curl -s https://codecov.io/bash)
 
 deploy:
