@@ -39,13 +39,7 @@ You can use this client to connect a java app to VFK MSB.
 
 Import to your application via maven
 
-```xml
-<dependency>
-    <groupId>com.github.research-virtualfortknox</groupId>
-    <artifactId>msb-client-websocket</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
+TODO: upload to maven central
 
 ## Create self-description
 
