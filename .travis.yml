@@ -17,6 +17,8 @@ install: true
 
 script:
   - mvn clean install -DskipITs
+
+after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 deploy:
