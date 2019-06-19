@@ -2,9 +2,6 @@ language: java
 
 jdk:
   - oraclejdk8
-  - oraclejdk11
-  - openjdk10
-  - openjdk11
 
 env:
   global:
@@ -13,7 +10,7 @@ env:
     - TESTENV_FLOW_URL=https://flow.15xr.msb.oss.cell.vfk.fraunhofer.de/
 
 script:
-  - mvn test -B
+  - mvn test
 
 deploy:
   provider: releases
