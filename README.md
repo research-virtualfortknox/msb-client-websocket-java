@@ -3,6 +3,8 @@
 
 [![Known Vulnerabilities](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java/badge.svg)](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java)
 
+[![codecov.io](https://codecov.io/github/research-virtualfortknox/msb-client-websocket-java/coverage.svg?branch=master)](https://codecov.io/github/research-virtualfortknox/msb-client-websocket-java?branch=master)
+
 <p align="center">
   <a href="https://research.virtualfortknox.de" target="_blank" rel="noopener noreferrer">
     <img src="https://research.virtualfortknox.de/static/cms/img/vfk_research_logo.png" alt="VFK Research Logo" height="70" >
