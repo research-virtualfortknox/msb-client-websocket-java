@@ -611,7 +611,7 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_REGISTERED"));
         FunctionCallMessage data = new FunctionCallMessage("df61a143-6dab-471a-88b4-8feddb4c9e45","/functionhandler/hello_world","correlationId",new HashMap<String, Object>());
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
-        Mockito.verify(mockSession,Mockito.after(100).times(2)).sendMessage(captor.capture());
+        Mockito.verify(mockSession,Mockito.after(1000).times(2)).sendMessage(captor.capture());
         Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"PULSE\""));
         Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));

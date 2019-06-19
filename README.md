@@ -1,4 +1,8 @@
 
+[![Build Status](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java.svg?branch=master)](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java)
+
+[![Known Vulnerabilities](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java/badge.svg)](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java)
+
 <p align="center">
   <a href="https://research.virtualfortknox.de" target="_blank" rel="noopener noreferrer">
     <img src="https://research.virtualfortknox.de/static/cms/img/vfk_research_logo.png" alt="VFK Research Logo" height="70" >
@@ -6,8 +10,6 @@
 </p>
 
 # MSB websocket client library for Java
-
-[![Build Status](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java.svg?branch=master)](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java)
 
 **Compatibility Matrix**
 
