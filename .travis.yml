@@ -13,10 +13,15 @@ cache:
   directories:
     - $HOME/.m2
 
+before_install:
+  # Use TRAVIS_TAG if defined, or the short commit SHA otherwise
+  - export VERSION=${TRAVIS_TAG:-$(git rev-parse --short HEAD)}
+
 install: true
 
 script:
   - mvn clean install -DskipITs
+  - sed -i -e "s/${project.version}/${VERSION}/g" ./bintray.json || true
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
