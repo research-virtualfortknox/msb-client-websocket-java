@@ -24,7 +24,6 @@ after_success:
 deploy:
     on:
       tags: true
-      repo: research-virtualfortknox/msb-client-websocket-java
     provider: bintray
     skip_cleanup: true
     file: bintray.json
