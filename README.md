@@ -1,9 +1,11 @@
 
 [![Build Status](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java.svg?branch=master)](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java)
 
-[![Known Vulnerabilities](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java/badge.svg)](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java)
+[![Known Vulnerabilities](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java/badge.svg?targetFile=msb-client-websocket/pom.xml)](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java)
 
 [![codecov.io](https://codecov.io/github/research-virtualfortknox/msb-client-websocket-java/coverage.svg?branch=master)](https://codecov.io/github/research-virtualfortknox/msb-client-websocket-java?branch=master)
+
+[ ![Download](https://api.bintray.com/packages/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/images/download.svg) ](https://bintray.com/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/_latestVersion)
 
 <p align="center">
   <a href="https://research.virtualfortknox.de" target="_blank" rel="noopener noreferrer">
@@ -39,7 +41,12 @@ You can use this client to connect a java app to VFK MSB.
 
 Import to your application via maven
 
-TODO: upload to maven central
+<dependency>
+  <groupId>com.github.research-virtualfortknox</groupId>
+  <artifactId>msb-client-api</artifactId>
+  <version>1.0.0-RELEASE</version>
+  <type>pom</type>
+</dependency>
 
 ## Create self-description
 
