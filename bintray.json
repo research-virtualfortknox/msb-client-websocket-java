@@ -13,29 +13,29 @@
     "public_stats": false
   },
   "version": {
-    "name": "${project.version}",
-    "vcs_tag": "${project.version}"
+    "name": "VERSION_NAME",
+    "vcs_tag": "VERSION_NAME"
   },
   "files": [
     {
       "includePattern": "pom.xml",
-      "uploadPattern": "com/github/research-virtualfortknox/msb-client-parent/${project.version}/msb-client-parent-${project.version}.pom"
+      "uploadPattern": "com/github/research-virtualfortknox/msb-client-parent/VERSION_NAME/msb-client-parent-VERSION_NAME.pom"
     },
     {
       "includePattern": "msb-client-api/target/(.*.jar)",
-      "uploadPattern": "com/github/research-virtualfortknox/msb-client-api/${project.version}/$1"
+      "uploadPattern": "com/github/research-virtualfortknox/msb-client-api/VERSION_NAME/$1"
     },
     {
       "includePattern": "msb-client-api/pom.xml",
-      "uploadPattern": "com/github/research-virtualfortknox/msb-client-api/${project.version}/msb-client-api-${project.version}.pom"
+      "uploadPattern": "com/github/research-virtualfortknox/msb-client-api/VERSION_NAME/msb-client-api-VERSION_NAME.pom"
     },
     {
       "includePattern": "msb-client-websocket/target/(.*.jar)",
-      "uploadPattern": "com/github/research-virtualfortknox/msb-client-websocket/${project.version}/$1"
+      "uploadPattern": "com/github/research-virtualfortknox/msb-client-websocket/VERSION_NAME/$1"
     },
     {
       "includePattern": "msb-client-websocket/pom.xml",
-      "uploadPattern": "com/github/research-virtualfortknox/msb-client-websocket/${project.version}/msb-client-websocket-${project.version}.pom"
+      "uploadPattern": "com/github/research-virtualfortknox/msb-client-websocket/VERSION_NAME/msb-client-websocket-VERSION_NAME.pom"
     }
   ],
   "publish": true

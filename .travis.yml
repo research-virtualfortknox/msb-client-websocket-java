@@ -21,7 +21,7 @@ install: true
 
 script:
   - mvn clean install -DskipITs
-  - sed -i -e "s/${project.version}/${VERSION}/g" ./bintray.json || true
+  - sed -i -e "s/VERSION_NAME/${VERSION}/g" ./bintray.json || true
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
