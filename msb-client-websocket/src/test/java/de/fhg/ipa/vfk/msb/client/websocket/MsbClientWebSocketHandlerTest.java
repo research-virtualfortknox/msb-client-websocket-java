@@ -600,7 +600,7 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.removeFunctionCallsListener(configurationListener);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
 
-        Mockito.verify(configurationListener, Mockito.after(100).times(1)).onCallback(Mockito.eq("df61a143-6dab-471a-88b4-8feddb4c9e45"), Mockito.eq("/functionhandler/hello_world"), Mockito.eq("correlationId"), Mockito.anyMapOf(String.class, Object.class));
+        Mockito.verify(configurationListener, Mockito.after(1000).times(1)).onCallback(Mockito.eq("df61a143-6dab-471a-88b4-8feddb4c9e45"), Mockito.eq("/functionhandler/hello_world"), Mockito.eq("correlationId"), Mockito.anyMapOf(String.class, Object.class));
     }
 
     @Test
@@ -627,7 +627,7 @@ public class MsbClientWebSocketHandlerTest {
         parameters.put("int",10);
         FunctionCallMessage data = new FunctionCallMessage("df61a143-6dab-471a-88b4-8feddb4c9e45","/functionhandler/printInt","correlationId", parameters);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
-        Mockito.verify(mockSession,Mockito.after(100).times(2)).sendMessage(captor.capture());
+        Mockito.verify(mockSession,Mockito.after(1000).times(2)).sendMessage(captor.capture());
         Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"START\""));
         Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));
@@ -659,7 +659,7 @@ public class MsbClientWebSocketHandlerTest {
 
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_CONNECTED"));
-        Mockito.verify(mockSession,Mockito.after(100).times(2)).sendMessage(captor.capture());
+        Mockito.verify(mockSession,Mockito.after(1000).times(2)).sendMessage(captor.capture());
         String reconnectMessage = captor.getValue().getPayload().toString();
         Assert.assertTrue(reconnectMessage.startsWith("R {"));
         Assert.assertTrue(reconnectMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
