@@ -40,3 +40,12 @@ or commint verion update
  mvn versions:commit
  ```
  
+ ## Publish release
+ 
+ Create and push a `tag` to git repo. 
+ The CI tool `Travis` will start a build and deploy the results to 
+ 
+ https://bintray.com/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java.
+ 
+ The new release at `JFrog Bintray` will be published to `JCenter` and `MavenCentral`. 
+ 

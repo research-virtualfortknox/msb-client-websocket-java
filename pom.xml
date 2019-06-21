@@ -73,6 +73,7 @@
 		<maven-failsafe-plugin.version>2.22.1</maven-failsafe-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
 		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
+		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
 		<dependency-check-maven.version>5.0.0</dependency-check-maven.version>
 	</properties>
 
@@ -170,6 +171,12 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.eluder.coveralls</groupId>
+				<artifactId>coveralls-maven-plugin</artifactId>
+				<version>${coveralls-maven-plugin.version}</version>
 			</plugin>
 
 			<plugin>

@@ -3,6 +3,8 @@
 
 [![Known Vulnerabilities](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java/badge.svg?targetFile=msb-client-websocket/pom.xml)](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java)
 
+[![Coverage Status](https://coveralls.io/repos/github/research-virtualfortknox/msb-client-websocket-java/badge.svg?branch=master)](https://coveralls.io/github/research-virtualfortknox/msb-client-websocket-java?branch=master)
+
 [![codecov.io](https://codecov.io/github/research-virtualfortknox/msb-client-websocket-java/coverage.svg?branch=master)](https://codecov.io/github/research-virtualfortknox/msb-client-websocket-java?branch=master)
 
 [ ![Download](https://api.bintray.com/packages/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/images/download.svg) ](https://bintray.com/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/_latestVersion)
@@ -41,12 +43,24 @@ You can use this client to connect a java app to VFK MSB.
 
 Import to your application via maven
 
-<dependency>
-  <groupId>com.github.research-virtualfortknox</groupId>
-  <artifactId>msb-client-api</artifactId>
-  <version>1.0.0-RELEASE</version>
-  <type>pom</type>
-</dependency>
+```xml
+<properties>
+    ...
+    <!-- Use the latest version whenever possible. -->
+    <msb-client-websocket.version>1.0.0-RELEASE</jackson.version>
+    ...
+</properties>
+
+<dependencies>
+    ...
+    <dependency>
+      <groupId>com.github.research-virtualfortknox</groupId>
+      <artifactId>msb-client-websocket</artifactId>
+      <version>${msb-client-websocket.version}</version>
+    </dependency>
+    ...
+</dependencies>
+```
 
 ## Create self-description
 
