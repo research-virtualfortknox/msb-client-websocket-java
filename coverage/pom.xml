@@ -52,7 +52,7 @@
                             <goal>report-aggregate</goal>
                         </goals>
                         <configuration>
-                            <title>Maven Multimodule Coverage Demo: Coverage of Unit Tests</title>
+                            <title>Maven Multimodule Coverage: Coverage of Unit Tests</title>
                             <outputDirectory>${project.reporting.outputDirectory}/jacoco-aggregate-ut</outputDirectory>
                             <dataFileExcludes>
                                 <dataFileExclude>**/target/jacoco-it.exec</dataFileExclude>
