@@ -41,18 +41,6 @@ public class WrongDataFormatException extends RuntimeException {
 	public WrongDataFormatException(String message){
 		super(message);
 	}
-		
-	/**
-	 * Instantiates a new wrong dataformat exception.
-	 *
-	 * @param message
-	 *            the message
-	 * @param throwable
-	 *            the throwable
-	 */
-	public WrongDataFormatException(String message, Throwable throwable){
-		super(message, throwable);
-	}
-	
+
 }
 

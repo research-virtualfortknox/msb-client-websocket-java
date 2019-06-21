@@ -20,6 +20,7 @@ package de.fhg.ipa.vfk.msb.client.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fhg.ipa.vfk.msb.client.api.messages.ConfigurationMessage;
+import de.fhg.ipa.vfk.msb.client.api.messages.EventMessage;
 import de.fhg.ipa.vfk.msb.client.api.messages.FunctionCallMessage;
 import de.fhg.ipa.vfk.msb.client.api.Application;
 import de.fhg.ipa.vfk.msb.client.api.Configuration;
@@ -29,6 +30,7 @@ import de.fhg.ipa.vfk.msb.client.api.Gateway;
 import de.fhg.ipa.vfk.msb.client.api.ParameterValue;
 import de.fhg.ipa.vfk.msb.client.api.SmartObject;
 import de.fhg.ipa.vfk.msb.client.listener.ConfigurationListener;
+import de.fhg.ipa.vfk.msb.client.listener.ConnectionAdapter;
 import de.fhg.ipa.vfk.msb.client.listener.ConnectionListener;
 import de.fhg.ipa.vfk.msb.client.listener.FunctionCallsListener;
 import de.fhg.ipa.vfk.msb.client.listener.PublishingError;
@@ -40,6 +42,7 @@ import de.fhg.ipa.vfk.msb.client.api.PrimitiveFormat;
 import de.fhg.ipa.vfk.msb.client.api.PrimitiveType;
 import de.fhg.ipa.vfk.msb.client.api.messages.EventPriority;
 import de.fhg.ipa.vfk.msb.client.util.MsbDateFormat;
+import io.swagger.models.HttpMethod;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -369,8 +372,12 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
         Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
+        EventMessage eventMessage = new ObjectMapper().readValue(captor.getValue().getPayload().toString().substring(2), EventMessage.class);
+        Assert.assertNotNull(eventMessage);
+        Assert.assertEquals("TEMPERATURE",eventMessage.getEventId());
+        Assert.assertEquals(23.4,eventMessage.getDataObject());
+        Assert.assertEquals("df61a143-6dab-471a-88b4-8feddb4c9e45",eventMessage.getUuid());
+        Assert.assertEquals(EventPriority.DEFAULT,eventMessage.getPriority());
     }
 
     @Test(expected = WrongDataFormatException.class)
@@ -533,7 +540,7 @@ public class MsbClientWebSocketHandlerTest {
 
     @Test
     public void testConnectionListener() throws Exception {
-        ConnectionListener connectionListener = Mockito.mock(ConnectionListener.class);
+        ConnectionListener connectionListener = Mockito.mock(ConnectionAdapter.class);
         msbClientWebSocketHandler.addConnectionListener(connectionListener);
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
@@ -560,7 +567,6 @@ public class MsbClientWebSocketHandlerTest {
         Mockito.verify(connectionListener, Mockito.times(1)).errorAtServiceRegistration(RegistrationError.NIO_ALREADY_CONNECTED);
         Mockito.verify(connectionListener, Mockito.times(1)).errorAtServiceRegistration(RegistrationError.NIO_REGISTRATION_ERROR);
         Mockito.verify(connectionListener, Mockito.times(1)).errorAtServiceRegistration(RegistrationError.NIO_UNEXPECTED_REGISTRATION_ERROR);
-        //Mockito.verify(connectionListener, Mockito.times(1)).errorAtServiceRegistration(Mockito.any(RegistrationError.class));
         Mockito.verify(connectionListener, Mockito.times(1)).afterConnectionClosed();
         Mockito.verify(connectionListener, Mockito.times(1)).beforeConnectionTryToReconnecting();
 
@@ -594,7 +600,12 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
 
-        FunctionCallMessage data = new FunctionCallMessage("df61a143-6dab-471a-88b4-8feddb4c9e45","/functionhandler/hello_world","correlationId",new HashMap<String, Object>());
+        FunctionCallMessage data = new FunctionCallMessage();
+        data.setUuid("df61a143-6dab-471a-88b4-8feddb4c9e45");
+        data.setFunctionId("/functionhandler/hello_world");
+        data.setCorrelationId("correlationId");
+        data.setHttpMethod(HttpMethod.GET);
+        data.setFunctionParameters(new HashMap<>());
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
         Thread.sleep(100);
         msbClientWebSocketHandler.removeFunctionCallsListener(configurationListener);
@@ -609,7 +620,7 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_REGISTERED"));
-        FunctionCallMessage data = new FunctionCallMessage("df61a143-6dab-471a-88b4-8feddb4c9e45","/functionhandler/hello_world","correlationId",new HashMap<String, Object>());
+        FunctionCallMessage data = new FunctionCallMessage("df61a143-6dab-471a-88b4-8feddb4c9e45","/functionhandler/hello_world","correlationId", new HashMap<>());
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
         Mockito.verify(mockSession,Mockito.after(1000).times(2)).sendMessage(captor.capture());
         Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));

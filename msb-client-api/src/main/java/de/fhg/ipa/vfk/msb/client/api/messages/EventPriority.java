@@ -46,7 +46,7 @@ public enum EventPriority {
 	 *
 	 * @param value the value
 	 */
-	private EventPriority(Integer value) {
+	EventPriority(Integer value) {
 		this.value = value;
 	}
 

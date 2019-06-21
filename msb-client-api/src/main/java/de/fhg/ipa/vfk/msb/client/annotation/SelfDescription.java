@@ -97,30 +97,6 @@ public @interface SelfDescription {
         }
 
         /**
-         * Parses the type.
-         *
-         * @param value the value
-         * @return the typs
-         */
-        public static Type parse(String value) {
-            if (value != null) {
-                value = value.toLowerCase(Locale.ENGLISH);
-                switch (value) {
-                    case "smartobject":
-                        return SMART_OBJECT;
-                    case "application":
-                        return APPLICATION;
-                    case "gateway":
-                        return GATEWAY;
-                    default:
-                        return null;
-                }
-            }
-            return null;
-        }
-
-
-        /**
          * To string.
          *
          * @return the string

@@ -30,7 +30,6 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.parser.util.SwaggerDeserializationResult;
 import io.swagger.util.Json;
-import io.swagger.util.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,15 +42,10 @@ import java.io.IOException;
  * @author des
  */
 public final class DataFormatValidator {
-	
-	/** The Constant LOG. */
+
 	private static final Logger LOG = LoggerFactory.getLogger(DataFormatValidator.class);
-	
-	/** The Constant JsonMapper. */
+
 	private static final ObjectMapper JsonMapper = Json.mapper();
-	
-	/** The Constant YamlMapper. */
-	private static final ObjectMapper YamlMapper = Yaml.mapper();
 
 	private DataFormatValidator(){}
 
@@ -106,14 +100,6 @@ public final class DataFormatValidator {
 			content = "{\"definitions\":" + content + "}";
 
 			JsonNode spec = readNode(content);
-			if (spec == null) {
-				ProcessingMessage pm = new ProcessingMessage();
-				pm.setLogLevel(LogLevel.ERROR);
-				pm.setMessage("Unable to read content.  It may be invalid JSON or YAML");
-				lp.error(pm);
-				return lp;
-			}
-
 			JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 			JsonSchema schema = factory.getJsonSchema(schemaObject);
 			ProcessingReport report = schema.validate(spec);
@@ -158,17 +144,8 @@ public final class DataFormatValidator {
 	 *            the text
 	 * @return the json node
 	 */
-	private static JsonNode readNode(String text) {
-		try {
-			if (text.trim().startsWith("{")) {
-				return JsonMapper.readTree(text);
-			} else {
-				return YamlMapper.readTree(text);
-			}
-		} catch (IOException e) {
-			LOG.warn("IOException: ",e);
-			return null;
-		}
+	private static JsonNode readNode(String text) throws IOException {
+		return JsonMapper.readTree(text);
 	}
 
 }

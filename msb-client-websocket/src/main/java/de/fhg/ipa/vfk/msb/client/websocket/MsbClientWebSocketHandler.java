@@ -42,6 +42,7 @@ import de.fhg.ipa.vfk.msb.client.parser.FunctionParser;
 import de.fhg.ipa.vfk.msb.client.parser.SelfDescriptionParser;
 import de.fhg.ipa.vfk.msb.client.util.DataFormatParser;
 import de.fhg.ipa.vfk.msb.client.util.DataObjectValidator;
+import de.fhg.ipa.vfk.msb.client.util.TypeMismatchException;
 import de.fhg.ipa.vfk.msb.client.util.WrongDataFormatException;
 import de.fhg.ipa.vfk.msb.client.api.PrimitiveFormat;
 import de.fhg.ipa.vfk.msb.client.api.PrimitiveType;
@@ -1013,7 +1014,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                                 }
                             }
                         } catch (IllegalAccessException | IllegalArgumentException
-                                | InvocationTargetException | IOException e) {
+                                | InvocationTargetException | IOException | TypeMismatchException e) {
                             LOG.error(e.getMessage(), e);
                         }
                     }

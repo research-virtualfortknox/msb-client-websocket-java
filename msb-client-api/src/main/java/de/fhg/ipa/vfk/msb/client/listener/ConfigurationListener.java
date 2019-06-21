@@ -30,6 +30,7 @@ import de.fhg.ipa.vfk.msb.client.api.messages.ConfigurationMessage;
  *
  * @author des
  */
+@FunctionalInterface
 public interface ConfigurationListener {
 
 	

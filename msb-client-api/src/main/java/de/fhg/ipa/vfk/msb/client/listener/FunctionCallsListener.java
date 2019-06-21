@@ -30,6 +30,7 @@ import java.util.Map;
  *
  * @author des
  */
+@FunctionalInterface
 public interface FunctionCallsListener {
 
 	/**

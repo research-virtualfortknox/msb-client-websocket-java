@@ -33,6 +33,14 @@ import java.util.Map;
 public class DataObjectValidatorTest {
 
     @Test
+    public void validateInvalidJson() {
+        String jsonDataFormatString = "wrong_json";
+        Map<String, Object> dataObject = new HashMap<>();
+        dataObject.put("dataObject", "");
+        Assert.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
+    }
+
+    @Test
     public void validateCorrectNoneDataObject() {
         String jsonDataFormatString = "{}";
         Assert.assertTrue(DataObjectValidator.validateDataObject(jsonDataFormatString, null));

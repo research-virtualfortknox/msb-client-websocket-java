@@ -24,62 +24,16 @@ package de.fhg.ipa.vfk.msb.client.util;
  */
 public class TypeMismatchException extends RuntimeException {
 
-	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6624515002675631896L;
 
-	/** The required type. */
-	private final Class<?> requiredType;
-
-	/** The value. */
-	private final transient Object value;
-
 	/**
 	 * Instantiates a new type mismatch exception.
 	 *
-	 * @param value
-	 *            the value
-	 * @param requiredType
-	 *            the required type
+	 * @param value the value
+	 * @param requiredType the required type
 	 */
 	public TypeMismatchException(Object value, Class<?> requiredType) {
-		super(String.format("Mismatching type: %s is not from type %s?", value.getClass().getName(),
-				requiredType.getName()));
-		this.value = value;
-		this.requiredType = requiredType;
+		super(String.format("Mismatching type: %s is not from type %s?", value.getClass().getName(), requiredType.getName()));
 	}
 
-	/**
-	 * Instantiates a new type mismatch exception.
-	 *
-	 * @param value
-	 *            the value
-	 * @param requiredType
-	 *            the required type
-	 * @param cause
-	 *            the cause
-	 */
-	public TypeMismatchException(Object value, Class<?> requiredType, Throwable cause) {
-		super(String.format("Mismatching type: %s is not from type %s?", value.getClass().getName(),
-				requiredType.getName()), cause);
-		this.value = value;
-		this.requiredType = requiredType;
-	}
-
-	/**
-	 * Gets the required type.
-	 *
-	 * @return the required type
-	 */
-	public Class<?> getRequiredType() {
-		return requiredType;
-	}
-
-	/**
-	 * Gets the value.
-	 *
-	 * @return the value
-	 */
-	public Object getValue() {
-		return value;
-	}
 }
