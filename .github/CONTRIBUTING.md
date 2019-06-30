@@ -20,7 +20,7 @@ If you are not sure how to work with Pull Requests, you can find an introduction
 ## Pull Request Guidelines
 
 - If you want to add a new feature, add a [issue](/../../issues/new) (with label `enhancement`) first so that the community has the chance to discuss it and provide helpful input
-- Consider the branch [naming converntions](#branch-naming-convention)
+- Consider the branch [naming conventions](#branch-naming-convention)
 - Keep your commit history clean: changes are atomic and the git message format is considered
 - Always `rebase` your work on top of the upstream branch to ensure your commit history is clean and linear
 - Keep the `.gitignore` file up-to-date
@@ -36,7 +36,7 @@ Base your work on the `master` branch (as the current snapshot) or a current rel
 - `feature-*` for new features
 - `fix-*` for bug fixes
 - `tests-*` when updating test suite
-- `refactor-*` when refactoring code without bbehavior changes
+- `refactor-*` when refactoring code without behavior changes
 - `docs-*` for README.md updates (or similar documents)
 
 ## Commit Messages
@@ -71,7 +71,7 @@ $ mvn site
 
 ## Review of the Pull Request
 
-After you have created your Pull Request, a project maintainer reviews it and decides wether it will be merged or rejected.
+After you have created your Pull Request, a project maintainer reviews it and decides whether it will be merged or rejected.
 
 Try to avoid large Pull Requests as it will take longer to review them.
 
@@ -217,7 +217,7 @@ Create a new pull request from your fork on Github.
 A pull request template will help you to provide all information needed 
 and to check if all requirements are met.
 
- ### Step 10: Update a Pull Reuest
+ ### Step 10: Update a Pull Request
 
 It is likely that you get some comments to your Pull Request and requests for changes by the reviewer.
 This is part of the review process.
@@ -233,7 +233,7 @@ $ git commit -m "Commit message"
 $ git push origin my-branch
 ```
 
-Check if a `git rebase` is neccessary before. 
+Check if a `git rebase` is necessary before. 
 If you have a conflict after a rebase with your remote branch on origin, 
 and you are the `ONLY` one working on it, you can overwrite it on origin by 
 

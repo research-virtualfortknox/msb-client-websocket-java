@@ -35,7 +35,7 @@ Revert version update
 ```sh
 mvn versions:revert 
  ```
-or commint verion update
+or commit version update
 ```sh
  mvn versions:commit
  ```
