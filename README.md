@@ -9,6 +9,9 @@
 
 [ ![Download](https://api.bintray.com/packages/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/images/download.svg) ](https://bintray.com/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/_latestVersion)
 
+[![Javadocs](https://www.javadoc.io/badge/com.github.research-virtualfortknox/msb-client-websocket.svg)](https://www.javadoc.io/doc/com.github.research-virtualfortknox/msb-client-websocket)
+
+
 <p align="center">
   <a href="https://research.virtualfortknox.de" target="_blank" rel="noopener noreferrer">
     <img src="https://research.virtualfortknox.de/static/cms/img/vfk_research_logo.png" alt="VFK Research Logo" height="70" >
