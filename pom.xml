@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.github.research-virtualfortknox</groupId>
@@ -8,8 +8,8 @@
 	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	
-	<name>msb-client</name>
-	<description>The MSB Client Libraries can be used to facilitate integration of Manufacturing Service Bus functionalities.</description>
+	<name>msb-client-parent</name>
+	<description>Parent pom providing dependency and plugin management for applications built with Maven</description>
 	<url>https://research.virtualfortknox.de</url>
 
 	<organization>
@@ -65,7 +65,7 @@
 
 		<maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
 		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
-		<maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
+		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
 		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
 		<maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
 		<maven-source-plugin.version>3.1.0</maven-source-plugin.version>

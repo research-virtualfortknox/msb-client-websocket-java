@@ -8,7 +8,6 @@
         <groupId>com.github.research-virtualfortknox</groupId>
         <artifactId>msb-client-parent</artifactId>
         <version>1.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>coverage</artifactId>
