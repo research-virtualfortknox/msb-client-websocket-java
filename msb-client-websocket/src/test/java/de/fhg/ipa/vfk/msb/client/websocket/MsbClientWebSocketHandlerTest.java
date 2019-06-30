@@ -540,7 +540,7 @@ public class MsbClientWebSocketHandlerTest {
 
     @Test
     public void testConnectionListener() throws Exception {
-        ConnectionListener connectionListener = Mockito.mock(ConnectionAdapter.class);
+        ConnectionAdapter connectionListener = Mockito.mock(ConnectionAdapter.class);
         msbClientWebSocketHandler.addConnectionListener(connectionListener);
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
