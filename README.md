@@ -1,15 +1,12 @@
+[![Apache 2.0 License](https://img.shields.io/:license-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Download](https://api.bintray.com/packages/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/images/download.svg) ](https://bintray.com/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/_latestVersion)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.research-virtualfortknox/msb-client-websocket/badge.svg?color=blue)](https://maven-badges.herokuapp.com/maven-central/com.github.research-virtualfortknox/msb-client-websocket)
+[![Javadocs](https://www.javadoc.io/badge/com.github.research-virtualfortknox/msb-client-websocket.svg?color=blue)](https://www.javadoc.io/doc/com.github.research-virtualfortknox/msb-client-websocket)
 
 [![Build Status](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java.svg?branch=master)](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java)
-
 [![Known Vulnerabilities](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java/badge.svg?targetFile=msb-client-websocket/pom.xml)](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java)
-
 [![Coverage Status](https://coveralls.io/repos/github/research-virtualfortknox/msb-client-websocket-java/badge.svg?branch=master)](https://coveralls.io/github/research-virtualfortknox/msb-client-websocket-java?branch=master)
-
 [![codecov.io](https://codecov.io/github/research-virtualfortknox/msb-client-websocket-java/coverage.svg?branch=master)](https://codecov.io/github/research-virtualfortknox/msb-client-websocket-java?branch=master)
-
-[ ![Download](https://api.bintray.com/packages/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/images/download.svg) ](https://bintray.com/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/_latestVersion)
-
-[![Javadocs](https://www.javadoc.io/badge/com.github.research-virtualfortknox/msb-client-websocket.svg)](https://www.javadoc.io/doc/com.github.research-virtualfortknox/msb-client-websocket)
 
 
 <p align="center">
