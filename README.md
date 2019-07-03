@@ -50,7 +50,7 @@ Import to your application via maven
 <properties>
     ...
     <!-- Use the latest version whenever possible. -->
-    <msb-client-websocket.version>1.0.0-RELEASE</msb-client-websocket.version>
+    <msb-client-websocket.version>1.0.1-RELEASE</msb-client-websocket.version>
     ...
 </properties>
 
