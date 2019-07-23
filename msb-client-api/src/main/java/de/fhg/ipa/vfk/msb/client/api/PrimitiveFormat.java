@@ -28,33 +28,48 @@ import java.util.Locale;
 public enum PrimitiveFormat {
 
     /**
-     * The int32.
+     * Int 32 primitive format, signed 32 bits.
      */
     INT32("int32"),
+
     /**
-     * The int64.
+     * Int 64 primitive format, signed 64 bits
      */
     INT64("int64"),
+
     /**
-     * The float.
+     * Float primitive format.
      */
     FLOAT("float"),
+
     /**
-     * The double.
+     * Double primitive format.
      */
     DOUBLE("double"),
+
     /**
-     * The byte.
+     * Byte primitive format, base64 encoded characters
      */
     BYTE("byte"),
     /**
-     * The date.
+     * Binary primitive format, any sequence of octets.
+     */
+    BINARY("binary"),
+
+    /**
+     * Date primitive format, as defined by full-date - RFC3339
      */
     DATE("date"),
+
     /**
-     * The date time.
+     * Date time primitive format, as defined by date-time - RFC3339
      */
-    DATE_TIME("date-time");
+    DATE_TIME("date-time"),
+
+    /**
+     * Password primitive format, used to hint UIs the input needs to be obscured.
+     */
+    PASSWORD("password");
 
     /**
      * The name.
@@ -90,10 +105,14 @@ public enum PrimitiveFormat {
                     return DOUBLE;
                 case "byte":
                     return BYTE;
+                case "binary":
+                    return BINARY;
                 case "date":
                     return DATE;
                 case "date-time":
                     return DATE_TIME;
+                case "password":
+                    return PASSWORD;
                 default:
                     return null;
             }
@@ -112,11 +131,18 @@ public enum PrimitiveFormat {
         return name;
     }
 
+    /**
+     * Gets corresponding type.
+     *
+     * @return the corresponding type
+     */
     public PrimitiveType getCorrespondingType() {
         switch (this) {
             case BYTE:
+            case BINARY:
             case DATE:
             case DATE_TIME:
+            case PASSWORD:
                 return PrimitiveType.STRING;
             case DOUBLE:
             case FLOAT:

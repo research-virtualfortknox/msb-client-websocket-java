@@ -74,10 +74,17 @@ public final class DataFormatParser {
 		return getObjectMapper().writeValueAsString(map);
 	}
 
-	public static Map<String, Object> readFromString(String dataformatString) throws IOException {
+	/**
+	 * Read from string map.
+	 *
+	 * @param dataFormatString the data format string
+	 * @return the map
+	 * @throws IOException the io exception
+	 */
+	public static Map<String, Object> readFromString(String dataFormatString) throws IOException {
 		ObjectMapper mapper = getObjectMapper();
 		JavaType type = mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class);
-		return mapper.readValue(dataformatString, type);
+		return mapper.readValue(dataFormatString, type);
 	}
 
 	/**
