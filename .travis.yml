@@ -28,8 +28,8 @@ after_success:
   - mvn test jacoco:report coveralls:report -DrepoToken=${COVERALLS_TOKEN}
 
 deploy:
-    on:
-      tags: true
+    #on:
+    #  tags: true
     provider: bintray
     skip_cleanup: true
     file: bintray.json
