@@ -20,7 +20,7 @@ before_install:
 install: true
 
 script:
-  - mvn clean install -DskipITs
+  - mvn clean install -DskipITs -q
   - sed -i -e "s/VERSION_NAME/${VERSION}/g" ./bintray.json || true
 
 after_success:
