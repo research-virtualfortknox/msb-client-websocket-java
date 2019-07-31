@@ -52,7 +52,7 @@
 		<spring.version>5.1.8.RELEASE</spring.version>
 		<tomcat.version>9.0.21</tomcat.version>
 		<jackson.version>2.9.9</jackson.version>
-		<jackson-databind.version>2.9.9.1</jackson-databind.version>
+		<jackson-databind.version>2.9.9.2</jackson-databind.version>
 		<swagger.version>2.0.8</swagger.version>
 		<swagger.parser.version>2.0.13</swagger.parser.version>
 		<json-schema-validator.version>2.2.10</json-schema-validator.version>
