@@ -20,7 +20,7 @@ before_install:
 install: true
 
 script:
-  - mvn clean install -DskipITs -q
+  - mvn clean install -DskipITs -q sonar:sonar -Dsonar.projectKey=research-virtualfortknox_msb-client-websocket-java
   - sed -i -e "s/VERSION_NAME/${VERSION}/g" ./bintray.json || true
 
 after_success:
@@ -35,3 +35,9 @@ deploy:
     file: bintray.json
     user: $BINTRAY_USER
     key: $BINTRAY_API_KEY
+
+addons:
+  sonarcloud:
+    organization: "research-virtualfortknox"
+    token:
+      secure: ${SONAR_TOKEN}
