@@ -280,15 +280,12 @@ public class MsbClient implements AutoCloseable {
         }
         LOG.info("connect client");
 
-        FutureTask<MsbClientHandler> future =
-                new FutureTask<>(new Callable<MsbClientHandler>() {
-                    public MsbClientHandler call() {
-                        if(clientHandler.establishConnection()) {
-                            LOG.info("client connected");
-                            return clientHandler;
-                        } else {
-                            return null;
-                        }
+        FutureTask<MsbClientHandler> future = new FutureTask<>(() -> {
+                    if(clientHandler.establishConnection()) {
+                        LOG.info("client connected");
+                        return clientHandler;
+                    } else {
+                        return null;
                     }
                 });
 

@@ -50,33 +50,66 @@ public final class NarrowingNumberConversion {
 	public static Number convert(Class outputType, Number value) {
 		if (value == null) {
 			return null;
-		} else if (Byte.class.equals(outputType) || byte.class.equals(outputType)) {
+		} else if (isByte(outputType)) {
 			return value.byteValue();
-		} else if (Short.class.equals(outputType) || short.class.equals(outputType)) {
+		} else if (isShort(outputType)) {
 			return value.shortValue();
-		} else if (Integer.class.equals(outputType) || int.class.equals(outputType)) {
+		} else if (isInteger(outputType)) {
 			return value.intValue();
-		} else if (Long.class.equals(outputType) || long.class.equals(outputType)) {
+		} else if (isLong(outputType)) {
 			return value.longValue();
-		} else if (Float.class.equals(outputType) || float.class.equals(outputType)) {
+		} else if (isFloat(outputType)) {
 			return value.floatValue();
-		} else if (Double.class.equals(outputType) || double.class.equals(outputType)) {
+		} else if (isDouble(outputType)) {
 			return value.doubleValue();
 		} else if (BigInteger.class.equals(outputType)) {
-			try {
-				return (BigInteger) value;
-			} catch (ClassCastException e) {
-				LOG.warn("ClassCastException to BigInteger",e);
-				return BigInteger.valueOf(value.longValue());
-			}
+			return convertBigInteger(value);
 		} else if (BigDecimal.class.equals(outputType)) {
-			try {
-				return (BigDecimal) value;
-			} catch (ClassCastException e) {
-				LOG.warn("ClassCastException to BigDecimal",e);
-				return BigDecimal.valueOf(value.doubleValue());
-			}
+			return convertBigDecimal(value);
 		}
 		throw new TypeMismatchException(value, outputType);
 	}
+
+	private static boolean isByte(Class outputType){
+		return Byte.class.equals(outputType) || byte.class.equals(outputType);
+	}
+
+	private static boolean isShort(Class outputType){
+		return Short.class.equals(outputType) || short.class.equals(outputType);
+	}
+
+	private static boolean isInteger(Class outputType){
+		return Integer.class.equals(outputType) || int.class.equals(outputType);
+	}
+
+	private static boolean isLong(Class outputType){
+		return Long.class.equals(outputType) || long.class.equals(outputType);
+	}
+
+	private static boolean isFloat(Class outputType){
+		return Float.class.equals(outputType) || float.class.equals(outputType);
+	}
+
+	private static boolean isDouble(Class outputType){
+		return Double.class.equals(outputType) || double.class.equals(outputType);
+	}
+
+	private static BigInteger convertBigInteger(Number value){
+		try {
+			return (BigInteger) value;
+		} catch (ClassCastException e) {
+			LOG.warn("ClassCastException to BigInteger",e);
+			return BigInteger.valueOf(value.longValue());
+		}
+	}
+
+	private static BigDecimal convertBigDecimal(Number value){
+		try {
+			return (BigDecimal) value;
+		} catch (ClassCastException e) {
+			LOG.warn("ClassCastException to BigDecimal",e);
+			return BigDecimal.valueOf(value.doubleValue());
+		}
+	}
+
 }

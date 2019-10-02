@@ -93,6 +93,8 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
 
     private static final Logger LOG = LoggerFactory.getLogger(MsbClientWebSocketHandler.class);
 
+    private static final String REGISTRATION_REQUIRED = "registration is required";
+
     private static final String PING = "ping";
     private static final String PONG = "pong";
     private static final String REGISTRATION = "R";
@@ -271,11 +273,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                 connectionListener.errorAtServiceRegistration(RegistrationError.NIO_ALREADY_CONNECTED);
             }
             if (reconnect) {
-                try {
-                    closeSession(CloseStatus.NORMAL.withReason("client restarted"));
-                } catch (IOException e) {
-                    LOG.warn("IOException during closeConnection: ", e);
-                }
+                closeSession(CloseStatus.NORMAL.withReason("client restarted"));
             }
         } else if (payload.startsWith(NIO_UNAUTHORIZED_CONNECTION)) {
             if (state == INITIAL && eventCacheEnabled) {
@@ -289,11 +287,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                 connectionListener.errorAtServiceRegistration(RegistrationError.NIO_REGISTRATION_ERROR);
             }
             if (reconnect) {
-                try {
-                    closeSession(CloseStatus.NORMAL.withReason("client restarted"));
-                } catch (IOException e) {
-                    LOG.warn("IOException during closeConnection: ", e);
-                }
+                closeSession(CloseStatus.NORMAL.withReason("client restarted"));
             }
         } else if (payload.startsWith(NIO_EVENT_FORWARDING_ERROR)) {
             if (state == INITIAL && eventCacheEnabled) {
@@ -535,12 +529,8 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      */
     protected void closeConnection(boolean interrupt) {
         LOG.info("close connection called");
-        try {
-            state = STOPPED;
-            closeSession(CloseStatus.NORMAL.withReason("client disconnected"));
-        } catch (IOException e) {
-            LOG.warn("IOException during closeConnection: ", e);
-        }
+        state = STOPPED;
+        closeSession(CloseStatus.NORMAL.withReason("client disconnected"));
         if(sockJsClient!=null) {
             sockJsClient.stop();
         }
@@ -804,7 +794,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     @Override
     public void publish(String eventId) throws IOException {
         if (this.selfDescription == null) {
-            throw new IOException("registration is required");
+            throw new IOException(REGISTRATION_REQUIRED);
         }
         publishForService(this.selfDescription.getUuid(), eventId);
     }
@@ -822,7 +812,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     @Override
     public void publish(String eventId, Object obj, EventPriority priority, boolean cache) throws IOException {
         if (this.selfDescription == null) {
-            throw new IOException("registration is required");
+            throw new IOException(REGISTRATION_REQUIRED);
         }
         publishForService(this.selfDescription.getUuid(), eventId, obj, priority, cache);
     }
@@ -830,7 +820,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     @Override
     public void publish(String eventId, Object obj, EventPriority priority, boolean cache, Date postDate) throws IOException {
         if (this.selfDescription == null) {
-            throw new IOException("registration is required");
+            throw new IOException(REGISTRATION_REQUIRED);
         }
         publishForService(this.selfDescription.getUuid(), eventId, obj, priority, cache, postDate);
     }
@@ -838,7 +828,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     @Override
     public void publish(String eventId, Object obj, EventPriority priority, boolean cache, Date postDate, String correlationId) throws IOException {
         if (this.selfDescription == null) {
-            throw new IOException("registration is required");
+            throw new IOException(REGISTRATION_REQUIRED);
         }
         publishForService(this.selfDescription.getUuid(), eventId, obj, priority, cache, postDate, correlationId);
     }
@@ -873,7 +863,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     public void publishForService(String serviceUuid, String eventId, Object obj, EventPriority priority, boolean cache, Date postDate, String correlationId)
             throws IOException {
         if (this.selfDescription == null) {
-            throw new IOException("registration is required");
+            throw new IOException(REGISTRATION_REQUIRED);
         }
         if (!serviceUuid.equals(this.selfDescription.getUuid()) && !isGateway(this.selfDescription)) {
             throw new IOException("invalid service uuid '" + serviceUuid + "' for publishing an event");
@@ -982,59 +972,58 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      * @param outdata
      */
     private void callFunction(final FunctionCallMessage outdata) {
-        Runnable functionCallRunnable = new Runnable() {
-            @Override
-            public void run() {
-                //TODO: check if function is registered by service or subService if is a gateway
-                for (FunctionCallsListener functionCallsListener : functionCallsListeners) {
-                    functionCallsListener.onCallback(outdata.getUuid(), outdata.getFunctionId(), outdata.getCorrelationId(), outdata.getFunctionParameters());
-                }
-                FunctionCallReference functionCallReference = functionMap.get(outdata.getUuid()+"_"+outdata.getFunctionId());
-                if(functionCallReference!=null){
-                    if (invokeFunctionCallEnabled) {
-                        try {
-                            Object response = FunctionInvoker.callFunctions(outdata, functionCallReference);
-                            if (!functionCallReference.getResponseEvents().isEmpty()) {
-                                if(response instanceof MultipleResponseEvent){
-                                    for(MultipleResponseEvent.ResponseEvent responseEvent : (MultipleResponseEvent) response){
-                                        if(functionCallReference.getResponseEvents().contains(responseEvent.getEventId())) {
-                                            LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
-                                                    selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),responseEvent.getEventId());
-                                            publish(responseEvent.getEventId(), responseEvent.getObj(), responseEvent.getPriority(),
-                                                    responseEvent.isCache(), new Date(), outdata.getCorrelationId());
-                                        } else {
-                                            LOG.error("Event is not published, because it is not defined as response event, please use a publish method instead.");
-                                        }
-                                    }
-                                } else {
-                                    String eventId = functionCallReference.getFunction().getResponseEvents()[0].getEventId();
-                                    LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
-                                            selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),eventId);
-                                    publish(eventId,response,null,eventCacheEnabled, new Date(),outdata.getCorrelationId());
-                                }
-                            }
-                        } catch (IllegalAccessException | IllegalArgumentException
-                                | InvocationTargetException | IOException | TypeMismatchException e) {
-                            LOG.error(e.getMessage(), e);
-                        }
-                    }
-                } else {
-                    LOG.warn("No function named {} found", outdata.getFunctionId());
-                }
+        functionCallExecutorService.execute(() -> {
+            //TODO: check if function is registered by service or subService if is a gateway
+            for (FunctionCallsListener functionCallsListener : functionCallsListeners) {
+                functionCallsListener.onCallback(outdata.getUuid(), outdata.getFunctionId(), outdata.getCorrelationId(), outdata.getFunctionParameters());
             }
-        };
-        functionCallExecutorService.execute(functionCallRunnable);
+            FunctionCallReference functionCallReference = functionMap.get(outdata.getUuid()+"_"+outdata.getFunctionId());
+            if(functionCallReference!=null){
+                if (invokeFunctionCallEnabled) {
+                    try {
+                        Object response = FunctionInvoker.callFunctions(outdata, functionCallReference);
+                        if (!functionCallReference.getResponseEvents().isEmpty()) {
+                            if(response instanceof MultipleResponseEvent){
+                                for(MultipleResponseEvent.ResponseEvent responseEvent : (MultipleResponseEvent) response){
+                                    if(functionCallReference.getResponseEvents().contains(responseEvent.getEventId())) {
+                                        LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
+                                                selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),responseEvent.getEventId());
+                                        publish(responseEvent.getEventId(), responseEvent.getObj(), responseEvent.getPriority(),
+                                                responseEvent.isCache(), new Date(), outdata.getCorrelationId());
+                                    } else {
+                                        LOG.error("Event is not published, because it is not defined as response event, please use a publish method instead.");
+                                    }
+                                }
+                            } else {
+                                String eventId = functionCallReference.getFunction().getResponseEvents()[0].getEventId();
+                                LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
+                                        selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),eventId);
+                                publish(eventId,response,null,eventCacheEnabled, new Date(),outdata.getCorrelationId());
+                            }
+                        }
+                    } catch (IllegalAccessException | IllegalArgumentException
+                            | InvocationTargetException | IOException | TypeMismatchException e) {
+                        LOG.error(e.getMessage(), e);
+                    }
+                }
+            } else {
+                LOG.warn("No function named {} found", outdata.getFunctionId());
+            }
+        });
     }
 
     /**
      * Close session.
      *
      * @param status the status
-     * @throws IOException Signals that an I/O exception has occurred.
      */
-    private void closeSession(CloseStatus status) throws IOException {
-        sessionWrapper.close(status);
-        sessionWrapper.setSession(null);
+    private void closeSession(CloseStatus status) {
+        try {
+            sessionWrapper.close(status);
+            sessionWrapper.setSession(null);
+        } catch (IOException e) {
+            LOG.warn("IOException during closeConnection: ", e);
+        }
     }
 
     private static SockJsClient createClient(String url, String trustStorePath, String trustStorePwd) {
@@ -1109,27 +1098,33 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) {
+			// Do nothing because it is a fake trust manager to disable hostname verification
         }
 
         @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType) {
+			// Do nothing because it is a fake trust manager to disable hostname verification
         }
 
         @Override
         public void checkClientTrusted(X509Certificate[] x509Certificates, String s, Socket socket) throws CertificateException {
+			// Do nothing because it is a fake trust manager to disable hostname verification
         }
 
         @Override
         public void checkServerTrusted(X509Certificate[] x509Certificates, String s, Socket socket) throws CertificateException {
+			// Do nothing because it is a fake trust manager to disable hostname verification
         }
 
         @Override
         public void checkClientTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) throws CertificateException {
-        }
+        	// Do nothing because it is a fake trust manager to disable hostname verification
+		}
 
         @Override
         public void checkServerTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) throws CertificateException {
-        }
+        	// Do nothing because it is a fake trust manager to disable hostname verification
+		}
     }
 
 }

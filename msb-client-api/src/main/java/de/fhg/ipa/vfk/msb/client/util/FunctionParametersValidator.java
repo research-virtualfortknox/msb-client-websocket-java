@@ -39,7 +39,7 @@ import java.util.Map;
  */
 public final class FunctionParametersValidator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DataFormatValidator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FunctionParametersValidator.class);
 
     private static final ObjectMapper JsonMapper = Json.mapper();
 
