@@ -18,11 +18,19 @@
 
 package de.fhg.ipa.vfk.msb.client.parser;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.fhg.ipa.vfk.msb.client.api.AllTypes;
+import de.fhg.ipa.vfk.msb.client.api.ComplexType;
 import de.fhg.ipa.vfk.msb.client.api.messages.FunctionCallMessage;
 import de.fhg.ipa.vfk.msb.client.util.MsbDateFormat;
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -41,6 +49,8 @@ import java.util.Map;
  */
 public class FunctionInvokerTest {
 
+    private static Logger LOG = LoggerFactory.getLogger(FunctionInvokerTest.class);
+
     private Object obj;
     private int number;
     private Long longNumber;
@@ -50,6 +60,7 @@ public class FunctionInvokerTest {
     private byte[] byteArray;
     private BigDecimal bigDecimal;
     private boolean called;
+    private ComplexType complexType;
 
     private FunctionCallReference callback;
 
@@ -73,6 +84,30 @@ public class FunctionInvokerTest {
         callback.setFunctionHandlerInstance(this);
         callback.setMethod(this.getClass().getDeclaredMethod("testFunction", Object.class, int.class, Long.class, boolean.class, String[].class, Date.class, byte[].class, BigDecimal.class));
         callback.setParameters(functionCallbackParameters);
+    }
+
+    @Test
+    public void testComplexTypeParameter() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, JsonProcessingException, JSONException {
+        Map<String, Type> functionCallbackParameters = new LinkedHashMap<>();
+        functionCallbackParameters.put("complexType",ComplexType.class);
+        FunctionCallReference callback = new FunctionCallReference();
+        callback.setFunctionHandlerInstance(this);
+        callback.setMethod(this.getClass().getDeclaredMethod("testFunction", ComplexType.class));
+        callback.setParameters(functionCallbackParameters);
+
+        this.complexType = null;
+
+        ComplexType complexType = new ComplexType();
+        complexType.setMap(new HashMap<>());
+        complexType.getMap().put(1, AllTypes.getTestEntity());
+        complexType.getMap().put(2, AllTypes.getTestEntity());
+        Map<String,Object> functionParameters = new LinkedHashMap<>();
+        functionParameters.put("complexType", complexType);
+        FunctionCallMessage outData = new FunctionCallMessage("","testFunction",null,functionParameters);
+        FunctionInvoker.callFunctions(outData,callback);
+        Assert.assertNotNull("is null",this.complexType);
+        JSONAssert.assertEquals(new ObjectMapper().writeValueAsString(complexType), new ObjectMapper().writeValueAsString(this.complexType),true);
+        LOG.debug(new ObjectMapper().writeValueAsString(this.complexType));
     }
 
     /**
@@ -357,6 +392,10 @@ public class FunctionInvokerTest {
      */
     public void testFunction(){
         this.called = true;
+    }
+
+    public void testFunction(ComplexType complexType){
+        this.complexType = complexType;
     }
 
 }
