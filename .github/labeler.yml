@@ -1,0 +1,2 @@
+# Add 'version-upgrade' to any file changes parent pom
+version-upgrade: pom.xml
