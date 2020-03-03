@@ -614,11 +614,11 @@ public class DrillMachine {
 
 ## Logging
 
-Logging is implemented with SLF4J (Simple Logging Facade for Java), which gives access to many logging frameworks 
+Logging is implemented with [SLF4J (Simple Logging Facade for Java)](http://www.slf4j.org), which gives access to many logging frameworks 
 such as Log4j, Logback or java.util.logging. This allows the end user to plug-in the desired logging framework. 
 This section shows how to use Logback as logging functionality without making any change in application code.
 
-If you want to use Logback for logging, you only need to add the logback-classic jar to the project dependency.
+If you want to use [Logback](http://logback.qos.ch) for logging, you only need to add the logback-classic jar to the project dependency.
 
 ```xml
 <dependency>
