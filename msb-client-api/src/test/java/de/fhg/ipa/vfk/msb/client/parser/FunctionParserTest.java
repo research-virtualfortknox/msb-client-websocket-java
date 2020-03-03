@@ -279,6 +279,23 @@ public class FunctionParserTest {
         Assert.assertTrue("response events of function call reference is empty",functionCallReference.getResponseEvents().isEmpty());
     }
 
+    @Test
+    public void testAddFunctionWitNullResponseEvents() {
+        Map<String, Type> callbackParameters = new HashMap<>();
+        callbackParameters.put("arg0",String.class);
+        FunctionCallReference functionCallReference = FunctionParser.addFunction("uuid", "printString", "printString", "print a string",
+                this, null, callbackParameters, null, new HashMap<String, EventReference>());
+
+        Assert.assertNotNull("response events of function call reference is null", functionCallReference);
+        Assert.assertNull("method of function call reference not null", functionCallReference.getMethod());
+        Assert.assertEquals("functionHandler class of function call reference not equals", this, functionCallReference.getFunctionHandlerInstance());
+        Assert.assertEquals("dataFormat of function call reference not equals", "{\"arg0\":{\"type\":\"string\"}}", functionCallReference.getDataFormat());
+        Assert.assertNotNull("parameters of function call reference is null", functionCallReference.getParameters());
+        Assert.assertEquals("parameters of function call reference is empty",1,functionCallReference.getParameters().size());
+        Assert.assertNotNull("response events of function call reference is null", functionCallReference.getResponseEvents());
+        Assert.assertTrue("response events of function call reference is empty",functionCallReference.getResponseEvents().isEmpty());
+    }
+
     @FunctionCall(path="/print")
     public void print() {
         // required for parsing test

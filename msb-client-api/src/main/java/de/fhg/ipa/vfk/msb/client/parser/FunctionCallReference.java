@@ -137,7 +137,11 @@ public class FunctionCallReference {
 	 * @return the response events
 	 */
 	public List<String> getResponseEvents() {
-		return new ArrayList<>(responseEvents);
+		if(responseEvents == null) {
+			return new ArrayList<>();
+		} else {
+			return new ArrayList<>(this.responseEvents);
+		}
 	}
 
 	/**
@@ -146,6 +150,11 @@ public class FunctionCallReference {
 	 * @param responseEvents the response events
 	 */
 	public void setResponseEvents(String[] responseEvents) {
-		this.responseEvents = Arrays.asList(responseEvents);
+		if(responseEvents == null) {
+			this.responseEvents = new ArrayList<>();
+		} else {
+			this.responseEvents = Arrays.asList(responseEvents);
+		}
+
 	}
 }
