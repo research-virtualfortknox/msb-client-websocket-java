@@ -40,4 +40,4 @@ addons:
   sonarcloud:
     organization: "research-virtualfortknox"
     token:
-      secure: ${SONAR_TOKEN}
+      secure: $SONAR_TOKEN
