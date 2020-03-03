@@ -612,6 +612,48 @@ public class DrillMachine {
 }
 ```
 
+## Logging
+
+Logging is implemented with SLF4J (Simple Logging Facade for Java), which gives access to many logging frameworks 
+such as Log4j, Logback or java.util.logging. This allows the end user to plug-in the desired logging framework. 
+This section shows how to use Logback as logging functionality without making any change in application code.
+
+If you want to use Logback for logging, you only need to add the logback-classic jar to the project dependency.
+
+```xml
+<dependency>
+  <groupId>ch.qos.logback</groupId>
+  <artifactId>logback-classic</artifactId>
+  <version>${logback.version}</version>
+</dependency>
+```
+
+To configure the log output, the configuration file logback.xml must be available at the root resource 
+folder src\main\resources. 
+The following examples illustrate how to set the root logger to INFO and a specific logger to DEBUG, 
+which causes info, warning and error messages from all loggers in the application to be logged and also DEBUG for the specific logger:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- set log level in the logback.xml file -->
+
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>
+        %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+      </Pattern>
+    </layout>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+  <logger name="de.fhg.ipa.vfk" level="DEBUG" />
+
+</configuration>
+```
 
 
 ## License
