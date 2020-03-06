@@ -80,7 +80,7 @@ public class MsbClientWebSocketHandlerTest {
     private ArgumentCaptor<WebSocketMessage> captor;
 
     @Spy
-    private MsbClientWebSocketHandler msbClientWebSocketHandler = new MsbClientWebSocketHandler();
+    private MsbClientWebSocketHandler msbClientWebSocketHandler = new MsbClientWebSocketHandler("");
 
     /**
      * Test send callback.

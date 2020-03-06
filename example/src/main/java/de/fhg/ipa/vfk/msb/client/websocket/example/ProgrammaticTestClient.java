@@ -73,7 +73,7 @@ public class ProgrammaticTestClient {
         this.uuid = uuid;
         this.name = name;
         this.token = token;
-        this.msbClient = new MsbClient.Builder().url("ws://localhost:8085").enabledDataFormatValidation().build();
+        this.msbClient = new MsbClient.Builder().url("wss://localhost:8084").disableHostnameVerification().enabledDataFormatValidation().build();
     }
 
     /**

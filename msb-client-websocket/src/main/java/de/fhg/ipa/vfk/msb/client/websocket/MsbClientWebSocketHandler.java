@@ -111,14 +111,14 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     private static final String NIO_EVENT_FORWARDING_ERROR = "NIO_EVENT_FORWARDING_ERROR";
     private static final String NIO_UNEXPECTED_EVENT_FORWARDING_ERROR = "NIO_UNEXPECTED_EVENT_FORWARDING_ERROR";
 
-    private static final String URL_PATH = "/websocket/data";
+    private static final String DEFAULT_URL_PATH = "/websocket/data";
 
     private static final int INITIAL = 0;
     private static final int STARTED = 1;
     private static final int REGISTERED = 2;
     private static final int STOPPED = 3;
 
-    private String url = "wss://localhost:8084" + URL_PATH;
+    private String url = "wss://localhost:8084"+ DEFAULT_URL_PATH;
     private int websocketTextMessageSize = 1000000;
     private int functionCallExecutorPoolSize =10;
     private boolean invokeFunctionCallEnabled = true;
@@ -150,7 +150,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     /**
      * Instantiates a new client web socket handler.
      */
-    protected MsbClientWebSocketHandler() {
+    private MsbClientWebSocketHandler() {
         functionCallExecutorService = Executors.newFixedThreadPool(functionCallExecutorPoolSize);
     }
 
@@ -331,10 +331,10 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     }
 
     private void setUrl(String url) {
-        if (url.endsWith(URL_PATH)) {
+        if (url.endsWith(DEFAULT_URL_PATH)) {
             this.url = url;
         } else {
-            this.url = url + URL_PATH;
+            this.url = url + DEFAULT_URL_PATH;
         }
     }
 
@@ -1028,15 +1028,16 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
 
     private static SockJsClient createClient(String url, String trustStorePath, String trustStorePwd) {
         StandardWebSocketClient simpleWebSocketClient = new StandardWebSocketClient();
-        if ((url.startsWith("wss://") || url.startsWith("https://")) && trustStorePath != null && trustStorePwd != null) {
+        if ((url.startsWith("wss://") || url.startsWith("https://"))) {
             Map<String, Object> userProperties = new HashMap<>();
-            userProperties.put("org.apache.tomcat.websocket.SSL_TRUSTSTORE", trustStorePath);
-            userProperties.put("org.apache.tomcat.websocket.SSL_TRUSTSTORE_PWD", trustStorePwd);
-
+            if(trustStorePath != null && trustStorePwd != null){
+                userProperties.put("org.apache.tomcat.websocket.SSL_TRUSTSTORE", trustStorePath);
+                userProperties.put("org.apache.tomcat.websocket.SSL_TRUSTSTORE_PWD", trustStorePwd);
+            }
             if (MsbClient.hostnameVerification) {
-                // TODO: only for testing with self-signed certificates and ip
+                LOG.warn("Hostname verification is disabled. Use this option only for testing. In production, use the option to define a truststore.");
                 try {
-                    SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+                    SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
                     sslContext.init(null, new TrustManager[]{new SkipX509TrustManager()}, new SecureRandom());
                     userProperties.put("org.apache.tomcat.websocket.SSL_CONTEXT", sslContext);
                     SSLContext.setDefault(sslContext);
