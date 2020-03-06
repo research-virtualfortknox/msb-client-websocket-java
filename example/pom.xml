@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.github.research-virtualfortknox</groupId>
         <artifactId>msb-client-parent</artifactId>
-        <version>1.0.4-RELEASE</version>
+        <version>1.0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>example</artifactId>
