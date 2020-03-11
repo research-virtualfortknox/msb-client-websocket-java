@@ -20,7 +20,7 @@ before_install:
 install: true
 
 script:
-  - mvn clean install -DskipITs -q sonar:sonar -Dsonar.projectKey=research-virtualfortknox_msb-client-websocket-java
+  - mvn clean install -DskipITs -q sonar:sonar -Pcoverage -Dsonar.projectKey=research-virtualfortknox_msb-client-websocket-java
   - sed -i -e "s/VERSION_NAME/${VERSION}/g" ./bintray.json || true
 
 after_success:
