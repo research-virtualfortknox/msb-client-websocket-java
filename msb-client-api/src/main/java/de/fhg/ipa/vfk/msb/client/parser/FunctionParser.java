@@ -343,7 +343,7 @@ public final class FunctionParser {
         Map<String, Object> map;
         if (method != null) {
             map = getFunctionDataFormat(method, callback.getParameters());
-        } else {
+        } else if (callbackParameters != null){
             callback.setParameters(callbackParameters);
             map = new LinkedHashMap<>();
             for (Entry<String, Type> entry : callbackParameters.entrySet()) {
@@ -351,6 +351,8 @@ public final class FunctionParser {
                 String parameterName = entry.getKey();
                 DataFormatParser.parse(parameterName, parameterClass, map);
             }
+        } else {
+            map = new LinkedHashMap<>();
         }
 
         try {

@@ -969,7 +969,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     /**
      * Creates a Runnable and triggers the execution by the ExecutorService.
      *
-     * @param outdata
+     * @param outdata the function call message
      */
     private void callFunction(final FunctionCallMessage outdata) {
         functionCallExecutorService.execute(() -> {
@@ -978,31 +978,12 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                 functionCallsListener.onCallback(outdata.getUuid(), outdata.getFunctionId(), outdata.getCorrelationId(), outdata.getFunctionParameters());
             }
             FunctionCallReference functionCallReference = functionMap.get(outdata.getUuid()+"_"+outdata.getFunctionId());
-            if(functionCallReference!=null){
+            if(functionCallReference != null){
                 if (invokeFunctionCallEnabled) {
                     try {
                         Object response = FunctionInvoker.callFunctions(outdata, functionCallReference);
-                        if (!functionCallReference.getResponseEvents().isEmpty()) {
-                            if(response instanceof MultipleResponseEvent){
-                                for(MultipleResponseEvent.ResponseEvent responseEvent : (MultipleResponseEvent) response){
-                                    if(functionCallReference.getResponseEvents().contains(responseEvent.getEventId())) {
-                                        LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
-                                                selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),responseEvent.getEventId());
-                                        publish(responseEvent.getEventId(), responseEvent.getObj(), responseEvent.getPriority(),
-                                                responseEvent.isCache(), new Date(), outdata.getCorrelationId());
-                                    } else {
-                                        LOG.error("Event is not published, because it is not defined as response event, please use a publish method instead.");
-                                    }
-                                }
-                            } else {
-                                String eventId = functionCallReference.getFunction().getResponseEvents()[0].getEventId();
-                                LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
-                                        selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),eventId);
-                                publish(eventId,response,null,eventCacheEnabled, new Date(),outdata.getCorrelationId());
-                            }
-                        }
-                    } catch (IllegalAccessException | IllegalArgumentException
-                            | InvocationTargetException | IOException | TypeMismatchException e) {
+                        publishResponseEvent(functionCallReference, outdata, response);
+                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException | TypeMismatchException e) {
                         LOG.error(e.getMessage(), e);
                     }
                 }
@@ -1010,6 +991,35 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                 LOG.warn("No function named {} found", outdata.getFunctionId());
             }
         });
+    }
+
+    /**
+     * Publish the return of function call as response event.
+     *
+     * @param functionCallReference the function call reference
+     * @param outdata the function call message
+     * @param response the return value
+     */
+    private void publishResponseEvent(final FunctionCallReference functionCallReference, final FunctionCallMessage outdata, final Object response) throws IOException {
+        if (!functionCallReference.getResponseEvents().isEmpty()) {
+            if(response instanceof MultipleResponseEvent){
+                for(MultipleResponseEvent.ResponseEvent responseEvent : (MultipleResponseEvent) response){
+                    if(functionCallReference.getResponseEvents().contains(responseEvent.getEventId())) {
+                        LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
+                                selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),responseEvent.getEventId());
+                        publish(responseEvent.getEventId(), responseEvent.getObj(), responseEvent.getPriority(),
+                                responseEvent.isCache(), new Date(), outdata.getCorrelationId());
+                    } else {
+                        LOG.error("Event is not published, because it is not defined as response event, please use a publish method instead.");
+                    }
+                }
+            } else {
+                String eventId = functionCallReference.getFunction().getResponseEvents()[0].getEventId();
+                LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
+                        selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),eventId);
+                publish(eventId,response,null,eventCacheEnabled, new Date(),outdata.getCorrelationId());
+            }
+        }
     }
 
     /**
@@ -1037,12 +1047,11 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
             if (MsbClient.hostnameVerification) {
                 LOG.warn("Hostname verification is disabled. Use this option only for testing. In production, use the option to define a truststore.");
                 try {
-                    SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
-                    sslContext.init(null, new TrustManager[]{new SkipX509TrustManager()}, new SecureRandom());
+                    SSLContext sslContext = loadSSLContext();
                     userProperties.put("org.apache.tomcat.websocket.SSL_CONTEXT", sslContext);
                     SSLContext.setDefault(sslContext);
-                } catch (NoSuchAlgorithmException e) {
-                   LOG.error("NoSuchAlgorithmException",e);
+                } catch (NoSuchAlgorithmException e){
+                    LOG.error("NoSuchAlgorithmException", e);
                 } catch (KeyManagementException e) {
                     LOG.error("KeyManagementException",e);
                 }
@@ -1053,6 +1062,18 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         WebSocketTransport w = new WebSocketTransport(simpleWebSocketClient);
         transports.add(w);
        return new SockJsClient(transports);
+    }
+
+    private static SSLContext loadSSLContext() throws NoSuchAlgorithmException, KeyManagementException {
+        SSLContext sslContext;
+        try {
+            sslContext = SSLContext.getInstance("TLSv1.3");
+        } catch (NoSuchAlgorithmException e) {
+            LOG.warn("TLSv1.3 not supported by JVM. TLSv1.2 loaded.");
+            sslContext = SSLContext.getInstance("TLSv1.2");
+        }
+        sslContext.init(null, new TrustManager[]{new SkipX509TrustManager()}, new SecureRandom());
+        return sslContext;
     }
 
     /**

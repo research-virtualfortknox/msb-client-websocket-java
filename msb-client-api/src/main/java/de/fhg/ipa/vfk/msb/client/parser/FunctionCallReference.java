@@ -39,7 +39,7 @@ public class FunctionCallReference {
 	private Map<String, Type> parameters = new LinkedHashMap<>();
 	private String dataFormat;
 	private Function function;
-	private List<String> responseEvents;
+	private List<String> responseEvents = new ArrayList<>();
 
 	/**
 	 * Gets the function handler instance.
@@ -137,11 +137,7 @@ public class FunctionCallReference {
 	 * @return the response events
 	 */
 	public List<String> getResponseEvents() {
-		if(responseEvents == null) {
-			return new ArrayList<>();
-		} else {
-			return new ArrayList<>(this.responseEvents);
-		}
+		return new ArrayList<>(this.responseEvents);
 	}
 
 	/**
