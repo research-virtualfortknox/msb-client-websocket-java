@@ -645,6 +645,28 @@ public class MsbClientWebSocketHandlerTest {
     }
 
     @Test
+    public void testFunctionCallsListenerWithEmptyReference() throws Exception {
+        FunctionCallsListener configurationListener = Mockito.mock(FunctionCallsListener.class);
+        msbClientWebSocketHandler.addFunctionCallsListener(configurationListener);
+        Mockito.when(mockSession.isOpen()).thenReturn(true);
+        msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
+        msbClientWebSocketHandler.register(new Application("df61a143-6dab-471a-88b4-8feddb4c9e45","name","description","token"));
+
+        FunctionCallMessage data = new FunctionCallMessage();
+        data.setUuid("df61a143-6dab-471a-88b4-8feddb4c9e45");
+        data.setFunctionId("/functionhandler/hello_world");
+        data.setCorrelationId("correlationId");
+        data.setHttpMethod(HttpMethod.GET);
+        data.setFunctionParameters(new HashMap<>());
+        msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
+        Thread.sleep(100);
+        msbClientWebSocketHandler.removeFunctionCallsListener(configurationListener);
+        msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
+
+        Mockito.verify(configurationListener, Mockito.after(1000).times(1)).onCallback(Mockito.eq("df61a143-6dab-471a-88b4-8feddb4c9e45"), Mockito.eq("/functionhandler/hello_world"), Mockito.eq("correlationId"), Mockito.anyMapOf(String.class, Object.class));
+    }
+
+    @Test
     public void testPing() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
