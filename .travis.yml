@@ -31,7 +31,7 @@ deploy:
     on:
       tags: true
     provider: bintray
-    skip_cleanup: true
+    cleanup: true
     file: bintray.json
     user: $BINTRAY_USER
     key: $BINTRAY_API_KEY
