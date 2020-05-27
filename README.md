@@ -2,6 +2,7 @@
 [![Download](https://api.bintray.com/packages/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/images/download.svg) ](https://bintray.com/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java/_latestVersion)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.research-virtualfortknox/msb-client-websocket/badge.svg?color=blue)](https://maven-badges.herokuapp.com/maven-central/com.github.research-virtualfortknox/msb-client-websocket)
 [![Javadocs](https://www.javadoc.io/badge/com.github.research-virtualfortknox/msb-client-websocket.svg?color=blue)](https://www.javadoc.io/doc/com.github.research-virtualfortknox/msb-client-websocket)
+[![SourceSpy Dashboard](https://sourcespy.com/shield.svg)](https://sourcespy.com/github/researchvirtualfortknoxmsbclientwebsocketjava/)
 
 [![Build Status](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java.svg?branch=master)](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=research-virtualfortknox_msb-client-websocket-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=research-virtualfortknox_msb-client-websocket-java)
