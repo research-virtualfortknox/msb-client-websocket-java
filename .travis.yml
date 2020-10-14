@@ -1,5 +1,7 @@
-language: java
+os: linux
+dist: xenial
 
+language: java
 jdk:
   - openjdk8
   - openjdk11
@@ -35,11 +37,10 @@ deploy:
     on:
       tags: true
     provider: bintray
-    cleanup: true
+    skip_cleanup: true             # required to prevent Travis from cleaning the workspace before deployment
     file: target/bintray.json
     user: $BINTRAY_USER
     key: $BINTRAY_API_KEY
-    dry_run: true
 
 addons:
   sonarcloud:
