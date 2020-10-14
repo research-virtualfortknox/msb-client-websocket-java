@@ -39,6 +39,7 @@ public class Service {
 	private String name;
 	private String description;
 	private Configuration configuration;
+	private Connection connection;
 	private List<Event> events = new ArrayList<>();
 	private List<Function> functions = new ArrayList<>();
 	private String token;
@@ -149,6 +150,24 @@ public class Service {
 	 */
 	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;
+	}
+
+	/**
+	 * Gets the connection.
+	 *
+	 * @return the connection
+	 */
+	public Connection getConnection() {
+		return connection;
+	}
+
+	/**
+	 * Sets the connection.
+	 *
+	 * @param connection the new connection
+	 */
+	public void setConnection(Connection connection) {
+		this.connection = connection;
 	}
 
 	/**

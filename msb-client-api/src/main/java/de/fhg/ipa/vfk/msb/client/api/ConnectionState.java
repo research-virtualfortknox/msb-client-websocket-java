@@ -20,15 +20,17 @@ package de.fhg.ipa.vfk.msb.client.api;
 import java.io.Serializable;
 
 /**
- * The Enum ConnectionFormat.
+ * The enum Connection state.
  *
  * @author des
  */
-public enum ConnectionFormat implements Serializable {
+public enum ConnectionState implements Serializable {
 
-	/** The json. */
-	JSON,
-	/** The xml. */
-	XML;
+    /** The unknown. */
+    N_A,
+    /** The connected. */
+    CONNECTED,
+    /** The unconnected. */
+    UNCONNECTED;
 
 }

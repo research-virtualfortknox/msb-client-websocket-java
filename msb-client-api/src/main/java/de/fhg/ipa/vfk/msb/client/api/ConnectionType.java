@@ -27,13 +27,20 @@ import java.io.Serializable;
 public enum ConnectionType implements Serializable {
 
 	/** The websocket. */
-	WEBSOCKET, /** The rest. */
-	REST, /** The opc ua. */
-	OPC_UA, /** The mqtt. */
-	MQTT, /** The socket. */
-	SOCKET, /** The soap. */
-	SOAP, /** The mtconnect. */
-	MTCONNECT, /** The LW m2 m. */
+	WEBSOCKET,
+	/** The rest. */
+	REST,
+	/** The opc ua. */
+	OPC_UA,
+	/** The mqtt. */
+	MQTT,
+	/** The socket. */
+	SOCKET,
+	/** The soap. */
+	SOAP,
+	/** The mtconnect. */
+	MTCONNECT,
+	/** The LW m2 m. */
 	LWM2M;
 
 }
