@@ -19,6 +19,11 @@
 package de.fhg.ipa.vfk.msb.client.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.fhg.ipa.vfk.msb.client.api.Connection;
+import de.fhg.ipa.vfk.msb.client.api.ConnectionFormat;
+import de.fhg.ipa.vfk.msb.client.api.ConnectionState;
+import de.fhg.ipa.vfk.msb.client.api.ConnectionType;
+import de.fhg.ipa.vfk.msb.client.api.Service;
 import de.fhg.ipa.vfk.msb.client.api.messages.ConfigurationMessage;
 import de.fhg.ipa.vfk.msb.client.api.messages.EventMessage;
 import de.fhg.ipa.vfk.msb.client.api.messages.FunctionCallMessage;
@@ -306,7 +311,7 @@ public class MsbClientWebSocketHandlerTest {
     }
 
     @Test
-    public void testRegisterGateway() throws Exception {
+    public void testRegisterAndUpdateGateway() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         Gateway gateway = new Gateway("df61a143-6dab-471a-88b4-8feddb4c9e","name","description","token");
@@ -317,22 +322,51 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.addConfigParam("test1", "testValue", PrimitiveType.STRING);
         msbClientWebSocketHandler.addConfigParam("test2", 123, PrimitiveFormat.INT32);
         msbClientWebSocketHandler.register(gateway);
-        Application managedApplication = new Application("uuid","name1","description1","token1");
+        Application managedApplication = new Application("uuid1","name1","description1","token1");
+        managedApplication.setConnection(new Connection(ConnectionState.CONNECTED, ConnectionType.MQTT, ConnectionFormat.JSON, new Date()));
         managedApplication.addEvent(new Event("PULSE","Pulse","Pulse event"));
         managedApplication.addFunction(new Function("helloWorld","Hello world","Print Hello world"));
         msbClientWebSocketHandler.addManagedService(managedApplication);
         msbClientWebSocketHandler.register(gateway);
         Mockito.verify(mockSession,Mockito.times(2)).sendMessage(captor.capture());
-        String message = captor.getValue().getPayload().toString();
-        Assert.assertTrue(message.startsWith("R {"));
-        Assert.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
-        gateway = new ObjectMapper().readValue(message.substring(2), Gateway.class);
-        Assert.assertEquals("name", gateway.getName());
-        Assert.assertEquals("description", gateway.getDescription());
-        Assert.assertEquals("token", gateway.getToken());
-        Assert.assertEquals(2, gateway.getEvents().size());
-        Assert.assertEquals(1, gateway.getFunctions().size());
-        Assert.assertEquals(2, gateway.getConfiguration().getParameters().size());
+
+        String firstMessage = captor.getAllValues().get(0).getPayload().toString();
+        Assert.assertTrue(firstMessage.startsWith("R {"));
+        Assert.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
+        Gateway firstMessageGateway = new ObjectMapper().readValue(firstMessage.substring(2), Gateway.class);
+        Assert.assertEquals("name", firstMessageGateway.getName());
+        Assert.assertEquals("description", firstMessageGateway.getDescription());
+        Assert.assertEquals("token", firstMessageGateway.getToken());
+        Assert.assertEquals(2, firstMessageGateway.getEvents().size());
+        Assert.assertEquals(1, firstMessageGateway.getFunctions().size());
+        Assert.assertEquals(2, firstMessageGateway.getConfiguration().getParameters().size());
+        Assert.assertEquals(0, firstMessageGateway.getServices().size());
+
+        String secondMessage = captor.getValue().getPayload().toString();
+        Assert.assertTrue(secondMessage.startsWith("R {"));
+        Assert.assertTrue(secondMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
+        Gateway secondMessageGateway = new ObjectMapper().readValue(secondMessage.substring(2), Gateway.class);
+        Assert.assertEquals("name", secondMessageGateway.getName());
+        Assert.assertEquals("description", secondMessageGateway.getDescription());
+        Assert.assertEquals("token", secondMessageGateway.getToken());
+        Assert.assertEquals(2, secondMessageGateway.getEvents().size());
+        Assert.assertEquals(1, secondMessageGateway.getFunctions().size());
+        Assert.assertEquals(2, secondMessageGateway.getConfiguration().getParameters().size());
+        Assert.assertEquals(1, secondMessageGateway.getServices().size());
+        Service secondMessageSubService = secondMessageGateway.getServices().iterator().next();
+        Assert.assertEquals("uuid1", secondMessageSubService.getUuid());
+        Assert.assertEquals("name1", secondMessageSubService.getName());
+        Assert.assertEquals("description1", secondMessageSubService.getDescription());
+        Assert.assertEquals("token1", secondMessageSubService.getToken());
+        Assert.assertEquals(1, secondMessageSubService.getEvents().size());
+        Assert.assertEquals(1, secondMessageSubService.getFunctions().size());
+        Assert.assertNull(secondMessageSubService.getConfiguration());
+        Assert.assertNotNull(secondMessageSubService.getConnection());
+        Assert.assertEquals(managedApplication.getConnection().getConnectionState(),secondMessageSubService.getConnection().getConnectionState());
+        Assert.assertEquals(managedApplication.getConnection().getConnectionType(),secondMessageSubService.getConnection().getConnectionType());
+        Assert.assertEquals(managedApplication.getConnection().getConnectionFormat(),secondMessageSubService.getConnection().getConnectionFormat());
+        Assert.assertEquals(managedApplication.getConnection().getLastContact(),secondMessageSubService.getConnection().getLastContact());
+
     }
 
     /**

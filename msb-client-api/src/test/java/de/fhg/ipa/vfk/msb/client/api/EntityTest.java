@@ -24,6 +24,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,12 +42,18 @@ public class EntityTest {
 
     @Test
     public void testApplicationSetter(){
+        Connection connection = new Connection();
+        connection.setConnectionState(ConnectionState.UNCONNECTED);
+        connection.setConnectionType(ConnectionType.OPC_UA);
+        connection.setConnectionFormat(ConnectionFormat.JSON);
+
         Application application = new Application("","","","");
         application.setUuid(SERVICE_UUID);
         application.setName(SERVICE_NAME);
         application.setDescription(SERVICE_DESCRIPTION);
         application.setToken(SERVICE_TOKEN);
         application.setConfiguration(getConfiguration());
+        application.setConnection(connection);
         addEvents(application);
         addFunctions(application);
         addEndpoints(application);
@@ -55,6 +63,10 @@ public class EntityTest {
         Assert.assertEquals(SERVICE_DESCRIPTION,application.getDescription());
         Assert.assertEquals(SERVICE_TOKEN,application.getToken());
         Assert.assertNotNull(application.getConfiguration());
+        Assert.assertNotNull(application.getConnection());
+        Assert.assertEquals(ConnectionState.UNCONNECTED, application.getConnection().getConnectionState());
+        Assert.assertEquals(ConnectionType.OPC_UA, application.getConnection().getConnectionType());
+        Assert.assertEquals(ConnectionFormat.JSON, application.getConnection().getConnectionFormat());
         Assert.assertNotNull(application.getEvents());
         Assert.assertEquals(2,application.getEvents().size());
         Assert.assertNotNull(application.getFunctions());
@@ -67,6 +79,7 @@ public class EntityTest {
     public void testApplicationConstructor(){
         Application application = new Application(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN, new ArrayList<Endpoint>());
         application.setConfiguration(getConfiguration());
+        application.setConnection(new Connection(ConnectionState.CONNECTED, ConnectionType.OPC_UA, ConnectionFormat.JSON, new Date()));
         addEvents(application);
         addFunctions(application);
         addEndpoints(application);
@@ -76,6 +89,10 @@ public class EntityTest {
         Assert.assertEquals(SERVICE_DESCRIPTION,application.getDescription());
         Assert.assertEquals(SERVICE_TOKEN,application.getToken());
         Assert.assertNotNull(application.getConfiguration());
+        Assert.assertNotNull(application.getConnection());
+        Assert.assertEquals(ConnectionState.CONNECTED, application.getConnection().getConnectionState());
+        Assert.assertEquals(ConnectionType.OPC_UA, application.getConnection().getConnectionType());
+        Assert.assertEquals(ConnectionFormat.JSON, application.getConnection().getConnectionFormat());
         Assert.assertNotNull(application.getEvents());
         Assert.assertEquals(2,application.getEvents().size());
         Assert.assertNotNull(application.getFunctions());
@@ -106,12 +123,18 @@ public class EntityTest {
 
     @Test
     public void testSmartObjectSetter(){
+        Connection connection = new Connection();
+        connection.setConnectionState(ConnectionState.UNCONNECTED);
+        connection.setConnectionType(ConnectionType.OPC_UA);
+        connection.setConnectionFormat(ConnectionFormat.JSON);
+
         SmartObject smartObject = new SmartObject("","","","");
         smartObject.setUuid(SERVICE_UUID);
         smartObject.setName(SERVICE_NAME);
         smartObject.setDescription(SERVICE_DESCRIPTION);
         smartObject.setToken(SERVICE_TOKEN);
         smartObject.setConfiguration(getConfiguration());
+        smartObject.setConnection(connection);
         addEvents(smartObject);
         addFunctions(smartObject);
 
@@ -120,6 +143,10 @@ public class EntityTest {
         Assert.assertEquals(SERVICE_DESCRIPTION,smartObject.getDescription());
         Assert.assertEquals(SERVICE_TOKEN,smartObject.getToken());
         Assert.assertNotNull(smartObject.getConfiguration());
+        Assert.assertNotNull(smartObject.getConnection());
+        Assert.assertEquals(ConnectionState.UNCONNECTED, smartObject.getConnection().getConnectionState());
+        Assert.assertEquals(ConnectionType.OPC_UA, smartObject.getConnection().getConnectionType());
+        Assert.assertEquals(ConnectionFormat.JSON, smartObject.getConnection().getConnectionFormat());
         Assert.assertNotNull(smartObject.getEvents());
         Assert.assertEquals(2,smartObject.getEvents().size());
         Assert.assertNotNull(smartObject.getFunctions());
@@ -130,6 +157,7 @@ public class EntityTest {
     public void testSmartObjectConstructor(){
         SmartObject smartObject = new SmartObject(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
         smartObject.setConfiguration(getConfiguration());
+        smartObject.setConnection(new Connection(ConnectionState.CONNECTED, ConnectionType.OPC_UA, ConnectionFormat.JSON, new Date()));
         addEvents(smartObject);
         addFunctions(smartObject);
 
@@ -138,6 +166,10 @@ public class EntityTest {
         Assert.assertEquals(SERVICE_DESCRIPTION,smartObject.getDescription());
         Assert.assertEquals(SERVICE_TOKEN,smartObject.getToken());
         Assert.assertNotNull(smartObject.getConfiguration());
+        Assert.assertNotNull(smartObject.getConnection());
+        Assert.assertEquals(ConnectionState.CONNECTED, smartObject.getConnection().getConnectionState());
+        Assert.assertEquals(ConnectionType.OPC_UA, smartObject.getConnection().getConnectionType());
+        Assert.assertEquals(ConnectionFormat.JSON, smartObject.getConnection().getConnectionFormat());
         Assert.assertNotNull(smartObject.getEvents());
         Assert.assertEquals(2,smartObject.getEvents().size());
         Assert.assertNotNull(smartObject.getFunctions());
@@ -171,6 +203,7 @@ public class EntityTest {
         gateway.setConfiguration(getConfiguration());
         addEvents(gateway);
         addFunctions(gateway);
+        gateway.setServices(Collections.singleton(new SmartObject("uuid", "name", "description", "token")));
 
         Assert.assertEquals(SERVICE_UUID,gateway.getUuid());
         Assert.assertEquals(SERVICE_NAME,gateway.getName());
@@ -181,11 +214,13 @@ public class EntityTest {
         Assert.assertEquals(2,gateway.getEvents().size());
         Assert.assertNotNull(gateway.getFunctions());
         Assert.assertEquals(2,gateway.getFunctions().size());
+        Assert.assertNotNull(gateway.getServices());
+        Assert.assertEquals(1,gateway.getServices().size());
     }
 
     @Test
     public void testGatewayConstructor(){
-        Gateway gateway = new Gateway(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN, new HashSet<Service>());
+        Gateway gateway = new Gateway(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN, new HashSet<>());
         gateway.setConfiguration(getConfiguration());
         addEvents(gateway);
         addFunctions(gateway);
@@ -228,15 +263,15 @@ public class EntityTest {
     }
 
     @Test
-    public void testServiceEquals(){
-        SmartObject smartObject = new SmartObject(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
-        Gateway gateway = new Gateway(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
+    public void testServiceNotEquals(){
+        Service smartObject = new SmartObject(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
+        Service gateway = new Gateway(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
         Assert.assertNotEquals(smartObject,gateway);
         Assert.assertEquals(smartObject.hashCode(),gateway.hashCode());
     }
 
     @Test
-    public void testServiceEqualsSame(){
+    public void testServiceEquals(){
         Application application = new Application(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
         Assert.assertEquals(application,application);
         Assert.assertEquals(application.hashCode(),application.hashCode());
@@ -262,6 +297,10 @@ public class EntityTest {
         configuration.addParameter("param3",new ParameterValue("value", PrimitiveType.INTEGER, PrimitiveFormat.INT32));
         configuration.addParameter("param4",new ParameterValue("value", PrimitiveType.ARRAY));
         return configuration;
+    }
+
+    private Connection getConnection(){
+        return new Connection(ConnectionState.CONNECTED, ConnectionType.OPC_UA, ConnectionFormat.JSON, new Date());
     }
 
     private void addEvents(Service service){
