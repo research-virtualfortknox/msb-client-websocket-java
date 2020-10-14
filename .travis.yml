@@ -17,28 +17,29 @@ cache:
   directories:
     - $HOME/.m2
 
-before_install:
-  # Use TRAVIS_TAG if defined, or the short commit SHA otherwise
-  - export VERSION=${TRAVIS_TAG:-$(git rev-parse --short HEAD)}
-
 install: true
 
 script:
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -DskipITs -q org.jacoco:jacoco-maven-plugin:report sonar:sonar -Pcoverage -Dsonar.projectKey=research-virtualfortknox_msb-client-websocket-java
-  - sed -i -e "s/VERSION_NAME/${VERSION}/g" ./bintray.json || true
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   - mvn test jacoco:report coveralls:report -DrepoToken=${COVERALLS_TOKEN}
+
+# Set version to tag for release
+before_deploy:
+  - mvn versions:set -DnewVersion=$TRAVIS_TAG
+  - mvn package -Dmaven.test.skip=true
 
 deploy:
     on:
       tags: true
     provider: bintray
     cleanup: true
-    file: bintray.json
+    file: target/bintray.json
     user: $BINTRAY_USER
     key: $BINTRAY_API_KEY
+    dry_run: true
 
 addons:
   sonarcloud:

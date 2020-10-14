@@ -67,6 +67,7 @@
 		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
 		<maven-deploy-plugin.version>3.0.0-M1</maven-deploy-plugin.version>
 		<maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
+		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 		<maven-source-plugin.version>3.1.0</maven-source-plugin.version>
 		<maven-site-plugin.version>3.7.1</maven-site-plugin.version>
@@ -87,6 +88,32 @@
 
 	<build>
 		<plugins>
+
+			<!-- Update bintray config file-->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+				<inherited>false</inherited>
+				<configuration>
+					<outputDirectory>${basedir}/target</outputDirectory>
+					<resources>
+						<resource>
+							<directory>${basedir}</directory>
+							<include>bintray.json</include>
+							<filtering>true</filtering>
+						</resource>
+					</resources>
+				</configuration>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 
 			<!-- Enabling the use of Maven Site Plugin-->
 			<plugin>
