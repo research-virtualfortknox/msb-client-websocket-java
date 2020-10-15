@@ -1,6 +1,6 @@
 {
   "package": {
-    "name": "${project.name}",
+    "name": "msb-client-websocket-java",
     "repo": "research-virtualfortknox",
     "subject": "research-virtualfortknox",
     "website_url": "${project.url}",
