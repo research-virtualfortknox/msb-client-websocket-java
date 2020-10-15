@@ -10,6 +10,7 @@
     </parent>
 	
 	<artifactId>msb-client-api</artifactId>
+	<version>1.0.5-RELEASE</version>
 	
 	<name>msb-client-api</name>
 	<description>Api and utils to implement a client library for the Manufacturing Service Bus</description>

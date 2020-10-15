@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>msb-client-websocket</artifactId>
+    <version>1.0.5-RELEASE</version>
 	
     <name>msb-client-websocket</name>
     <description>Client library to facilitate integration with the Manufacturing Service Bus</description>
