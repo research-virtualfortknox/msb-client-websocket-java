@@ -4,7 +4,7 @@
 [![Javadocs](https://www.javadoc.io/badge/com.github.research-virtualfortknox/msb-client-websocket.svg?color=blue)](https://www.javadoc.io/doc/com.github.research-virtualfortknox/msb-client-websocket)
 [![SourceSpy Dashboard](https://sourcespy.com/shield.svg)](https://sourcespy.com/github/researchvirtualfortknoxmsbclientwebsocketjava/)
 
-[![Build Status](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java.svg?branch=master)](https://travis-ci.org/research-virtualfortknox/msb-client-websocket-java)
+[![Build Status](https://travis-ci.com/research-virtualfortknox/msb-client-websocket-java.svg?branch=master)](https://travis-ci.com/research-virtualfortknox/msb-client-websocket-java)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=research-virtualfortknox_msb-client-websocket-java&metric=alert_status)](https://sonarcloud.io/dashboard?id=research-virtualfortknox_msb-client-websocket-java)
 [![Known Vulnerabilities](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java/badge.svg?targetFile=msb-client-websocket/pom.xml)](https://snyk.io/test/github/research-virtualfortknox/msb-client-websocket-java)
 [![Coverage Status](https://coveralls.io/repos/github/research-virtualfortknox/msb-client-websocket-java/badge.svg?branch=master)](https://coveralls.io/github/research-virtualfortknox/msb-client-websocket-java?branch=master)
