@@ -22,7 +22,10 @@ cache:
 install: true
 
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -DskipITs -q org.jacoco:jacoco-maven-plugin:report sonar:sonar -Pcoverage -Dsonar.projectKey=research-virtualfortknox_msb-client-websocket-java
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -DskipITs -q org.jacoco:jacoco-maven-plugin:report -Pcoverage
+  - if [ "$JAVA_HOME" = "/usr/local/lib/jvm/openjdk11" ]; then 
+      mvn sonar:sonar -Dsonar.projectKey=research-virtualfortknox_msb-client-websocket-java;
+    fi
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
