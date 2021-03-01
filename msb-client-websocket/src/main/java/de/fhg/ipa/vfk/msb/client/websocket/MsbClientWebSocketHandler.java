@@ -232,10 +232,10 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         String payload = message.getPayload();
         if (payload.startsWith(FUNCTION_CALLBACK)) {
             payload = payload.replaceFirst(FUNCTION_CALLBACK, "");
-            FunctionCallMessage outdata = null;
+            FunctionCallMessage functionCall = null;
             try {
-                outdata = mapper.readValue(payload, FunctionCallMessage.class);
-                callFunction(outdata);
+                functionCall = mapper.readValue(payload, FunctionCallMessage.class);
+                callFunction(functionCall);
             } catch (Exception e) {
                 LOG.error(e.getMessage(), e);
             }
@@ -969,26 +969,26 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     /**
      * Creates a Runnable and triggers the execution by the ExecutorService.
      *
-     * @param outdata the function call message
+     * @param functionCall the function call message
      */
-    private void callFunction(final FunctionCallMessage outdata) {
+    private void callFunction(final FunctionCallMessage functionCall) {
         functionCallExecutorService.execute(() -> {
             //TODO: check if function is registered by service or subService if is a gateway
             for (FunctionCallsListener functionCallsListener : functionCallsListeners) {
-                functionCallsListener.onCallback(outdata.getUuid(), outdata.getFunctionId(), outdata.getCorrelationId(), outdata.getFunctionParameters());
+                functionCallsListener.onCallback(functionCall.getUuid(), functionCall.getFunctionId(), functionCall.getCorrelationId(), functionCall.getFunctionParameters());
             }
-            FunctionCallReference functionCallReference = functionMap.get(outdata.getUuid()+"_"+outdata.getFunctionId());
+            FunctionCallReference functionCallReference = functionMap.get(functionCall.getUuid()+"_"+functionCall.getFunctionId());
             if(functionCallReference != null){
                 if (invokeFunctionCallEnabled) {
                     try {
-                        Object response = FunctionInvoker.callFunctions(outdata, functionCallReference);
-                        publishResponseEvent(functionCallReference, outdata, response);
+                        Object response = FunctionInvoker.callFunctions(functionCall, functionCallReference);
+                        publishResponseEvent(functionCallReference, functionCall.getFunctionId(), functionCall.getCorrelationId(), response);
                     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException | TypeMismatchException e) {
                         LOG.error(e.getMessage(), e);
                     }
                 }
             } else {
-                LOG.warn("No function named {} found", outdata.getFunctionId());
+                LOG.warn("No function named {} found", functionCall.getFunctionId());
             }
         });
     }
@@ -997,18 +997,19 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      * Publish the return of function call as response event.
      *
      * @param functionCallReference the function call reference
-     * @param outdata the function call message
+     * @param functionId the function id
+     * @param correlationId the correlation id
      * @param response the return value
      */
-    private void publishResponseEvent(final FunctionCallReference functionCallReference, final FunctionCallMessage outdata, final Object response) throws IOException {
+    private void publishResponseEvent(final FunctionCallReference functionCallReference, final String functionId, final String correlationId, final Object response) throws IOException {
         if (!functionCallReference.getResponseEvents().isEmpty()) {
             if(response instanceof MultipleResponseEvent){
                 for(MultipleResponseEvent.ResponseEvent responseEvent : (MultipleResponseEvent) response){
                     if(functionCallReference.getResponseEvents().contains(responseEvent.getEventId())) {
                         LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
-                                selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),responseEvent.getEventId());
+                                selfDescription.getUuid(),correlationId,functionId,responseEvent.getEventId());
                         publish(responseEvent.getEventId(), responseEvent.getObj(), responseEvent.getPriority(),
-                                responseEvent.isCache(), new Date(), outdata.getCorrelationId());
+                                responseEvent.isCache(), new Date(), correlationId);
                     } else {
                         LOG.error("Event is not published, because it is not defined as response event, please add it or use a publish method instead.");
                     }
@@ -1016,8 +1017,8 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
             } else if (functionCallReference.getFunction().getResponseEvents()[0].getDataFormat() == null || response != null) {
                 String eventId = functionCallReference.getFunction().getResponseEvents()[0].getEventId();
                 LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
-                        selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),eventId);
-                publish(eventId,response,null,eventCacheEnabled, new Date(),outdata.getCorrelationId());
+                        selfDescription.getUuid(),correlationId,functionId,eventId);
+                publish(eventId,response,null,eventCacheEnabled, new Date(),correlationId);
             }
         }
     }

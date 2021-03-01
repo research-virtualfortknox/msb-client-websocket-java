@@ -48,28 +48,28 @@ public final class FunctionInvoker {
 	/**
 	 * Call functions.
 	 *
-	 * @param outData  the out data
+	 * @param functionCall  the function call message
 	 * @param callback the callback
 	 * @return the object
 	 * @throws IllegalAccessException    the illegal access exception
 	 * @throws InvocationTargetException the invocation target exception
 	 */
-	public static Object callFunctions(FunctionCallMessage outData, FunctionCallReference callback)
+	public static Object callFunctions(FunctionCallMessage functionCall, FunctionCallReference callback)
 			throws IllegalAccessException, InvocationTargetException {
-		LOG.debug("call function: {}", outData.getFunctionId());
+		LOG.debug("call function: {}", functionCall.getFunctionId());
 		if (callback == null) {
-			throw new IllegalAccessException("function " + outData.getFunctionId() + " does not exist");
+			throw new IllegalAccessException("function " + functionCall.getFunctionId() + " does not exist");
 		}
 		Object functionHandler = callback.getFunctionHandlerInstance();
 		Method method = callback.getMethod();
 		if (method != null && functionHandler != null) {
-			Map<String, Object> objects = convertToClassType(outData.getFunctionParameters(), callback);
+			Map<String, Object> objects = convertToClassType(functionCall.getFunctionParameters(), callback);
 			if (!objects.values().isEmpty()) {
 				Object[] objectArray = objects.values().toArray();
-				LOG.debug("call {} with parameters {}", outData.getFunctionId(), objectArray);
+				LOG.debug("call {} with parameters {}", functionCall.getFunctionId(), objectArray);
                 return method.invoke(functionHandler, objectArray);
 			} else {
-				LOG.debug("call {} without parameters", outData.getFunctionId());
+				LOG.debug("call {} without parameters", functionCall.getFunctionId());
                 return method.invoke(functionHandler);
 			}
 		} else {
