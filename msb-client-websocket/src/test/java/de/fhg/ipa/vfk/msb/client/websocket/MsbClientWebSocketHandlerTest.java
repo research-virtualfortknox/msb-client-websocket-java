@@ -111,7 +111,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("Annotation Test client",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertEquals(3,application.getConfiguration().getParameters().size());
     }
 
@@ -129,7 +129,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("Annotation Test client",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertEquals(3,application.getConfiguration().getParameters().size());
     }
 
@@ -147,7 +147,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("Annotation Test client",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertEquals(3,application.getConfiguration().getParameters().size());
     }
 
@@ -167,7 +167,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("Annotation Test client",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertEquals(3,application.getConfiguration().getParameters().size());
 
         String secondMessage = captor.getValue().getPayload().toString();
@@ -202,7 +202,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("Annotation Test client",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertEquals(3,application.getConfiguration().getParameters().size());
 
         String secondMessage = captor.getValue().getPayload().toString();
@@ -213,7 +213,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("description",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertEquals(4,application.getConfiguration().getParameters().size());
     }
 
@@ -235,7 +235,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("Annotation Test client",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertEquals(3,application.getConfiguration().getParameters().size());
 
         String secondMessage = captor.getValue().getPayload().toString();
@@ -246,7 +246,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("description",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(4, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertNull(application.getConfiguration());
     }
 
@@ -270,7 +270,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("Annotation Test client",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertEquals(3,application.getConfiguration().getParameters().size());
 
         String secondMessage = captor.getValue().getPayload().toString();
@@ -281,7 +281,7 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("description",application.getDescription());
         Assert.assertEquals("token",application.getToken());
         Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(7, application.getFunctions().size());
+        Assert.assertEquals(8, application.getFunctions().size());
         Assert.assertEquals(1,application.getConfiguration().getParameters().size());
     }
 
@@ -676,6 +676,19 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"START\""));
         Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));
+    }
+
+    @Test
+    public void testFunctionCallNullResponseEvent() throws Exception {
+        Mockito.when(mockSession.isOpen()).thenReturn(true);
+        msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
+        msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
+        msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_REGISTERED"));
+        FunctionCallMessage data = new FunctionCallMessage("df61a143-6dab-471a-88b4-8feddb4c9e45","/functionhandler/helloNull","correlationId", new HashMap<>());
+        msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
+        Mockito.verify(mockSession,Mockito.after(1000).times(1)).sendMessage(captor.capture());
+        Assert.assertFalse(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assert.assertFalse(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));
     }
 
     @Test

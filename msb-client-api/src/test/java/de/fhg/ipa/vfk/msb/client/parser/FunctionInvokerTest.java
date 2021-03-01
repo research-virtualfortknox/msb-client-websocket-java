@@ -86,6 +86,15 @@ public class FunctionInvokerTest {
         callback.setParameters(functionCallbackParameters);
     }
 
+    /**
+     * Test complex type parameter.
+     *
+     * @throws NoSuchMethodException     the no such method exception
+     * @throws InvocationTargetException the invocation target exception
+     * @throws IllegalAccessException    the illegal access exception
+     * @throws JsonProcessingException   the json processing exception
+     * @throws JSONException             the json exception
+     */
     @Test
     public void testComplexTypeParameter() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, JsonProcessingException, JSONException {
         Map<String, Type> functionCallbackParameters = new LinkedHashMap<>();
@@ -104,7 +113,10 @@ public class FunctionInvokerTest {
         Map<String,Object> functionParameters = new LinkedHashMap<>();
         functionParameters.put("complexType", complexType);
         FunctionCallMessage outData = new FunctionCallMessage("","testFunction",null,functionParameters);
-        FunctionInvoker.callFunctions(outData,callback);
+        Object result = FunctionInvoker.callFunctions(outData,callback);
+        Assert.assertNotNull(result);
+        Assert.assertTrue(result instanceof ComplexType);
+        Assert.assertEquals(this.complexType, result);
         Assert.assertNotNull("is null",this.complexType);
         JSONAssert.assertEquals(new ObjectMapper().writeValueAsString(complexType), new ObjectMapper().writeValueAsString(this.complexType),true);
         LOG.debug(new ObjectMapper().writeValueAsString(this.complexType));
@@ -288,7 +300,7 @@ public class FunctionInvokerTest {
     }
 
     /**
-     * Test fail call function fails 2.
+     * Test fail call function fails cause null parameter.
      *
      * @throws ClassNotFoundException    the class not found exception
      * @throws InvocationTargetException the invocation target exception
@@ -297,7 +309,7 @@ public class FunctionInvokerTest {
      * @throws NoSuchMethodException     the no such method exception
      */
     @Test(expected = IllegalArgumentException.class)
-    public void testFailCallFunctionFails2() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
+    public void testFailCallFunctionFailsCauseNullParameter() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
         Map<String,Object> functionParameters = new LinkedHashMap<>();
         functionParameters.put("obj",new Object());
         functionParameters.put("number",1);
@@ -325,7 +337,7 @@ public class FunctionInvokerTest {
     }
 
     /**
-     * Test call function with convertable types.
+     * Test call function with convertible types.
      *
      * @throws ClassNotFoundException    the class not found exception
      * @throws InvocationTargetException the invocation target exception
@@ -334,7 +346,7 @@ public class FunctionInvokerTest {
      * @throws ParseException            the parse exception
      */
     @Test
-    public void testCallFunctionWithConvertableTypes() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, ParseException {
+    public void testCallFunctionWithConvertibleTypes() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, ParseException {
         obj=null;
         number=0;
         longNumber=0L;
@@ -362,6 +374,35 @@ public class FunctionInvokerTest {
         Assert.assertEquals("date not equals",new MsbDateFormat().parse("2018-03-01T12:48:58.771+01"),date);
         Assert.assertEquals("byte array not equals","test byte string",new String(byteArray));
         Assert.assertEquals("bigDecimal not equals",BigDecimal.valueOf(1.2),bigDecimal);
+    }
+
+    /**
+     * Test call function returning null.
+     *
+     * @throws InvocationTargetException the invocation target exception
+     * @throws IllegalAccessException    the illegal access exception
+     * @throws NoSuchMethodException     the no such method exception
+     */
+    @Test
+    public void testCallFunctionReturningNull() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        Map<String, Type> functionCallbackParameters = new LinkedHashMap<>();
+        functionCallbackParameters.put("bool", boolean.class);
+        FunctionCallReference callback = new FunctionCallReference();
+        callback.setFunctionHandlerInstance(this);
+        callback.setMethod(this.getClass().getDeclaredMethod("testFunction", boolean.class));
+        callback.setParameters(functionCallbackParameters);
+
+        Map<String,Object> functionParameters = new LinkedHashMap<>();
+        functionParameters.put("bool",true);
+        FunctionCallMessage outData = new FunctionCallMessage("","testFunction",null,functionParameters);
+        Object obj = FunctionInvoker.callFunctions(outData,callback);
+        Assert.assertNotNull("is null",obj);
+        Assert.assertTrue("is false",(Boolean) obj);
+
+        functionParameters.put("bool",false);
+        outData = new FunctionCallMessage("","testFunction",null,functionParameters);
+        obj = FunctionInvoker.callFunctions(outData,callback);
+        Assert.assertNull("is not null",obj);
     }
 
     /**
@@ -394,8 +435,28 @@ public class FunctionInvokerTest {
         this.called = true;
     }
 
-    public void testFunction(ComplexType complexType){
+    /**
+     * Test function complex type.
+     *
+     * @param complexType the complex type
+     * @return the complex type
+     */
+    public ComplexType testFunction(ComplexType complexType){
         this.complexType = complexType;
+        return complexType;
+    }
+
+    /**
+     * Test function boolean.
+     *
+     * @param bool the bool
+     * @return the boolean
+     */
+    public Boolean testFunction(boolean bool){
+        if(bool){
+            return true;
+        }
+        return null;
     }
 
 }

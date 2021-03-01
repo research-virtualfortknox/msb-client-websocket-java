@@ -140,4 +140,10 @@ public class TestClientFunctionHandler {
 		LOG.info("printAllTypes: " + floatValue+", "+doubleValue+", "+intValue+", "+longValue+", "+boolValue);
 	}
 
+	@FunctionCall(path="/helloNull", description = "return null", responseEvents = {"WAIT"})
+	public Date helloNull() {
+		LOG.info("Hello Null!");
+		return null;
+	}
+
 }

@@ -1010,10 +1010,10 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                         publish(responseEvent.getEventId(), responseEvent.getObj(), responseEvent.getPriority(),
                                 responseEvent.isCache(), new Date(), outdata.getCorrelationId());
                     } else {
-                        LOG.error("Event is not published, because it is not defined as response event, please use a publish method instead.");
+                        LOG.error("Event is not published, because it is not defined as response event, please add it or use a publish method instead.");
                     }
                 }
-            } else {
+            } else if (functionCallReference.getFunction().getResponseEvents()[0].getDataFormat() == null || response != null) {
                 String eventId = functionCallReference.getFunction().getResponseEvents()[0].getEventId();
                 LOG.debug("Response event: {\"uuid\":\"{}\", \"correlationId\":\"{}\", \"functionId\":\"{}\", \"eventId\":\"{}\"}",
                         selfDescription.getUuid(),outdata.getCorrelationId(),outdata.getFunctionId(),eventId);
