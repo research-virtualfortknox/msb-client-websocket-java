@@ -44,21 +44,28 @@
 		<url>https://github.com/research-virtualfortknox/msb-client-websocket-java</url>
 	</scm>
 
-	<distributionManagement>
-		<repository>
-			<id>ossrh</id>
-			<name>Maven Central</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/research-virtualfortknox/msb-client-websocket-java</url>
-		</repository>
-	</distributionManagement>
-
+	<profiles>
+		<profile>
+			<id>default</id>
+			<distributionManagement>
+				<repository>
+					<id>github</id>
+					<name>GitHub Packages</name>
+					<url>https://maven.pkg.github.com/research-virtualfortknox/msb-client-websocket-java</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>release</id>
+			<distributionManagement>
+				<repository>
+					<id>ossrh</id>
+					<name>Maven Central</name>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
