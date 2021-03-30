@@ -4,8 +4,9 @@
 name: Maven Central Package
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+    - '*'
 
 jobs:
   build:
