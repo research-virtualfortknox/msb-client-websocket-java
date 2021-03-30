@@ -29,14 +29,6 @@
         </license>
     </licenses>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/research-virtualfortknox/msb-client-websocket</url>
-        </repository>
-    </distributionManagement>
-
     <dependencies>
 		<dependency>
             <groupId>com.github.research-virtualfortknox</groupId>

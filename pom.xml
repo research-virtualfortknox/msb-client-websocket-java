@@ -48,7 +48,7 @@
 		<repository>
 			<id>github</id>
 			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/research-virtualfortknox/msb-client-parent</url>
+			<url>https://maven.pkg.github.com/research-virtualfortknox/msb-client-websocket-java</url>
 		</repository>
 	</distributionManagement>
 
