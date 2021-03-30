@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.research-virtualfortknox</groupId>
         <artifactId>msb-client-parent</artifactId>
-        <version>1.0.6-SNAPSHOT</version>
+        <version>1.0.6-RELEASE</version>
     </parent>
 
     <artifactId>coverage</artifactId>

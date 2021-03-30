@@ -6,11 +6,11 @@
     <parent>
         <groupId>com.github.research-virtualfortknox</groupId>
 		<artifactId>msb-client-parent</artifactId>
-        <version>1.0.6-SNAPSHOT</version>
+        <version>1.0.6-RELEASE</version>
     </parent>
 
     <artifactId>msb-client-websocket</artifactId>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.6-RELEASE</version>
 	
     <name>msb-client-websocket</name>
     <description>Client library to facilitate integration with the Manufacturing Service Bus</description>
