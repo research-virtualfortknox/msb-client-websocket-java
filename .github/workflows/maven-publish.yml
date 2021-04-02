@@ -21,8 +21,6 @@ jobs:
       with:
         java-version: 1.8
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
-        gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
@@ -32,4 +30,3 @@ jobs:
       run: mvn deploy -DskipTests -P default -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
-        MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
