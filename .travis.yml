@@ -31,20 +31,6 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
   - mvn test jacoco:report coveralls:report -DrepoToken=${COVERALLS_TOKEN}
 
-# Set version to tag for release
-#before_deploy:
-#  - mvn versions:set -DnewVersion=$TRAVIS_TAG
-#  - mvn clean package -Dmaven.test.skip=true
-
-deploy:
-    on:
-      tags: true
-    provider: bintray
-    skip_cleanup: true             # required to prevent Travis from cleaning the workspace before deployment
-    file: target/bintray.json
-    user: $BINTRAY_USER
-    key: $BINTRAY_API_KEY
-
 addons:
   sonarcloud:
     organization: "research-virtualfortknox"

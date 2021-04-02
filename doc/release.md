@@ -40,12 +40,12 @@ or commit version update
  mvn versions:commit
  ```
  
- ## Publish release
- 
- Create and push a `tag` to git repo. 
- The CI tool `Travis` will start a build and deploy the results to 
- 
- https://bintray.com/research-virtualfortknox/research-virtualfortknox/msb-client-websocket-java.
- 
- The new release at `JFrog Bintray` will be published to `JCenter` and `MavenCentral`. 
+ ## Publish snapshots and releases
+
+Push a `commit` to `master` branch will trigger the github action `maven-publish.yml`, 
+which build and deploy a snapshot to our [github packages repo](https://github.com/orgs/research-virtualfortknox/packages).
+
+Create and push a `tag` to git repo will start the github action `maven-central-publish.yml`, 
+which build and deploy a release to [sonatype staging repo](https://oss.sonatype.org/#stagingRepositories). 
+After a validation the new release at `sonatype` will be published to `MavenCentral`. 
  
