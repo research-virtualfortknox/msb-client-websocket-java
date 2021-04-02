@@ -96,6 +96,7 @@
 		<maven-site-plugin.version>3.7.1</maven-site-plugin.version>
 		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>2.22.1</maven-failsafe-plugin.version>
+		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
 		<jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
 		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
@@ -182,6 +183,29 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- To sign release artifacts -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>${maven-gpg-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<!-- This is necessary for gpg to not try to use the pinentry programs -->
+							<gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							</gpgArguments>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
