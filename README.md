@@ -21,9 +21,10 @@
 
 Client version compatibility to MSB versions:
 
-| | **1.5.x-RELEASE** |
-|---|:---:|
-| 1.0.x       | x |
+| | **1.5.x-RELEASE** | **1.6.x-RELEASE** |
+|---|:---:|:---:|
+| 1.0.x       | x | x |
+| 1.6.x       | x | x |
 
 ## Welcome
 
