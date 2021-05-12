@@ -89,7 +89,7 @@ public @interface SelfDescription {
         GATEWAY("Gateway");
 
 
-        private String name;
+        private final String name;
 
         Type(String name) {
             this.name = name;

@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +99,7 @@ public final class ConfigParamParser {
                 // TODO: allow access of field over getter/setter if is private
                 try {
                     parseParameterValue(annotatedClass,parameters);
-                } catch (InstantiationException | IllegalAccessException e) {
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                     LOG.error("Instantiation error, check if a default constructor is defined at " + annotatedClass.getName(), e);
                 }
             }
@@ -106,8 +107,9 @@ public final class ConfigParamParser {
         return new Configuration(parameters);
     }
 
-    private static void parseParameterValue(Class<?> annotatedClass, Map<String, ParameterValue> parameters) throws InstantiationException, IllegalAccessException {
-        Object instance = annotatedClass.newInstance();
+    private static void parseParameterValue(Class<?> annotatedClass, Map<String, ParameterValue> parameters)
+            throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        Object instance = annotatedClass.getDeclaredConstructor().newInstance();
         for (Field field : annotatedClass.getDeclaredFields()) {
             if (field.isAnnotationPresent(ConfigurationParam.class)) {
                 ConfigurationParam configurationParam = field.getAnnotation(ConfigurationParam.class);

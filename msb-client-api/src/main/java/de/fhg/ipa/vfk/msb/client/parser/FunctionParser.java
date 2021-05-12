@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -115,7 +116,7 @@ public final class FunctionParser {
                     Class<?> annotatedClass = (Class<?>) functionHandler;
                     try {
                         parseFunctionHandler(serviceUuid, annotatedClass, functionCallbackMap, functionList, eventMap);
-                    } catch (InstantiationException | IllegalAccessException e) {
+                    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                         LOG.error("Instantiation error, check if a default constructor is defined at " + annotatedClass.getName(), e);
                     }
                 } else {
@@ -141,8 +142,8 @@ public final class FunctionParser {
     private static List<Function> parseFunctionHandler(String serviceUuid, Class<?> functionHandlerClass,
                                                        Map<String, FunctionCallReference> functionCallbackMap, List<Function> functionList,
                                                        Map<String, EventReference> eventMap)
-            throws JsonProcessingException, InstantiationException, IllegalAccessException {
-        Object functionHandler = functionHandlerClass.newInstance();
+            throws JsonProcessingException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        Object functionHandler = functionHandlerClass.getDeclaredConstructor().newInstance();
         return parseFunctionHandler(serviceUuid, functionHandler, functionCallbackMap, functionList, eventMap);
     }
 
@@ -190,8 +191,8 @@ public final class FunctionParser {
                 String functionHandlerPath = functionHandler.path();
                 Object functionHandlerInstance = null;
                 try {
-                    functionHandlerInstance = functionHandlerClass.newInstance();
-                } catch (InstantiationException | IllegalAccessException e) {
+                    functionHandlerInstance = functionHandlerClass.getDeclaredConstructor().newInstance();
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                     LOG.error("Instantiation error, check if a default constructor is defined at " + functionHandlerClass.getName(), e);
                 }
                 parseFunctionHandler(serviceUuid, functionHandlerInstance, functionHandlerClass, functionHandlerPath,

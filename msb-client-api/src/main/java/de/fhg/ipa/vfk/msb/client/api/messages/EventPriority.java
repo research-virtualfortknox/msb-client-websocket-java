@@ -39,7 +39,7 @@ public enum EventPriority {
 	public static final EventPriority DEFAULT = EventPriority.LOW;
 	
 	/** The value. */
-	private int value;
+	private final int value;
 
 	/**
 	 * Instantiates a new event priority.

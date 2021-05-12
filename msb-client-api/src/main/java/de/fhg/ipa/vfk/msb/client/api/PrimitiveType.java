@@ -60,7 +60,7 @@ public enum PrimitiveType {
     /**
      * The name.
      */
-    private String name;
+    private final String name;
 
     /**
      * Instantiates a new primitive typs.

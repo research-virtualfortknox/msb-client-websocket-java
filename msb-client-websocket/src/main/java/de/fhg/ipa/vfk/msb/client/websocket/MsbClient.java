@@ -325,7 +325,7 @@ public class MsbClient implements AutoCloseable {
      *
      * @return the boolean
      */
-    public boolean isRegistered() {
+    public synchronized boolean isRegistered() {
         return clientHandler.isRegistered();
     }
 
@@ -341,8 +341,8 @@ public class MsbClient implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-        if(state == STARTED) {
+    public synchronized void close() throws Exception {
+        if (state == STARTED) {
             disconnect();
         }
         clientHandler.close();
