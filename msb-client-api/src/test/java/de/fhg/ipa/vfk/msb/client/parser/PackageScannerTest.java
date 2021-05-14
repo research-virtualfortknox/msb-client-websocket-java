@@ -63,8 +63,9 @@ public class PackageScannerTest {
     public void testPackageScanMultiple() throws IOException, ClassNotFoundException {
         List<Class<?>> found = PackageScanner.findMyTypes("de.fhg.ipa.vfk.msb.client.parser", new Class[] { FunctionHandler.class, FunctionCall.class });
         Assert.assertNotNull(found);
-        Assert.assertEquals(1,found.size());
-        Assert.assertEquals(FunctionParserTest.class,found.get(0));
+        Assert.assertEquals(2,found.size());
+        Assert.assertTrue(found.contains(FunctionParserTest.class));
+        Assert.assertTrue(found.contains(FunctionParserTest.FailingClazz.class));
     }
 
     /**
