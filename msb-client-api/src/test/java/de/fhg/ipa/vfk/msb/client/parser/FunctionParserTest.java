@@ -20,6 +20,8 @@ package de.fhg.ipa.vfk.msb.client.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.fhg.ipa.vfk.msb.client.annotation.ConfigurationParam;
+import de.fhg.ipa.vfk.msb.client.annotation.Events;
 import de.fhg.ipa.vfk.msb.client.annotation.FunctionCall;
 import de.fhg.ipa.vfk.msb.client.annotation.FunctionHandler;
 import de.fhg.ipa.vfk.msb.client.annotation.FunctionParam;
@@ -335,6 +337,17 @@ public class FunctionParserTest {
         Assert.assertTrue("response events of function call reference is empty",functionCallReference.getResponseEvents().isEmpty());
     }
 
+    @Test
+    public void testParseFunctionFailsByConstructor() throws JsonProcessingException {
+        LOG.info("testParseFunctionByInstance");
+        Map<String, FunctionCallReference> functionCallbackMap = new HashMap<>();
+        Map<String, EventReference> eventMap = new HashMap<>();
+        List<Function> functions = FunctionParser.parseFunctionHandlers("uuid", new Class[]{FailingClazz.class}, functionCallbackMap, eventMap);
+
+        Assert.assertEquals("functions size not equals",0, functions.size());
+        Assert.assertEquals("function call references size not equals", 0, functionCallbackMap.size());
+    }
+
     @FunctionCall(path="/print")
     public void print() {
         // required for parsing test
@@ -367,5 +380,12 @@ public class FunctionParserTest {
     public String printFunctions(List<String> functions) {
         // required for parsing test
         return null;
+    }
+
+    @FunctionHandler(path="FunctionParserTest.FailingClazz")
+    public static class FailingClazz {
+
+        public FailingClazz(String missingDefaultConstructor){ }
+
     }
 }

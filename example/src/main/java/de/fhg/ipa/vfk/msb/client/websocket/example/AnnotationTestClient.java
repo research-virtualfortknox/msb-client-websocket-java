@@ -61,7 +61,7 @@ public class AnnotationTestClient {
      * @throws IOException          the io exception
      */
     public void startClient() throws ExecutionException, InterruptedException, IOException {
-        MsbClient msbClient = new MsbClient.Builder().url("wss://localhost:8084").disableHostnameVerification().enabledDataFormatValidation().build();
+        MsbClient msbClient = new MsbClient.Builder().url("wss://ws.msb.sng.cell.vfk.fraunhofer.de").disableHostnameVerification().enabledDataFormatValidation().build();
         Future<MsbClientHandler> future = msbClient.connect();
         MsbClientHandler handler = future.get();
 
@@ -79,6 +79,7 @@ public class AnnotationTestClient {
                 }
             } catch (Exception e) {
                 LOG.error("Exception: ", e);
+                Thread.currentThread().interrupt();
             } finally {
                 msbClient.disconnect();
                 try {

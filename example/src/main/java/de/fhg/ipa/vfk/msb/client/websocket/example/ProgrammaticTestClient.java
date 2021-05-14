@@ -121,6 +121,7 @@ public class ProgrammaticTestClient {
                 }
             } catch (Exception e) {
                 LOG.error("Exception: ", e);
+                Thread.currentThread().interrupt();
             } finally {
                 msbClient.disconnect();
                 try {
