@@ -49,7 +49,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<spring.version>5.3.9</spring.version>
-		<tomcat.version>9.0.50</tomcat.version>
+		<tomcat.version>9.0.52</tomcat.version>
 		<jackson.version>2.12.4</jackson.version>
 		<swagger.version>2.1.10</swagger.version>
 		<swagger.parser.version>2.0.27</swagger.parser.version>
