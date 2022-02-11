@@ -54,13 +54,10 @@ public class ProgrammaticTestClient {
     private static final String PULSE_EVENT = "PULSE";
     private static final String TEMPERATURE_EVENT = "TEMPERATURE";
 
-    private String uuid;
-
-    private String name;
-
-    private String token;
-
-    private MsbClient msbClient;
+    private final String uuid;
+    private final String name;
+    private final String token;
+    private final MsbClient msbClient;
 
     /**
      * Instantiates a new Programmatic test client.
@@ -133,9 +130,9 @@ public class ProgrammaticTestClient {
         }).start();
     }
 
-    private FunctionCallsListener functionCallsListener = (serviceUuid, functionId, correlationId, functionParameters) -> LOG.debug("call: {}, {}, {}, {}", serviceUuid, functionId, correlationId, functionParameters);
+    private final FunctionCallsListener functionCallsListener = (serviceUuid, functionId, correlationId, functionParameters) -> LOG.debug("call: {}, {}, {}, {}", serviceUuid, functionId, correlationId, functionParameters);
 
-    private ConfigurationListener configurationListener = configuration -> LOG.debug("New configuration: {}", configuration);
+    private final ConfigurationListener configurationListener = configuration -> LOG.debug("New configuration: {}", configuration);
 
     /**
      * The entry point of application.
