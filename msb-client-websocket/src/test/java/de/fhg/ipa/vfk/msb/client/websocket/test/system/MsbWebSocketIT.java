@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  */
 public class MsbWebSocketIT {
 
-    private static Logger LOG = LoggerFactory.getLogger(MsbWebSocketIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MsbWebSocketIT.class);
     private static TestEnvironmentConfiguration4Websocket testEnv;
 
     /**

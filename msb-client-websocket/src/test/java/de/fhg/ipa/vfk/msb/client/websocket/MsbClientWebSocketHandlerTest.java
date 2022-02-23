@@ -19,49 +19,51 @@
 package de.fhg.ipa.vfk.msb.client.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.fhg.ipa.vfk.msb.client.api.Application;
+import de.fhg.ipa.vfk.msb.client.api.Configuration;
 import de.fhg.ipa.vfk.msb.client.api.Connection;
 import de.fhg.ipa.vfk.msb.client.api.ConnectionFormat;
 import de.fhg.ipa.vfk.msb.client.api.ConnectionState;
 import de.fhg.ipa.vfk.msb.client.api.ConnectionType;
-import de.fhg.ipa.vfk.msb.client.api.Service;
-import de.fhg.ipa.vfk.msb.client.api.messages.ConfigurationMessage;
-import de.fhg.ipa.vfk.msb.client.api.messages.EventMessage;
-import de.fhg.ipa.vfk.msb.client.api.messages.FunctionCallMessage;
-import de.fhg.ipa.vfk.msb.client.api.Application;
-import de.fhg.ipa.vfk.msb.client.api.Configuration;
 import de.fhg.ipa.vfk.msb.client.api.Event;
 import de.fhg.ipa.vfk.msb.client.api.Function;
 import de.fhg.ipa.vfk.msb.client.api.Gateway;
 import de.fhg.ipa.vfk.msb.client.api.ParameterValue;
+import de.fhg.ipa.vfk.msb.client.api.PrimitiveFormat;
+import de.fhg.ipa.vfk.msb.client.api.PrimitiveType;
+import de.fhg.ipa.vfk.msb.client.api.Service;
 import de.fhg.ipa.vfk.msb.client.api.SmartObject;
+import de.fhg.ipa.vfk.msb.client.api.messages.ConfigurationMessage;
+import de.fhg.ipa.vfk.msb.client.api.messages.EventMessage;
+import de.fhg.ipa.vfk.msb.client.api.messages.EventPriority;
+import de.fhg.ipa.vfk.msb.client.api.messages.FunctionCallMessage;
 import de.fhg.ipa.vfk.msb.client.listener.ConfigurationListener;
 import de.fhg.ipa.vfk.msb.client.listener.ConnectionAdapter;
-import de.fhg.ipa.vfk.msb.client.listener.ConnectionListener;
 import de.fhg.ipa.vfk.msb.client.listener.FunctionCallsListener;
 import de.fhg.ipa.vfk.msb.client.listener.PublishingError;
 import de.fhg.ipa.vfk.msb.client.listener.RegistrationError;
+import de.fhg.ipa.vfk.msb.client.util.MsbDateFormat;
 import de.fhg.ipa.vfk.msb.client.util.WrongDataFormatException;
 import de.fhg.ipa.vfk.msb.client.websocket.annotation.AnnotationTestClient;
 import de.fhg.ipa.vfk.msb.client.websocket.annotation.TestClientFunctionHandler;
-import de.fhg.ipa.vfk.msb.client.api.PrimitiveFormat;
-import de.fhg.ipa.vfk.msb.client.api.PrimitiveType;
-import de.fhg.ipa.vfk.msb.client.api.messages.EventPriority;
-import de.fhg.ipa.vfk.msb.client.util.MsbDateFormat;
 import io.swagger.models.HttpMethod;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.sockjs.client.SockJsClient;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -80,12 +82,17 @@ public class MsbClientWebSocketHandlerTest {
 
     @Mock
     private WebSocketSession mockSession;
-
+    @Mock
+    private SockJsClient sockJsClient;
     @Captor
-    private ArgumentCaptor<WebSocketMessage> captor;
-
+    private ArgumentCaptor<WebSocketMessage<?>> captor;
     @Spy
-    private MsbClientWebSocketHandler msbClientWebSocketHandler = new MsbClientWebSocketHandler("");
+    private MsbClientWebSocketHandler msbClientWebSocketHandler = new MsbClientWebSocketHandler("http://localhost");
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
 
     /**
      * Test send callback.
@@ -574,6 +581,9 @@ public class MsbClientWebSocketHandlerTest {
 
     @Test
     public void testConnectionListener() throws Exception {
+        Mockito.when(sockJsClient.doHandshake(Mockito.same(msbClientWebSocketHandler),Mockito.anyString(), Mockito.any())).thenReturn(new AsyncResult<>(mockSession));
+        Mockito.when(msbClientWebSocketHandler.createClient(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(sockJsClient);
+
         ConnectionAdapter connectionListener = Mockito.mock(ConnectionAdapter.class);
         msbClientWebSocketHandler.addConnectionListener(connectionListener);
         Mockito.when(mockSession.isOpen()).thenReturn(true);
@@ -722,10 +732,12 @@ public class MsbClientWebSocketHandlerTest {
         Assert.assertEquals("pong",captor.getValue().getPayload());
     }
 
-    @Ignore
     @Test
     public void testReconnect() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
+        Mockito.when(sockJsClient.doHandshake(Mockito.same(msbClientWebSocketHandler),Mockito.anyString(), Mockito.any())).thenReturn(new AsyncResult<>(mockSession));
+        Mockito.when(msbClientWebSocketHandler.createClient(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(sockJsClient);
+
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_CONNECTED"));
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -739,6 +751,7 @@ public class MsbClientWebSocketHandlerTest {
 
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_CONNECTED"));
+
         Mockito.verify(mockSession,Mockito.after(1000).times(2)).sendMessage(captor.capture());
         String reconnectMessage = captor.getValue().getPayload().toString();
         Assert.assertTrue(reconnectMessage.startsWith("R {"));

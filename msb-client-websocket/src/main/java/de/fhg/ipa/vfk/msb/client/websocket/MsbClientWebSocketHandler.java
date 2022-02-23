@@ -83,6 +83,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The Class MsbClientWebSocketHandler to interacted with a connected MSB instance.
@@ -130,20 +131,20 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     private String trustStorePwd;
 
     private int state = INITIAL;
-    private static ObjectMapper mapper = DataFormatParser.getObjectMapper();
+    private static final ObjectMapper mapper = DataFormatParser.getObjectMapper();
 
-    private Map<String, FunctionCallReference> functionMap = new LinkedHashMap<>();
-    private Map<String, EventReference> eventMap = new LinkedHashMap<>();
-    private Map<String, ParameterValue> configParameters = new LinkedHashMap<>();
-    private Map<String, FunctionCallReference> addedFunctionMap = new LinkedHashMap<>();
-    private Map<String, EventReference> addedEventMap = new LinkedHashMap<>();
+    private final Map<String, FunctionCallReference> functionMap = new LinkedHashMap<>();
+    private final Map<String, EventReference> eventMap = new LinkedHashMap<>();
+    private final Map<String, ParameterValue> configParameters = new LinkedHashMap<>();
+    private final Map<String, FunctionCallReference> addedFunctionMap = new LinkedHashMap<>();
+    private final Map<String, EventReference> addedEventMap = new LinkedHashMap<>();
 
     private SockJsClient sockJsClient;
-    private ExecutorService functionCallExecutorService;
+    private final ExecutorService functionCallExecutorService;
     private final SynchronizedWebSocketSessionWrapper sessionWrapper = new SynchronizedWebSocketSessionWrapper(null);
-    private List<FunctionCallsListener> functionCallsListeners = new ArrayList<>();
-    private List<ConnectionListener> connectionListeners = new ArrayList<>();
-    private List<ConfigurationListener> configurationListeners = new ArrayList<>();
+    private final List<FunctionCallsListener> functionCallsListeners = new ArrayList<>();
+    private final List<ConnectionListener> connectionListeners = new ArrayList<>();
+    private final List<ConfigurationListener> configurationListeners = new ArrayList<>();
     private Service selfDescription;
     private LimitedSizeQueue<TextMessage> eventCache = new LimitedSizeQueue<>(1000);
 
@@ -214,6 +215,12 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         sessionWrapper.setSession(session);
         for (ConnectionListener connectionListener : connectionListeners) {
             connectionListener.afterConnectionEstablished();
+        }
+        if (reconnect && selfDescription !=null) {
+            // re-register
+            String s = mapper.writeValueAsString(selfDescription);
+            TextMessage message = new TextMessage(REGISTRATION + " " + s);
+            sessionWrapper.sendMessage(message);
         }
     }
 
@@ -483,11 +490,11 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      */
     protected boolean establishConnection() {
         LOG.info("establish connection to: {}", url);
-        if(state == INITIAL) {
+        if(sockJsClient == null || state == INITIAL) {
             sockJsClient = createClient(url, trustStorePath, trustStorePwd);
         }
 
-        if (sockJsClient != null && !sessionWrapper.isOpen()) {
+        if (!sessionWrapper.isOpen()) {
             state = STARTED;
             WebSocketSession session = connect(sockJsClient, this, url, websocketTextMessageSize, reconnectIntervalMillis);
             return session.isOpen();
@@ -514,12 +521,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
             connectionListener.beforeConnectionTryToReconnecting();
         }
         // reconnect
-        if (establishConnection() && selfDescription !=null) {
-            // re-register
-            String s = mapper.writeValueAsString(selfDescription);
-            TextMessage message = new TextMessage(REGISTRATION + " " + s);
-            sessionWrapper.sendMessage(message);
-        }
+        establishConnection();
     }
 
     /**
@@ -685,8 +687,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     }
 
     @Override
-    public void register(Service selfDescription, Object[] functionHandler, Class<?>[] eventDeclarations)
-            throws IOException {
+    public void register(Service selfDescription, Object[] functionHandler, Class<?>[] eventDeclarations) throws IOException {
         prepareRegister();
 
         addEventsToEventReferenceMap(selfDescription.getUuid(), selfDescription.getEvents(), eventMap);
@@ -1037,7 +1038,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         }
     }
 
-    private static SockJsClient createClient(String url, String trustStorePath, String trustStorePwd) {
+    protected SockJsClient createClient(String url, String trustStorePath, String trustStorePwd) {
         StandardWebSocketClient simpleWebSocketClient = new StandardWebSocketClient();
         if ((url.startsWith("wss://") || url.startsWith("https://"))) {
             Map<String, Object> userProperties = new HashMap<>();
@@ -1083,13 +1084,12 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      * @param websocketTextMessageSize the websocket text message size
      * @return the web socket session
      */
-    private static WebSocketSession connect(WebSocketClient sockJsClient, WebSocketHandler webSocketHandler,
-                                            String url, int websocketTextMessageSize, int reconnectIntervalMillis) {
-          WebSocketSession session = null;
+    private static WebSocketSession connect(WebSocketClient sockJsClient, WebSocketHandler webSocketHandler, String url, int websocketTextMessageSize, int reconnectIntervalMillis) {
+        WebSocketSession session = null;
         while (session == null || !session.isOpen()) {
             try {
                 ListenableFuture<WebSocketSession> f = sockJsClient.doHandshake(webSocketHandler, url);
-                session = f.get();
+                session = f.get(10, TimeUnit.SECONDS);
                 session.setTextMessageSizeLimit(websocketTextMessageSize);
             } catch (Exception e) {
                 LOG.error(e.getMessage(),e);
