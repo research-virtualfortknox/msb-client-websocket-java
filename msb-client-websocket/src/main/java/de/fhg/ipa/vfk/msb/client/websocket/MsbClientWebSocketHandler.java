@@ -1089,7 +1089,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         while (session == null || !session.isOpen()) {
             try {
                 ListenableFuture<WebSocketSession> f = sockJsClient.doHandshake(webSocketHandler, url);
-                session = f.get(10, TimeUnit.SECONDS);
+                session = f.get();
                 session.setTextMessageSizeLimit(websocketTextMessageSize);
             } catch (Exception e) {
                 LOG.error(e.getMessage(),e);
