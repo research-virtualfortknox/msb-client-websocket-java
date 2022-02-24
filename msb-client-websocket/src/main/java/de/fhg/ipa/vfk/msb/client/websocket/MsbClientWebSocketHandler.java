@@ -216,12 +216,6 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         for (ConnectionListener connectionListener : connectionListeners) {
             connectionListener.afterConnectionEstablished();
         }
-        if (reconnect && selfDescription !=null) {
-            // re-register
-            String s = mapper.writeValueAsString(selfDescription);
-            TextMessage message = new TextMessage(REGISTRATION + " " + s);
-            sessionWrapper.sendMessage(message);
-        }
     }
 
     /**
@@ -260,7 +254,11 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         } else if (payload.startsWith(PING)) {
             sessionWrapper.sendMessage(new TextMessage(PONG));
         } else if (payload.startsWith(IO_CONNECTED)) {
-            // ignore, because duplicate with afterConnectionEstablished
+            if (reconnect && selfDescription !=null) {
+                // re-register
+                String s = mapper.writeValueAsString(selfDescription);
+                sessionWrapper.sendMessage(new TextMessage(REGISTRATION + " " + s));
+            }
         } else if (payload.startsWith(IO_REGISTERED)) {
             this.state = REGISTERED;
             for (ConnectionListener connectionListener : connectionListeners) {
@@ -1089,10 +1087,10 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         while (session == null || !session.isOpen()) {
             try {
                 ListenableFuture<WebSocketSession> f = sockJsClient.doHandshake(webSocketHandler, url);
-                session = f.get();
+                session = f.get(2,TimeUnit.MINUTES);
                 session.setTextMessageSizeLimit(websocketTextMessageSize);
             } catch (Exception e) {
-                LOG.error(e.getMessage(),e);
+                LOG.error("Exception during connect",e);
                 if(session!=null) {
                     try {
                         session.close();
