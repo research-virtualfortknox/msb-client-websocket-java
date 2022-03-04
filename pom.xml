@@ -48,16 +48,16 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.version>5.3.10</spring.version>
-		<tomcat.version>9.0.54</tomcat.version>
+		<spring.version>5.3.15</spring.version>
+		<tomcat.version>9.0.59</tomcat.version>
 		<jackson.version>2.12.5</jackson.version>
-		<swagger.version>2.1.10</swagger.version>
-		<swagger.parser.version>2.0.28</swagger.parser.version>
+		<swagger.version>2.1.13</swagger.version>
+		<swagger.parser.version>2.0.29</swagger.parser.version>
 		<json-schema-validator.version>2.2.14</json-schema-validator.version>
-		<slf4j.version>1.7.32</slf4j.version>
-		<logback.version>1.2.6</logback.version>
+		<slf4j.version>1.7.36</slf4j.version>
+		<logback.version>1.2.10</logback.version>
 
-		<junit.version>4.12</junit.version>
+		<junit.version>4.13.2</junit.version>
 		<mockito.version>2.23.4</mockito.version>
 		<jsonassert.version>1.5.0</jsonassert.version>
 
