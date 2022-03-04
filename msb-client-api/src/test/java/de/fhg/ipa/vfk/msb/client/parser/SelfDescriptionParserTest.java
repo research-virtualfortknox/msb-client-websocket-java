@@ -19,8 +19,8 @@
 package de.fhg.ipa.vfk.msb.client.parser;
 
 import de.fhg.ipa.vfk.msb.client.api.Service;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -52,19 +52,19 @@ public class SelfDescriptionParserTest {
      * Test parse self description.
      */
     @Test
-    public void testParseSelfDescription() throws IOException {
+    void testParseSelfDescription() throws IOException {
         Service service = SelfDescriptionParser.parse("de.fhg.ipa.vfk.msb.client.parser");
-        Assert.assertEquals("uuid not equals", UUID, service.getUuid());
-        Assert.assertEquals("name not equals", NAME, service.getName());
-        Assert.assertEquals("description not equals", DESCRIPTION, service.getDescription());
-        Assert.assertEquals("token not equals", TOKEN, service.getToken());
-        Assert.assertTrue("type not equals", "Application".equals(service.getType()) || "SmartObject".equals(service.getType()) || "Gateway".equals(service.getType()));
+        Assertions.assertEquals(UUID, service.getUuid(), "uuid not equals");
+        Assertions.assertEquals(NAME, service.getName(), "name not equals");
+        Assertions.assertEquals(DESCRIPTION, service.getDescription(),"description not equals");
+        Assertions.assertEquals(TOKEN, service.getToken(), "token not equals");
+        Assertions.assertTrue("Application".equals(service.getType()) || "SmartObject".equals(service.getType()) || "Gateway".equals(service.getType()), "type not equals");
     }
 
     @Test
-    public void testNoSelfDescription() throws IOException {
+    void testNoSelfDescription() throws IOException {
         Service service = SelfDescriptionParser.parse("dead.package.path");
-        Assert.assertNull("found a service",service);
+        Assertions.assertNull(service, "found a service");
     }
 
 }

@@ -47,18 +47,17 @@ import de.fhg.ipa.vfk.msb.client.util.WrongDataFormatException;
 import de.fhg.ipa.vfk.msb.client.websocket.annotation.AnnotationTestClient;
 import de.fhg.ipa.vfk.msb.client.websocket.annotation.TestClientFunctionHandler;
 import io.swagger.models.HttpMethod;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.internal.stubbing.answers.AnswersWithDelay;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -78,8 +77,8 @@ import java.util.UUID;
  *
  * @author des
  */
-@RunWith(MockitoJUnitRunner.class)
-public class MsbClientWebSocketHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class MsbClientWebSocketHandlerTest {
 
     @Mock
     private WebSocketSession mockSession;
@@ -90,9 +89,9 @@ public class MsbClientWebSocketHandlerTest {
     @Spy
     private MsbClientWebSocketHandler msbClientWebSocketHandler = new MsbClientWebSocketHandler("http://localhost");
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+    @BeforeEach
+    void setUp() throws Exception {
+        //MockitoAnnotations.initMocks(this);
     }
 
     /**
@@ -100,67 +99,67 @@ public class MsbClientWebSocketHandlerTest {
      *
      * @throws Exception the exception
      */
-    @Test(expected = IllegalStateException.class)
-    public void testRegisterUnconnected() throws Exception{
-        msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
+    @Test
+    void testRegisterUnconnected() throws Exception{
+        Assertions.assertThrows(IllegalStateException.class, ()->msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation"));
     }
 
     @Test
-    public void testRegisterWithAnnotationScanning() throws Exception {
+    void testRegisterWithAnnotationScanning() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
         Mockito.verify(mockSession).sendMessage(captor.capture());
         String message = captor.getValue().getPayload().toString();
-        Assert.assertTrue(message.startsWith("R {"));
-        Assert.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(message.startsWith("R {"));
+        Assertions.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Application application = new ObjectMapper().readValue(message.substring(2), Application.class);
-        Assert.assertEquals("AnnotationTestClient",application.getName());
-        Assert.assertEquals("Annotation Test client",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertEquals(3,application.getConfiguration().getParameters().size());
+        Assertions.assertEquals("AnnotationTestClient",application.getName());
+        Assertions.assertEquals("Annotation Test client",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(5, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertEquals(3,application.getConfiguration().getParameters().size());
     }
 
     @Test
-    public void testRegisterWithAnnotationScanningAndFunctionHandlerInstances() throws Exception {
+    void testRegisterWithAnnotationScanningAndFunctionHandlerInstances() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation", new Object[]{new TestClientFunctionHandler()});
         Mockito.verify(mockSession).sendMessage(captor.capture());
         String message = captor.getValue().getPayload().toString();
-        Assert.assertTrue(message.startsWith("R {"));
-        Assert.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(message.startsWith("R {"));
+        Assertions.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Application application = new ObjectMapper().readValue(message.substring(2), Application.class);
-        Assert.assertEquals("AnnotationTestClient",application.getName());
-        Assert.assertEquals("Annotation Test client",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertEquals(3,application.getConfiguration().getParameters().size());
+        Assertions.assertEquals("AnnotationTestClient",application.getName());
+        Assertions.assertEquals("Annotation Test client",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(5, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertEquals(3,application.getConfiguration().getParameters().size());
     }
 
     @Test
-    public void testRegisterWithAnnotationScanningAndFunctionHandlerClasses() throws Exception {
+    void testRegisterWithAnnotationScanningAndFunctionHandlerClasses() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation", new Object[]{TestClientFunctionHandler.class});
         Mockito.verify(mockSession).sendMessage(captor.capture());
         String message = captor.getValue().getPayload().toString();
-        Assert.assertTrue(message.startsWith("R {"));
-        Assert.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(message.startsWith("R {"));
+        Assertions.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Application application = new ObjectMapper().readValue(message.substring(2), Application.class);
-        Assert.assertEquals("AnnotationTestClient",application.getName());
-        Assert.assertEquals("Annotation Test client",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertEquals(3,application.getConfiguration().getParameters().size());
+        Assertions.assertEquals("AnnotationTestClient",application.getName());
+        Assertions.assertEquals("Annotation Test client",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(5, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertEquals(3,application.getConfiguration().getParameters().size());
     }
 
     @Test
-    public void testUpdateRegister() throws Exception {
+    void testUpdateRegister() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -168,30 +167,30 @@ public class MsbClientWebSocketHandlerTest {
         Mockito.verify(mockSession, Mockito.times(2)).sendMessage(captor.capture());
 
         String firstMessage = captor.getAllValues().get(0).getPayload().toString();
-        Assert.assertTrue(firstMessage.startsWith("R {"));
-        Assert.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(firstMessage.startsWith("R {"));
+        Assertions.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Application application = new ObjectMapper().readValue(firstMessage.substring(2), Application.class);
-        Assert.assertEquals("AnnotationTestClient",application.getName());
-        Assert.assertEquals("Annotation Test client",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertEquals(3,application.getConfiguration().getParameters().size());
+        Assertions.assertEquals("AnnotationTestClient",application.getName());
+        Assertions.assertEquals("Annotation Test client",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(5, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertEquals(3,application.getConfiguration().getParameters().size());
 
         String secondMessage = captor.getValue().getPayload().toString();
-        Assert.assertTrue(secondMessage.startsWith("R {"));
-        Assert.assertTrue(secondMessage.contains("\"uuid\":\"uuid\","));
+        Assertions.assertTrue(secondMessage.startsWith("R {"));
+        Assertions.assertTrue(secondMessage.contains("\"uuid\":\"uuid\","));
         application = new ObjectMapper().readValue(secondMessage.substring(2), Application.class);
-        Assert.assertEquals("name",application.getName());
-        Assert.assertEquals("description",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(0, application.getEvents().size());
-        Assert.assertEquals(0, application.getFunctions().size());
-        Assert.assertNull(application.getConfiguration());
+        Assertions.assertEquals("name",application.getName());
+        Assertions.assertEquals("description",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(0, application.getEvents().size());
+        Assertions.assertEquals(0, application.getFunctions().size());
+        Assertions.assertNull(application.getConfiguration());
     }
 
     @Test
-    public void testUpdateRegisterWithAnnotationScanning() throws Exception {
+    void testUpdateRegisterWithAnnotationScanning() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -203,30 +202,30 @@ public class MsbClientWebSocketHandlerTest {
         Mockito.verify(mockSession, Mockito.times(2)).sendMessage(captor.capture());
 
         String firstMessage = captor.getAllValues().get(0).getPayload().toString();
-        Assert.assertTrue(firstMessage.startsWith("R {"));
-        Assert.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(firstMessage.startsWith("R {"));
+        Assertions.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Application application = new ObjectMapper().readValue(firstMessage.substring(2), Application.class);
-        Assert.assertEquals("AnnotationTestClient",application.getName());
-        Assert.assertEquals("Annotation Test client",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertEquals(3,application.getConfiguration().getParameters().size());
+        Assertions.assertEquals("AnnotationTestClient",application.getName());
+        Assertions.assertEquals("Annotation Test client",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(5, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertEquals(3,application.getConfiguration().getParameters().size());
 
         String secondMessage = captor.getValue().getPayload().toString();
-        Assert.assertTrue(secondMessage.startsWith("R {"));
-        Assert.assertTrue(secondMessage.contains("\"uuid\":\"uuid\","));
+        Assertions.assertTrue(secondMessage.startsWith("R {"));
+        Assertions.assertTrue(secondMessage.contains("\"uuid\":\"uuid\","));
         application = new ObjectMapper().readValue(secondMessage.substring(2), Application.class);
-        Assert.assertEquals("name",application.getName());
-        Assert.assertEquals("description",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertEquals(4,application.getConfiguration().getParameters().size());
+        Assertions.assertEquals("name",application.getName());
+        Assertions.assertEquals("description",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(5, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertEquals(4,application.getConfiguration().getParameters().size());
     }
 
     @Test
-    public void testUpdateRegisterWithAnnotationScanningAndFunctionHandlerClasses() throws Exception {
+    void testUpdateRegisterWithAnnotationScanningAndFunctionHandlerClasses() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -236,30 +235,30 @@ public class MsbClientWebSocketHandlerTest {
         Mockito.verify(mockSession, Mockito.times(2)).sendMessage(captor.capture());
 
         String firstMessage = captor.getAllValues().get(0).getPayload().toString();
-        Assert.assertTrue(firstMessage.startsWith("R {"));
-        Assert.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(firstMessage.startsWith("R {"));
+        Assertions.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Application application = new ObjectMapper().readValue(firstMessage.substring(2), Application.class);
-        Assert.assertEquals("AnnotationTestClient",application.getName());
-        Assert.assertEquals("Annotation Test client",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertEquals(3,application.getConfiguration().getParameters().size());
+        Assertions.assertEquals("AnnotationTestClient",application.getName());
+        Assertions.assertEquals("Annotation Test client",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(5, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertEquals(3,application.getConfiguration().getParameters().size());
 
         String secondMessage = captor.getValue().getPayload().toString();
-        Assert.assertTrue(secondMessage.startsWith("R {"));
-        Assert.assertTrue(secondMessage.contains("\"uuid\":\"uuid\","));
+        Assertions.assertTrue(secondMessage.startsWith("R {"));
+        Assertions.assertTrue(secondMessage.contains("\"uuid\":\"uuid\","));
         application = new ObjectMapper().readValue(secondMessage.substring(2), Application.class);
-        Assert.assertEquals("name",application.getName());
-        Assert.assertEquals("description",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(4, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertNull(application.getConfiguration());
+        Assertions.assertEquals("name",application.getName());
+        Assertions.assertEquals("description",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(4, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertNull(application.getConfiguration());
     }
 
     @Test
-    public void testUpdateRegisterWithAnnotationScanningAndFunctionHandlerAndEventClasses() throws Exception {
+    void testUpdateRegisterWithAnnotationScanningAndFunctionHandlerAndEventClasses() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -271,30 +270,30 @@ public class MsbClientWebSocketHandlerTest {
         Mockito.verify(mockSession, Mockito.times(2)).sendMessage(captor.capture());
 
         String firstMessage = captor.getAllValues().get(0).getPayload().toString();
-        Assert.assertTrue(firstMessage.startsWith("R {"));
-        Assert.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(firstMessage.startsWith("R {"));
+        Assertions.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         Application application = new ObjectMapper().readValue(firstMessage.substring(2), Application.class);
-        Assert.assertEquals("AnnotationTestClient",application.getName());
-        Assert.assertEquals("Annotation Test client",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertEquals(3,application.getConfiguration().getParameters().size());
+        Assertions.assertEquals("AnnotationTestClient",application.getName());
+        Assertions.assertEquals("Annotation Test client",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(5, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertEquals(3,application.getConfiguration().getParameters().size());
 
         String secondMessage = captor.getValue().getPayload().toString();
-        Assert.assertTrue(secondMessage.startsWith("R {"));
-        Assert.assertTrue(secondMessage.contains("\"uuid\":\"uuid\","));
+        Assertions.assertTrue(secondMessage.startsWith("R {"));
+        Assertions.assertTrue(secondMessage.contains("\"uuid\":\"uuid\","));
         application = new ObjectMapper().readValue(secondMessage.substring(2), Application.class);
-        Assert.assertEquals("name",application.getName());
-        Assert.assertEquals("description",application.getDescription());
-        Assert.assertEquals("token",application.getToken());
-        Assert.assertEquals(5, application.getEvents().size());
-        Assert.assertEquals(8, application.getFunctions().size());
-        Assert.assertEquals(1,application.getConfiguration().getParameters().size());
+        Assertions.assertEquals("name",application.getName());
+        Assertions.assertEquals("description",application.getDescription());
+        Assertions.assertEquals("token",application.getToken());
+        Assertions.assertEquals(5, application.getEvents().size());
+        Assertions.assertEquals(8, application.getFunctions().size());
+        Assertions.assertEquals(1,application.getConfiguration().getParameters().size());
     }
 
     @Test
-    public void testRegisterWithAddMethods() throws Exception {
+    void testRegisterWithAddMethods() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         SmartObject smartObject = new SmartObject("df61a143-6dab-471a-88b4-8feddb4c9e23","name","description","token");
@@ -307,19 +306,19 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.register(smartObject);
         Mockito.verify(mockSession).sendMessage(captor.capture());
         String message = captor.getValue().getPayload().toString();
-        Assert.assertTrue(message.startsWith("R {"));
-        Assert.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e23\","));
+        Assertions.assertTrue(message.startsWith("R {"));
+        Assertions.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e23\","));
         smartObject = new ObjectMapper().readValue(message.substring(2), SmartObject.class);
-        Assert.assertEquals("name", smartObject.getName());
-        Assert.assertEquals("description", smartObject.getDescription());
-        Assert.assertEquals("token", smartObject.getToken());
-        Assert.assertEquals(2, smartObject.getEvents().size());
-        Assert.assertEquals(1, smartObject.getFunctions().size());
-        Assert.assertEquals(2, smartObject.getConfiguration().getParameters().size());
+        Assertions.assertEquals("name", smartObject.getName());
+        Assertions.assertEquals("description", smartObject.getDescription());
+        Assertions.assertEquals("token", smartObject.getToken());
+        Assertions.assertEquals(2, smartObject.getEvents().size());
+        Assertions.assertEquals(1, smartObject.getFunctions().size());
+        Assertions.assertEquals(2, smartObject.getConfiguration().getParameters().size());
     }
 
     @Test
-    public void testRegisterAndUpdateGateway() throws Exception {
+    void testRegisterAndUpdateGateway() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         Gateway gateway = new Gateway("df61a143-6dab-471a-88b4-8feddb4c9e","name","description","token");
@@ -339,41 +338,41 @@ public class MsbClientWebSocketHandlerTest {
         Mockito.verify(mockSession,Mockito.times(2)).sendMessage(captor.capture());
 
         String firstMessage = captor.getAllValues().get(0).getPayload().toString();
-        Assert.assertTrue(firstMessage.startsWith("R {"));
-        Assert.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
+        Assertions.assertTrue(firstMessage.startsWith("R {"));
+        Assertions.assertTrue(firstMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
         Gateway firstMessageGateway = new ObjectMapper().readValue(firstMessage.substring(2), Gateway.class);
-        Assert.assertEquals("name", firstMessageGateway.getName());
-        Assert.assertEquals("description", firstMessageGateway.getDescription());
-        Assert.assertEquals("token", firstMessageGateway.getToken());
-        Assert.assertEquals(2, firstMessageGateway.getEvents().size());
-        Assert.assertEquals(1, firstMessageGateway.getFunctions().size());
-        Assert.assertEquals(2, firstMessageGateway.getConfiguration().getParameters().size());
-        Assert.assertEquals(0, firstMessageGateway.getServices().size());
+        Assertions.assertEquals("name", firstMessageGateway.getName());
+        Assertions.assertEquals("description", firstMessageGateway.getDescription());
+        Assertions.assertEquals("token", firstMessageGateway.getToken());
+        Assertions.assertEquals(2, firstMessageGateway.getEvents().size());
+        Assertions.assertEquals(1, firstMessageGateway.getFunctions().size());
+        Assertions.assertEquals(2, firstMessageGateway.getConfiguration().getParameters().size());
+        Assertions.assertEquals(0, firstMessageGateway.getServices().size());
 
         String secondMessage = captor.getValue().getPayload().toString();
-        Assert.assertTrue(secondMessage.startsWith("R {"));
-        Assert.assertTrue(secondMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
+        Assertions.assertTrue(secondMessage.startsWith("R {"));
+        Assertions.assertTrue(secondMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
         Gateway secondMessageGateway = new ObjectMapper().readValue(secondMessage.substring(2), Gateway.class);
-        Assert.assertEquals("name", secondMessageGateway.getName());
-        Assert.assertEquals("description", secondMessageGateway.getDescription());
-        Assert.assertEquals("token", secondMessageGateway.getToken());
-        Assert.assertEquals(2, secondMessageGateway.getEvents().size());
-        Assert.assertEquals(1, secondMessageGateway.getFunctions().size());
-        Assert.assertEquals(2, secondMessageGateway.getConfiguration().getParameters().size());
-        Assert.assertEquals(1, secondMessageGateway.getServices().size());
+        Assertions.assertEquals("name", secondMessageGateway.getName());
+        Assertions.assertEquals("description", secondMessageGateway.getDescription());
+        Assertions.assertEquals("token", secondMessageGateway.getToken());
+        Assertions.assertEquals(2, secondMessageGateway.getEvents().size());
+        Assertions.assertEquals(1, secondMessageGateway.getFunctions().size());
+        Assertions.assertEquals(2, secondMessageGateway.getConfiguration().getParameters().size());
+        Assertions.assertEquals(1, secondMessageGateway.getServices().size());
         Service secondMessageSubService = secondMessageGateway.getServices().iterator().next();
-        Assert.assertEquals("uuid1", secondMessageSubService.getUuid());
-        Assert.assertEquals("name1", secondMessageSubService.getName());
-        Assert.assertEquals("description1", secondMessageSubService.getDescription());
-        Assert.assertEquals("token1", secondMessageSubService.getToken());
-        Assert.assertEquals(1, secondMessageSubService.getEvents().size());
-        Assert.assertEquals(1, secondMessageSubService.getFunctions().size());
-        Assert.assertNull(secondMessageSubService.getConfiguration());
-        Assert.assertNotNull(secondMessageSubService.getConnection());
-        Assert.assertEquals(managedApplication.getConnection().getConnectionState(),secondMessageSubService.getConnection().getConnectionState());
-        Assert.assertEquals(managedApplication.getConnection().getConnectionType(),secondMessageSubService.getConnection().getConnectionType());
-        Assert.assertEquals(managedApplication.getConnection().getConnectionFormat(),secondMessageSubService.getConnection().getConnectionFormat());
-        Assert.assertEquals(managedApplication.getConnection().getLastContact(),secondMessageSubService.getConnection().getLastContact());
+        Assertions.assertEquals("uuid1", secondMessageSubService.getUuid());
+        Assertions.assertEquals("name1", secondMessageSubService.getName());
+        Assertions.assertEquals("description1", secondMessageSubService.getDescription());
+        Assertions.assertEquals("token1", secondMessageSubService.getToken());
+        Assertions.assertEquals(1, secondMessageSubService.getEvents().size());
+        Assertions.assertEquals(1, secondMessageSubService.getFunctions().size());
+        Assertions.assertNull(secondMessageSubService.getConfiguration());
+        Assertions.assertNotNull(secondMessageSubService.getConnection());
+        Assertions.assertEquals(managedApplication.getConnection().getConnectionState(),secondMessageSubService.getConnection().getConnectionState());
+        Assertions.assertEquals(managedApplication.getConnection().getConnectionType(),secondMessageSubService.getConnection().getConnectionType());
+        Assertions.assertEquals(managedApplication.getConnection().getConnectionFormat(),secondMessageSubService.getConnection().getConnectionFormat());
+        Assertions.assertEquals(managedApplication.getConnection().getLastContact(),secondMessageSubService.getConnection().getLastContact());
 
     }
 
@@ -382,77 +381,77 @@ public class MsbClientWebSocketHandlerTest {
      *
      * @throws Exception the exception
      */
-    @Test(expected = IOException.class)
-    public void testPublishBeforeRegister() throws Exception {
+    @Test
+    void testPublishBeforeRegister() throws Exception {
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
-        msbClientWebSocketHandler.publish("PULSE");
+        Assertions.assertThrows(IOException.class, ()->msbClientWebSocketHandler.publish("PULSE"));
     }
 
     @Test
-    public void testPublishEmptyEvent() throws Exception {
+    void testPublishEmptyEvent() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_REGISTERED"));
-        Assert.assertTrue(msbClientWebSocketHandler.isRegistered());
+        Assertions.assertTrue(msbClientWebSocketHandler.isRegistered());
         msbClientWebSocketHandler.publish("PULSE");
         Mockito.verify(mockSession,Mockito.times(2)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"PULSE\""));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"PULSE\""));
     }
 
     @Test
-    public void testPublishObject() throws Exception {
+    void testPublishObject() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_REGISTERED"));
         msbClientWebSocketHandler.publish("TEMPERATURE",23.4F);
         Mockito.verify(mockSession,Mockito.times(2)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         EventMessage eventMessage = new ObjectMapper().readValue(captor.getValue().getPayload().toString().substring(2), EventMessage.class);
-        Assert.assertNotNull(eventMessage);
-        Assert.assertEquals("TEMPERATURE",eventMessage.getEventId());
-        Assert.assertEquals(23.4,eventMessage.getDataObject());
-        Assert.assertEquals("df61a143-6dab-471a-88b4-8feddb4c9e45",eventMessage.getUuid());
-        Assert.assertEquals(EventPriority.DEFAULT,eventMessage.getPriority());
+        Assertions.assertNotNull(eventMessage);
+        Assertions.assertEquals("TEMPERATURE",eventMessage.getEventId());
+        Assertions.assertEquals(23.4,eventMessage.getDataObject());
+        Assertions.assertEquals("df61a143-6dab-471a-88b4-8feddb4c9e45",eventMessage.getUuid());
+        Assertions.assertEquals(EventPriority.DEFAULT,eventMessage.getPriority());
     }
 
-    @Test(expected = WrongDataFormatException.class)
-    public void testPublishWithWrongDataFormat() throws Exception {
+    @Test
+    void testPublishWithWrongDataFormat() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.setDataFormatValidation(true);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_REGISTERED"));
-        msbClientWebSocketHandler.publish("TEMPERATURE",new Date());
+        Assertions.assertThrows(WrongDataFormatException.class,()->msbClientWebSocketHandler.publish("TEMPERATURE",new Date()));
         Mockito.verify(mockSession,Mockito.times(1)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("R {"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("R {"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
     }
 
     @Test
-    public void testPublishObjectWithPriority() throws Exception {
+    void testPublishObjectWithPriority() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_REGISTERED"));
         msbClientWebSocketHandler.publish("TEMPERATURE",23.4F, EventPriority.MEDIUM);
         Mockito.verify(mockSession,Mockito.times(2)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
     }
 
     @Test
-    public void testPublishObjectWithDate() throws Exception {
+    void testPublishObjectWithDate() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -460,17 +459,17 @@ public class MsbClientWebSocketHandlerTest {
         Date date = new Date();
         msbClientWebSocketHandler.publish("TEMPERATURE",23.4F, EventPriority.MEDIUM, false, date);
         Mockito.verify(mockSession,Mockito.times(2)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"postDate\":\""+ new MsbDateFormat().format(date)+"\""));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"postDate\":\""+ new MsbDateFormat().format(date)+"\""));
     }
 
     @Test
-    public void testPublishObjectWithCorrelationId() throws Exception {
+    void testPublishObjectWithCorrelationId() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -479,35 +478,35 @@ public class MsbClientWebSocketHandlerTest {
         String correlationId = UUID.randomUUID().toString();
         msbClientWebSocketHandler.publish("TEMPERATURE",23.4F, EventPriority.MEDIUM, false, date, correlationId);
         Mockito.verify(mockSession,Mockito.times(2)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
-        Assert.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"postDate\":\""+ new MsbDateFormat().format(date)+"\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"correlationId\":\""+ correlationId+"\""));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().startsWith("R {"));
+        Assertions.assertTrue(captor.getAllValues().get(0).getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"postDate\":\""+ new MsbDateFormat().format(date)+"\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"correlationId\":\""+ correlationId+"\""));
     }
 
     @Test
-    public void testPublishObjectWithCached() throws Exception {
+    void testPublishObjectWithCached() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
         msbClientWebSocketHandler.publish("TEMPERATURE",23.4F, EventPriority.MEDIUM, true);
         Mockito.verify(mockSession,Mockito.times(1)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("R {"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("R {"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_REGISTERED"));
         Mockito.verify(mockSession,Mockito.times(2)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
     }
 
     @Test
-    public void testPublishForServiceWithAddedManagedService() throws Exception {
+    void testPublishForServiceWithAddedManagedService() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         Gateway gateway = new Gateway("df61a143-6dab-471a-88b4-8feddb4c9e","name","description","token");
@@ -521,12 +520,12 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.publish("TEMPERATURE",23.4F, EventPriority.MEDIUM, true);
         msbClientWebSocketHandler.publishForService("application_uuid","PULSE");
         Mockito.verify(mockSession,Mockito.times(4)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"application_uuid\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"PULSE\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"application_uuid\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"PULSE\""));
     }
 
     @Test
-    public void testPublishForServiceInvalidEventWithAddedManagedService() throws Exception {
+    void testPublishForServiceInvalidEventWithAddedManagedService() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         Gateway gateway = new Gateway("df61a143-6dab-471a-88b4-8feddb4c9e","name","description","token");
@@ -538,14 +537,14 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.publish("TEMPERATURE",23.4F, EventPriority.MEDIUM, true);
         msbClientWebSocketHandler.publishForService("application_uuid","TEMPERATURE",4F);
         Mockito.verify(mockSession,Mockito.times(3)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
     }
 
     @Test
-    public void testPublishForService() throws Exception {
+    void testPublishForService() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         Application managedApplication = new Application("application_uuid","name1","description1","token1");
@@ -558,12 +557,12 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.publish("TEMPERATURE",23.4F, EventPriority.MEDIUM, true);
         msbClientWebSocketHandler.publishForService("application_uuid","PULSE");
         Mockito.verify(mockSession,Mockito.times(3)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"application_uuid\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"PULSE\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"application_uuid\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"PULSE\""));
     }
 
     @Test
-    public void testPublishForServiceInvalidEvent() throws Exception {
+    void testPublishForServiceInvalidEvent() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         Gateway gateway = new Gateway("df61a143-6dab-471a-88b4-8feddb4c9e","name","description","token");
@@ -574,14 +573,14 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.publish("TEMPERATURE",23.4F, EventPriority.MEDIUM, true);
         msbClientWebSocketHandler.publishForService("application_uuid","TEMPERATURE",4F);
         Mockito.verify(mockSession,Mockito.times(2)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"TEMPERATURE\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"dataObject\":23.4"));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"priority\":1"));
     }
 
     @Test
-    public void testConnectionListener() throws Exception {
+    void testConnectionListener() throws Exception {
         Mockito.when(sockJsClient.doHandshake(Mockito.same(msbClientWebSocketHandler),Mockito.anyString(), Mockito.any())).thenReturn(new AsyncResult<>(mockSession));
         Mockito.when(msbClientWebSocketHandler.createClient(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(sockJsClient);
 
@@ -620,7 +619,7 @@ public class MsbClientWebSocketHandlerTest {
     }
 
     @Test
-    public void testConfigurationListener() throws Exception {
+    void testConfigurationListener() throws Exception {
         ConfigurationListener configurationListener = Mockito.mock(ConfigurationListener.class);
         msbClientWebSocketHandler.addConfigurationListener(configurationListener);
         Mockito.when(mockSession.isOpen()).thenReturn(true);
@@ -638,7 +637,7 @@ public class MsbClientWebSocketHandlerTest {
     }
 
     @Test
-    public void testFunctionCallsListener() throws Exception {
+    void testFunctionCallsListener() throws Exception {
         FunctionCallsListener configurationListener = Mockito.mock(FunctionCallsListener.class);
         msbClientWebSocketHandler.addFunctionCallsListener(configurationListener);
         Mockito.when(mockSession.isOpen()).thenReturn(true);
@@ -656,11 +655,11 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.removeFunctionCallsListener(configurationListener);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
 
-        Mockito.verify(configurationListener, Mockito.after(1000).times(1)).onCallback(Mockito.eq("df61a143-6dab-471a-88b4-8feddb4c9e45"), Mockito.eq("/functionhandler/hello_world"), Mockito.eq("correlationId"), Mockito.anyMapOf(String.class, Object.class));
+        Mockito.verify(configurationListener, Mockito.after(1000).times(1)).onCallback(Mockito.eq("df61a143-6dab-471a-88b4-8feddb4c9e45"), Mockito.eq("/functionhandler/hello_world"), Mockito.eq("correlationId"), Mockito.anyMap());
     }
 
     @Test
-    public void testFunctionCallResponseEvent() throws Exception {
+    void testFunctionCallResponseEvent() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -668,13 +667,13 @@ public class MsbClientWebSocketHandlerTest {
         FunctionCallMessage data = new FunctionCallMessage("df61a143-6dab-471a-88b4-8feddb4c9e45","/functionhandler/hello_world","correlationId", new HashMap<>());
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
         Mockito.verify(mockSession,Mockito.after(1000).times(2)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"PULSE\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"PULSE\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));
     }
 
     @Test
-    public void testFunctionCallMultiResponseEvent() throws Exception {
+    void testFunctionCallMultiResponseEvent() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -684,13 +683,13 @@ public class MsbClientWebSocketHandlerTest {
         FunctionCallMessage data = new FunctionCallMessage("df61a143-6dab-471a-88b4-8feddb4c9e45","/functionhandler/printInt","correlationId", parameters);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
         Mockito.verify(mockSession,Mockito.after(1000).times(2)).sendMessage(captor.capture());
-        Assert.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"START\""));
-        Assert.assertTrue(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"eventId\":\"START\""));
+        Assertions.assertTrue(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));
     }
 
     @Test
-    public void testFunctionCallNullResponseEvent() throws Exception {
+    void testFunctionCallNullResponseEvent() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
@@ -698,12 +697,12 @@ public class MsbClientWebSocketHandlerTest {
         FunctionCallMessage data = new FunctionCallMessage("df61a143-6dab-471a-88b4-8feddb4c9e45","/functionhandler/helloNull","correlationId", new HashMap<>());
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
         Mockito.verify(mockSession,Mockito.after(1000).times(1)).sendMessage(captor.capture());
-        Assert.assertFalse(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertFalse(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));
+        Assertions.assertFalse(captor.getValue().getPayload().toString().startsWith("E {\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertFalse(captor.getValue().getPayload().toString().contains("\"correlationId\":\"correlationId\""));
     }
 
     @Test
-    public void testFunctionCallsListenerWithEmptyReference() throws Exception {
+    void testFunctionCallsListenerWithEmptyReference() throws Exception {
         FunctionCallsListener configurationListener = Mockito.mock(FunctionCallsListener.class);
         msbClientWebSocketHandler.addFunctionCallsListener(configurationListener);
         Mockito.when(mockSession.isOpen()).thenReturn(true);
@@ -721,20 +720,20 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.removeFunctionCallsListener(configurationListener);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("C "+new ObjectMapper().writeValueAsString(data)));
 
-        Mockito.verify(configurationListener, Mockito.after(1000).times(1)).onCallback(Mockito.eq("df61a143-6dab-471a-88b4-8feddb4c9e45"), Mockito.eq("/functionhandler/hello_world"), Mockito.eq("correlationId"), Mockito.anyMapOf(String.class, Object.class));
+        Mockito.verify(configurationListener, Mockito.after(1000).times(1)).onCallback(Mockito.eq("df61a143-6dab-471a-88b4-8feddb4c9e45"), Mockito.eq("/functionhandler/hello_world"), Mockito.eq("correlationId"), Mockito.anyMap());
     }
 
     @Test
-    public void testPing() throws Exception {
+    void testPing() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("ping"));
         Mockito.verify(mockSession).sendMessage(captor.capture());
-        Assert.assertEquals("pong",captor.getValue().getPayload());
+        Assertions.assertEquals("pong",captor.getValue().getPayload());
     }
 
     @Test
-    public void testReconnect() throws Exception {
+    void testReconnect() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
 
         Mockito.when(sockJsClient.doHandshake(Mockito.same(msbClientWebSocketHandler),Mockito.anyString(), Mockito.any())).thenAnswer(
@@ -751,19 +750,17 @@ public class MsbClientWebSocketHandlerTest {
         msbClientWebSocketHandler.register("de.fhg.ipa.vfk.msb.client.websocket.annotation");
         Mockito.verify(mockSession).sendMessage(captor.capture());
         String message = captor.getValue().getPayload().toString();
-        Assert.assertTrue(message.startsWith("R {"));
-        Assert.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertTrue(message.startsWith("R {"));
+        Assertions.assertTrue(message.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_REGISTERED"));
 
         msbClientWebSocketHandler.afterConnectionClosed(mockSession, CloseStatus.NORMAL);
 
-
-
         Mockito.verify(mockSession,Mockito.after(1000).times(2)).sendMessage(captor.capture());
         String reconnectMessage = captor.getValue().getPayload().toString();
-        Assert.assertTrue(reconnectMessage.startsWith("R {"));
-        Assert.assertTrue(reconnectMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
-        Assert.assertEquals(message,reconnectMessage);
+        Assertions.assertTrue(reconnectMessage.startsWith("R {"));
+        Assertions.assertTrue(reconnectMessage.contains("\"uuid\":\"df61a143-6dab-471a-88b4-8feddb4c9e45\","));
+        Assertions.assertEquals(message,reconnectMessage);
     }
 
 }

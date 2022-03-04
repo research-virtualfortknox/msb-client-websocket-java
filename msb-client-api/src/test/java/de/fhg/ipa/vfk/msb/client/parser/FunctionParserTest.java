@@ -29,8 +29,8 @@ import de.fhg.ipa.vfk.msb.client.api.Function;
 import de.fhg.ipa.vfk.msb.client.api.MultipleResponseEvent;
 import de.fhg.ipa.vfk.msb.client.util.DataFormatParser;
 import de.fhg.ipa.vfk.msb.client.api.messages.EventPriority;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ import java.util.Map;
  * @author des
  */
 @FunctionHandler(path="FunctionParserTest")
-public class FunctionParserTest {
+class FunctionParserTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(FunctionParserTest.class);
 
@@ -58,66 +58,67 @@ public class FunctionParserTest {
      * @throws JsonProcessingException the json processing exception
      */
     @Test
-    public void testParseFunctionByPackageScan() throws JsonProcessingException {
+    void testParseFunctionByPackageScan() throws JsonProcessingException {
         LOG.info("testParseFunctionByPackageScan");
         Map<String, FunctionCallReference> functionCallbackMap = new HashMap<>();
         Map<String, EventReference> eventMap = new HashMap<>();
         eventMap.put("uuid_START",EventParser.getEventReference("START","start","start description",Void.class, EventPriority.DEFAULT));
         eventMap.put("uuid_WAIT",EventParser.getEventReference("WAIT","wait","wait description",Void.class, EventPriority.DEFAULT));
         List<Function> functions = FunctionParser.parseFunctionHandlers("uuid", "de.fhg.ipa.vfk.msb.client.parser",functionCallbackMap,eventMap);
-        Assert.assertEquals("functions size not equals",4, functions.size());
-        Assert.assertEquals("function call references size not equals", 4, functionCallbackMap.size());
+
+        Assertions.assertEquals(4, functions.size(), "functions size not equals");
+        Assertions.assertEquals(4, functionCallbackMap.size(), "function call references size not equals");
 
         FunctionCallReference functionCallReference = functionCallbackMap.get("uuid_/FunctionParserTest/print");
-        Assert.assertNotNull("function call reference is null", functionCallReference);
-        Assert.assertNotNull("function handler instance of function call reference is null", functionCallReference.getFunctionHandlerInstance());
-        Assert.assertNotNull("method of function call reference is null", functionCallReference.getMethod());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference.getParameters());
-        Assert.assertEquals("parameters of function call reference is not empty",0, functionCallReference.getParameters().size());
+        Assertions.assertNotNull(functionCallReference, "function call reference is null");
+        Assertions.assertNotNull(functionCallReference.getFunctionHandlerInstance(), "function handler instance of function call reference is null");
+        Assertions.assertNotNull(functionCallReference.getMethod(), "method of function call reference is null");
+        Assertions.assertNotNull(functionCallReference.getParameters(), "parameters of function call reference is null");
+        Assertions.assertEquals(0, functionCallReference.getParameters().size(), "parameters of function call reference is not empty");
 
         Function function = functionCallReference.getFunction();
-        Assert.assertNotNull("function of function call reference is null",function);
-        Assert.assertTrue("functions not contains function",functions.contains(function));
-        Assert.assertEquals("functionId not equals","/FunctionParserTest/print",function.getFunctionId());
-        Assert.assertEquals("name not equals","print",function.getName());
-        Assert.assertEquals("description not equals","",function.getDescription());
-        Assert.assertNull("data format is not null",function.getDataFormat());
-        Assert.assertNull("response events is not null",function.getResponseEvents());
+        Assertions.assertNotNull(function, "function of function call reference is null");
+        Assertions.assertTrue(functions.contains(function), "functions not contains function");
+        Assertions.assertEquals("/FunctionParserTest/print",function.getFunctionId(), "functionId not equals");
+        Assertions.assertEquals("print",function.getName(), "name not equals");
+        Assertions.assertEquals("",function.getDescription(), "description not equals");
+        Assertions.assertNull(function.getDataFormat(), "data format is not null");
+        Assertions.assertNull(function.getResponseEvents(), "response events is not null");
 
         FunctionCallReference functionCallReference2 = functionCallbackMap.get("uuid_/FunctionParserTest/printInt");
-        Assert.assertNotNull("function call reference is null", functionCallReference2);
-        Assert.assertNotNull("function handler instance of function call reference is null", functionCallReference2.getFunctionHandlerInstance());
-        Assert.assertNotNull("method of function call reference is null", functionCallReference2.getMethod());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference2.getParameters());
-        Assert.assertEquals("parameters of function call reference is empty",3, functionCallReference2.getParameters().size());
+        Assertions.assertNotNull(functionCallReference2, "function call reference is null");
+        Assertions.assertNotNull(functionCallReference2.getFunctionHandlerInstance(), "function handler instance of function call reference is null");
+        Assertions.assertNotNull(functionCallReference2.getMethod(), "method of function call reference is null");
+        Assertions.assertNotNull(functionCallReference2.getParameters(), "parameters of function call reference is null");
+        Assertions.assertEquals(3, functionCallReference2.getParameters().size(), "parameters of function call reference is not empty");
 
         Function function2 = functionCallReference2.getFunction();
-        Assert.assertNotNull("function of function call reference is null",function2);
-        Assert.assertTrue("functions not contains function",functions.contains(function2));
-        Assert.assertEquals("functionId not equals","/FunctionParserTest/printInt",function2.getFunctionId());
-        Assert.assertEquals("name not equals","printInteger",function2.getName());
-        Assert.assertEquals("description not equals","test with different response",function2.getDescription());
-        Assert.assertNotNull("data format is null",function2.getDataFormat());
-        Assert.assertEquals("{\"int\":{\"type\":\"integer\",\"format\":\"int32\"},\"arg1\":{\"type\":\"string\"},\"arg2\":{\"type\":\"string\"}}",mapper.writeValueAsString(function2.getDataFormat()));
-        Assert.assertNotNull("response events is null",function2.getResponseEvents());
-        Assert.assertEquals("response events size not equals",2, function2.getResponseEvents().length);
+        Assertions.assertNotNull(function2, "function of function call reference is null");
+        Assertions.assertTrue(functions.contains(function2), "functions not contains function");
+        Assertions.assertEquals("/FunctionParserTest/printInt",function2.getFunctionId(), "functionId not equals");
+        Assertions.assertEquals("printInteger",function2.getName(), "name not equals");
+        Assertions.assertEquals("test with different response",function2.getDescription(), "description not equals");
+        Assertions.assertNotNull(function2.getDataFormat(), "data format is null");
+        Assertions.assertEquals("{\"int\":{\"type\":\"integer\",\"format\":\"int32\"},\"arg1\":{\"type\":\"string\"},\"arg2\":{\"type\":\"string\"}}",mapper.writeValueAsString(function2.getDataFormat()));
+        Assertions.assertNotNull(function2.getResponseEvents(), "response events is null");
+        Assertions.assertEquals(2, function2.getResponseEvents().length, "response events size not equals");
 
         FunctionCallReference functionCallReference3 = functionCallbackMap.get("uuid_/FunctionParserTest/printFunctions");
-        Assert.assertNotNull("function call reference is null", functionCallReference3);
-        Assert.assertNotNull("function handler instance of function call reference is null", functionCallReference3.getFunctionHandlerInstance());
-        Assert.assertNotNull("method of function call reference is null", functionCallReference3.getMethod());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference3.getParameters());
-        Assert.assertEquals("parameters of function call reference is empty",1, functionCallReference3.getParameters().size());
+        Assertions.assertNotNull(functionCallReference3, "function call reference is null");
+        Assertions.assertNotNull(functionCallReference3.getFunctionHandlerInstance(), "function handler instance of function call reference is null");
+        Assertions.assertNotNull(functionCallReference3.getMethod(), "method of function call reference is null");
+        Assertions.assertNotNull(functionCallReference3.getParameters(), "parameters of function call reference is null");
+        Assertions.assertEquals(1, functionCallReference3.getParameters().size(), "parameters of function call reference is not empty");
 
         Function function3 = functionCallReference3.getFunction();
-        Assert.assertNotNull("function of function call reference is null",function3);
-        Assert.assertTrue("functions not contains function",functions.contains(function3));
-        Assert.assertEquals("functionId not equals","/FunctionParserTest/printFunctions",function3.getFunctionId());
-        Assert.assertEquals("name not equals","printFunctions",function3.getName());
-        Assert.assertEquals("description not equals","",function3.getDescription());
-        Assert.assertNotNull("data format is null",function3.getDataFormat());
-        Assert.assertEquals("{\"arg0\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}",mapper.writeValueAsString(function3.getDataFormat()));
-        Assert.assertNotNull("response events is null",function3.getResponseEvents());
+        Assertions.assertNotNull(function3, "function of function call reference is null");
+        Assertions.assertTrue(functions.contains(function3), "functions not contains function");
+        Assertions.assertEquals("/FunctionParserTest/printFunctions",function3.getFunctionId(),"functionId not equals");
+        Assertions.assertEquals("printFunctions",function3.getName(),"name not equals");
+        Assertions.assertEquals("",function3.getDescription(),"description not equals");
+        Assertions.assertNotNull(function3.getDataFormat(),"data format is null");
+        Assertions.assertEquals("{\"arg0\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}",mapper.writeValueAsString(function3.getDataFormat()));
+        Assertions.assertNotNull(function3.getResponseEvents(),"response events is null");
     }
 
     /**
@@ -126,7 +127,7 @@ public class FunctionParserTest {
      * @throws JsonProcessingException the json processing exception
      */
     @Test
-    public void testParseFunctionByInstance() throws JsonProcessingException {
+    void testParseFunctionByInstance() throws JsonProcessingException {
         LOG.info("testParseFunctionByInstance");
         Map<String, FunctionCallReference> functionCallbackMap = new HashMap<>();
         Map<String, EventReference> eventMap = new HashMap<>();
@@ -134,88 +135,88 @@ public class FunctionParserTest {
         eventMap.put("uuid_WAIT",EventParser.getEventReference("WAIT","wait","wait description",Void.class, EventPriority.DEFAULT));
         List<Function> functions = FunctionParser.parseFunctionHandlers("uuid", new Object[]{this},functionCallbackMap,eventMap);
 
-        Assert.assertEquals("functions size not equals",4, functions.size());
-        Assert.assertEquals("function call references size not equals", 4, functionCallbackMap.size());
+        Assertions.assertEquals(4, functions.size(), "functions size not equals");
+        Assertions.assertEquals(4, functionCallbackMap.size(), "function call references size not equals");
 
         FunctionCallReference functionCallReference = functionCallbackMap.get("uuid_/FunctionParserTest/print");
-        Assert.assertNotNull("function call reference is null", functionCallReference);
-        Assert.assertNotNull("function handler instance of function call reference is null", functionCallReference.getFunctionHandlerInstance());
-        Assert.assertNotNull("method of function call reference is null", functionCallReference.getMethod());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference.getParameters());
-        Assert.assertEquals("parameters of function call reference is not empty",0, functionCallReference.getParameters().size());
+        Assertions.assertNotNull(functionCallReference, "function call reference is null");
+        Assertions.assertNotNull(functionCallReference.getFunctionHandlerInstance(), "function handler instance of function call reference is null");
+        Assertions.assertNotNull(functionCallReference.getMethod(), "method of function call reference is null");
+        Assertions.assertNotNull(functionCallReference.getParameters(), "parameters of function call reference is null");
+        Assertions.assertEquals(0, functionCallReference.getParameters().size(), "parameters of function call reference is not empty");
 
         Function function = functionCallReference.getFunction();
-        Assert.assertNotNull("function of function call reference is null",function);
-        Assert.assertTrue("functions not contains function",functions.contains(function));
-        Assert.assertEquals("functionId not equals","/FunctionParserTest/print",function.getFunctionId());
-        Assert.assertEquals("name not equals","print",function.getName());
-        Assert.assertEquals("description not equals","",function.getDescription());
-        Assert.assertNull("data format is not null",function.getDataFormat());
-        Assert.assertNull("response events is not null",function.getResponseEvents());
+        Assertions.assertNotNull(function, "function of function call reference is null");
+        Assertions.assertTrue(functions.contains(function), "functions not contains function");
+        Assertions.assertEquals("/FunctionParserTest/print",function.getFunctionId(), "functionId not equals");
+        Assertions.assertEquals("print",function.getName(), "name not equals");
+        Assertions.assertEquals("",function.getDescription(), "description not equals");
+        Assertions.assertNull(function.getDataFormat(), "data format is not null");
+        Assertions.assertNull(function.getResponseEvents(), "response events is not null");
 
         FunctionCallReference functionCallReference2 = functionCallbackMap.get("uuid_/FunctionParserTest/printInt");
-        Assert.assertNotNull("function call reference is null", functionCallReference2);
-        Assert.assertNotNull("function handler instance of function call reference is null", functionCallReference2.getFunctionHandlerInstance());
-        Assert.assertNotNull("method of function call reference is null", functionCallReference2.getMethod());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference2.getParameters());
-        Assert.assertEquals("parameters of function call reference is empty",3, functionCallReference2.getParameters().size());
+        Assertions.assertNotNull(functionCallReference2, "function call reference is null");
+        Assertions.assertNotNull(functionCallReference2.getFunctionHandlerInstance(), "function handler instance of function call reference is null");
+        Assertions.assertNotNull(functionCallReference2.getMethod(), "method of function call reference is null");
+        Assertions.assertNotNull(functionCallReference2.getParameters(), "parameters of function call reference is null");
+        Assertions.assertEquals(3, functionCallReference2.getParameters().size(), "parameters of function call reference is not empty");
 
         Function function2 = functionCallReference2.getFunction();
-        Assert.assertNotNull("function of function call reference is null",function2);
-        Assert.assertTrue("functions not contains function",functions.contains(function2));
-        Assert.assertEquals("functionId not equals","/FunctionParserTest/printInt",function2.getFunctionId());
-        Assert.assertEquals("name not equals","printInteger",function2.getName());
-        Assert.assertEquals("description not equals","test with different response",function2.getDescription());
-        Assert.assertNotNull("data format is null",function2.getDataFormat());
-        Assert.assertEquals("{\"int\":{\"type\":\"integer\",\"format\":\"int32\"},\"arg1\":{\"type\":\"string\"},\"arg2\":{\"type\":\"string\"}}",mapper.writeValueAsString(function2.getDataFormat()));
-        Assert.assertNotNull("response events is null",function2.getResponseEvents());
-        Assert.assertEquals("response events size not equals",2, function2.getResponseEvents().length);
+        Assertions.assertNotNull(function2, "function of function call reference is null");
+        Assertions.assertTrue(functions.contains(function2), "functions not contains function");
+        Assertions.assertEquals("/FunctionParserTest/printInt",function2.getFunctionId(), "functionId not equals");
+        Assertions.assertEquals("printInteger",function2.getName(), "name not equals");
+        Assertions.assertEquals("test with different response",function2.getDescription(), "description not equals");
+        Assertions.assertNotNull(function2.getDataFormat(), "data format is null");
+        Assertions.assertEquals("{\"int\":{\"type\":\"integer\",\"format\":\"int32\"},\"arg1\":{\"type\":\"string\"},\"arg2\":{\"type\":\"string\"}}",mapper.writeValueAsString(function2.getDataFormat()));
+        Assertions.assertNotNull(function2.getResponseEvents(), "response events is null");
+        Assertions.assertEquals(2, function2.getResponseEvents().length, "response events size not equals");
 
         FunctionCallReference functionCallReference3 = functionCallbackMap.get("uuid_/FunctionParserTest/printFunctions");
-        Assert.assertNotNull("function call reference is null", functionCallReference3);
-        Assert.assertNotNull("function handler instance of function call reference is null", functionCallReference3.getFunctionHandlerInstance());
-        Assert.assertNotNull("method of function call reference is null", functionCallReference3.getMethod());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference3.getParameters());
-        Assert.assertEquals("parameters of function call reference is empty",1, functionCallReference3.getParameters().size());
+        Assertions.assertNotNull(functionCallReference3, "function call reference is null");
+        Assertions.assertNotNull(functionCallReference3.getFunctionHandlerInstance(), "function handler instance of function call reference is null");
+        Assertions.assertNotNull(functionCallReference3.getMethod(), "method of function call reference is null");
+        Assertions.assertNotNull(functionCallReference3.getParameters(), "parameters of function call reference is null");
+        Assertions.assertEquals(1, functionCallReference3.getParameters().size(), "parameters of function call reference is not empty");
 
         Function function3 = functionCallReference3.getFunction();
-        Assert.assertNotNull("function of function call reference is null",function3);
-        Assert.assertTrue("functions not contains function",functions.contains(function3));
-        Assert.assertEquals("functionId not equals","/FunctionParserTest/printFunctions",function3.getFunctionId());
-        Assert.assertEquals("name not equals","printFunctions",function3.getName());
-        Assert.assertEquals("description not equals","",function3.getDescription());
-        Assert.assertNotNull("data format is null",function3.getDataFormat());
-        Assert.assertEquals("{\"arg0\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}",mapper.writeValueAsString(function3.getDataFormat()));
-        Assert.assertNotNull("response events is null",function3.getResponseEvents());
+        Assertions.assertNotNull(function3, "function of function call reference is null");
+        Assertions.assertTrue(functions.contains(function3), "functions not contains function");
+        Assertions.assertEquals("/FunctionParserTest/printFunctions",function3.getFunctionId(),"functionId not equals");
+        Assertions.assertEquals("printFunctions",function3.getName(),"name not equals");
+        Assertions.assertEquals("",function3.getDescription(),"description not equals");
+        Assertions.assertNotNull(function3.getDataFormat(),"data format is null");
+        Assertions.assertEquals("{\"arg0\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}}}",mapper.writeValueAsString(function3.getDataFormat()));
+        Assertions.assertNotNull(function3.getResponseEvents(),"response events is null");
     }
 
     /**
      * Test parse function with missing response event.
      */
-    @Test(expected = IllegalStateException.class)
-    public void testParseFunctionWithMissingResponseEvent() {
+    @Test
+    void testParseFunctionWithMissingResponseEvent() {
         Map<String, FunctionCallReference> functionCallbackMap = new HashMap<>();
         Map<String, EventReference> eventMap = new HashMap<>();
         eventMap.put("START",EventParser.getEventReference("START","start","start description",Void.class, EventPriority.DEFAULT));
-        FunctionParser.parseFunctionHandlers("uuid", "de.fhg.ipa.vfk.msb.client.parser",functionCallbackMap,eventMap);
+        Assertions.assertThrows(IllegalStateException.class, ()->FunctionParser.parseFunctionHandlers("uuid", "de.fhg.ipa.vfk.msb.client.parser",functionCallbackMap,eventMap));
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testParseFunctionWithDuplicatePath() {
+    @Test
+    void testParseFunctionWithDuplicatePath() {
         Map<String, FunctionCallReference> functionCallbackMap = new HashMap<>();
         Map<String, EventReference> eventMap = new HashMap<>();
-        FunctionParser.parseFunctionHandlers("uuid", "de.fhg.ipa.vfk.msb.client.failing.entities",functionCallbackMap,eventMap);
+        Assertions.assertThrows(IllegalStateException.class, ()->FunctionParser.parseFunctionHandlers("uuid", "de.fhg.ipa.vfk.msb.client.failing.entities",functionCallbackMap,eventMap));
     }
 
     @Test
-    public void testParseFunctionEmptyPath() {
+    void testParseFunctionEmptyPath() {
         LOG.info("testParseFunctionByInstance");
         List<Function> functions = FunctionParser.parseFunctionHandlers("uuid", "com.empty", new HashMap<>(), new HashMap<>());
-        Assert.assertTrue(functions.isEmpty());
+        Assertions.assertTrue(functions.isEmpty());
     }
 
     @Test
-    public void testParseFunctionByInstanceAndPackageScan() throws JsonProcessingException {
+    void testParseFunctionByInstanceAndPackageScan() throws JsonProcessingException {
         LOG.info("testParseFunctionByInstanceAndPackageScan");
         Map<String, FunctionCallReference> functionCallbackMap = new HashMap<>();
         Map<String, EventReference> eventMap = new HashMap<>();
@@ -223,12 +224,12 @@ public class FunctionParserTest {
         eventMap.put("uuid_WAIT",EventParser.getEventReference("WAIT","wait","wait description",Void.class, EventPriority.DEFAULT));
         List<Function> functions = FunctionParser.parseFunctionHandlers("uuid","de.fhg.ipa.vfk.msb.client.parser.entities",new Object[]{this},functionCallbackMap,eventMap);
 
-        Assert.assertEquals("functions size not equals",4, functions.size());
-        Assert.assertEquals("function call references size not equals", 4, functionCallbackMap.size());
+        Assertions.assertEquals(4, functions.size(), "functions size not equals");
+        Assertions.assertEquals( 4, functionCallbackMap.size(), "function call references size not equals");
     }
 
     @Test
-    public void testParseFunctionByClass() throws JsonProcessingException {
+    void testParseFunctionByClass() throws JsonProcessingException {
         LOG.info("testParseFunctionByClass");
         Map<String, FunctionCallReference> functionCallbackMap = new HashMap<>();
         Map<String, EventReference> eventMap = new HashMap<>();
@@ -236,12 +237,12 @@ public class FunctionParserTest {
         eventMap.put("uuid_WAIT", EventParser.getEventReference("WAIT", "wait", "wait description", Void.class, EventPriority.DEFAULT));
         List<Function> functions = FunctionParser.parseFunctionHandlers("uuid", new Object[]{FunctionParserTest.class}, functionCallbackMap, eventMap);
 
-        Assert.assertEquals("functions size not equals", 4, functions.size());
-        Assert.assertEquals("function call references size not equals", 4, functionCallbackMap.size());
+        Assertions.assertEquals(4, functions.size(), "functions size not equals");
+        Assertions.assertEquals( 4, functionCallbackMap.size(), "function call references size not equals");
     }
 
     @Test
-    public void testAddFunction() throws NoSuchMethodException {
+    void testAddFunction() throws NoSuchMethodException {
         Map<String, EventReference> eventMap = new HashMap<>();
         eventMap.put("uuid_START", EventParser.getEventReference("START", "start", "start description", Void.class, EventPriority.DEFAULT));
         Map<String, Type> callbackParameters = new HashMap<>();
@@ -253,99 +254,101 @@ public class FunctionParserTest {
         FunctionCallReference functionCallReference = FunctionParser.addFunction("uuid", "printString", "printString", "print a string",
                 this, stringMethod, callbackParameters, new String[]{"START"},eventMap);
 
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference);
-        Assert.assertEquals("method of function call reference not equals", stringMethod, functionCallReference.getMethod());
-        Assert.assertEquals("functionHandler class of function call reference not equals", this, functionCallReference.getFunctionHandlerInstance());
-        Assert.assertEquals("dataFormat of function call reference not equals", "{\"arg0\":{\"type\":\"string\"}}", functionCallReference.getDataFormat());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference.getParameters());
-        Assert.assertEquals("parameters of function call reference is empty",1, functionCallReference.getParameters().size());
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference.getResponseEvents());
-        Assert.assertEquals("response events of function call reference is empty",1, functionCallReference.getResponseEvents().size());
+        Assertions.assertNotNull(functionCallReference,"response events of function call reference is null");
+        Assertions.assertEquals(stringMethod, functionCallReference.getMethod(),"method of function call reference not equals");
+        Assertions.assertEquals(this, functionCallReference.getFunctionHandlerInstance(),"functionHandler class of function call reference not equals");
+        Assertions.assertEquals("{\"arg0\":{\"type\":\"string\"}}", functionCallReference.getDataFormat(),"dataFormat of function call reference not equals");
+        Assertions.assertNotNull(functionCallReference.getParameters(),"parameters of function call reference is null");
+        Assertions.assertEquals(1, functionCallReference.getParameters().size(),"parameters of function call reference is empty");
+        Assertions.assertNotNull(functionCallReference.getResponseEvents(), "response events of function call reference is null");
+        Assertions.assertEquals(1, functionCallReference.getResponseEvents().size(), "response events of function call reference is empty");
 
         Function function = functionCallReference.getFunction();
-        Assert.assertNotNull("function of function call reference is null",function);
-        Assert.assertEquals("functionId not equals","printString",function.getFunctionId());
-        Assert.assertEquals("name not equals","printString",function.getName());
-        Assert.assertEquals("description not equals","print a string",function.getDescription());
-        Assert.assertNotNull("data format is null",function.getDataFormat());
-        Assert.assertNotNull("response events is null",function.getResponseEvents());
+        Assertions.assertNotNull(function, "function of function call reference is null");
+        Assertions.assertEquals("printString",function.getFunctionId(), "functionId not equals");
+        Assertions.assertEquals("printString",function.getName(), "name not equals");
+        Assertions.assertEquals("print a string",function.getDescription(), "description not equals");
+        Assertions.assertNotNull(function.getDataFormat(), "data format is null");
+        Assertions.assertNotNull(function.getResponseEvents(), "response events is null");
     }
 
     @Test
-    public void testAddFunctionWithoutMethod() {
+    void testAddFunctionWithoutMethod() {
         Map<String, Type> callbackParameters = new HashMap<>();
         callbackParameters.put("arg0",String.class);
         FunctionCallReference functionCallReference = FunctionParser.addFunction("uuid", "printString", "printString", "print a string",
                 this, null, callbackParameters, new String[0], new HashMap<String, EventReference>());
 
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference);
-        Assert.assertNull("method of function call reference not null", functionCallReference.getMethod());
-        Assert.assertEquals("functionHandler class of function call reference not equals", this, functionCallReference.getFunctionHandlerInstance());
-        Assert.assertEquals("dataFormat of function call reference not equals", "{\"arg0\":{\"type\":\"string\"}}", functionCallReference.getDataFormat());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference.getParameters());
-        Assert.assertEquals("parameters of function call reference is empty",1,functionCallReference.getParameters().size());
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference.getResponseEvents());
-        Assert.assertTrue("response events of function call reference is empty",functionCallReference.getResponseEvents().isEmpty());
+        Assertions.assertNotNull(functionCallReference,"response events of function call reference is null");
+        Assertions.assertNull(functionCallReference.getMethod(), "method of function call reference not null");
+        Assertions.assertEquals(this, functionCallReference.getFunctionHandlerInstance(),"functionHandler class of function call reference not equals");
+        Assertions.assertEquals("{\"arg0\":{\"type\":\"string\"}}", functionCallReference.getDataFormat(),"dataFormat of function call reference not equals");
+        Assertions.assertNotNull(functionCallReference.getParameters(),"parameters of function call reference is null");
+        Assertions.assertEquals(1, functionCallReference.getParameters().size(),"parameters of function call reference is empty");
+        Assertions.assertNotNull(functionCallReference.getResponseEvents(),"response events of function call reference is null");
+        Assertions.assertTrue(functionCallReference.getResponseEvents().isEmpty(), "response events of function call reference is empty");
     }
 
     @Test
-    public void testAddFunctionWitNullResponseEvents() {
+    void testAddFunctionWitNullResponseEvents() {
         Map<String, Type> callbackParameters = new HashMap<>();
         callbackParameters.put("arg0",String.class);
         FunctionCallReference functionCallReference = FunctionParser.addFunction("uuid", "printString", "printString", "print a string",
                 this, null, callbackParameters, null, new HashMap<String, EventReference>());
 
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference);
-        Assert.assertNull("method of function call reference not null", functionCallReference.getMethod());
-        Assert.assertEquals("functionHandler class of function call reference not equals", this, functionCallReference.getFunctionHandlerInstance());
-        Assert.assertEquals("dataFormat of function call reference not equals", "{\"arg0\":{\"type\":\"string\"}}", functionCallReference.getDataFormat());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference.getParameters());
-        Assert.assertEquals("parameters of function call reference is empty",1,functionCallReference.getParameters().size());
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference.getResponseEvents());
-        Assert.assertTrue("response events of function call reference is empty",functionCallReference.getResponseEvents().isEmpty());
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testAddFunctionWithNotExistingResponseEvent() {
-        Map<String, Type> callbackParameters = new HashMap<>();
-        callbackParameters.put("arg0",String.class);
-        FunctionCallReference functionCallReference = FunctionParser.addFunction("uuid", "printString", "printString", "print a string",
-                this, null, callbackParameters, new String[]{"Not_Existing_Event"}, new HashMap<>());
-
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference);
-        Assert.assertNull("method of function call reference not null", functionCallReference.getMethod());
-        Assert.assertEquals("functionHandler class of function call reference not equals", this, functionCallReference.getFunctionHandlerInstance());
-        Assert.assertEquals("dataFormat of function call reference not equals", "{\"arg0\":{\"type\":\"string\"}}", functionCallReference.getDataFormat());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference.getParameters());
-        Assert.assertEquals("parameters of function call reference is empty",1,functionCallReference.getParameters().size());
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference.getResponseEvents());
-        Assert.assertTrue("response events of function call reference is empty",functionCallReference.getResponseEvents().isEmpty());
+        Assertions.assertNotNull(functionCallReference,"response events of function call reference is null");
+        Assertions.assertNull(functionCallReference.getMethod(), "method of function call reference not null");
+        Assertions.assertEquals(this, functionCallReference.getFunctionHandlerInstance(),"functionHandler class of function call reference not equals");
+        Assertions.assertEquals("{\"arg0\":{\"type\":\"string\"}}", functionCallReference.getDataFormat(),"dataFormat of function call reference not equals");
+        Assertions.assertNotNull(functionCallReference.getParameters(),"parameters of function call reference is null");
+        Assertions.assertEquals(1, functionCallReference.getParameters().size(),"parameters of function call reference is empty");
+        Assertions.assertNotNull(functionCallReference.getResponseEvents(),"response events of function call reference is null");
+        Assertions.assertTrue(functionCallReference.getResponseEvents().isEmpty(), "response events of function call reference is empty");
     }
 
     @Test
-    public void testEmpty() {
+    void testAddFunctionWithNotExistingResponseEvent() {
+        Map<String, Type> callbackParameters = new HashMap<>();
+        callbackParameters.put("arg0",String.class);
+        Assertions.assertThrows(IllegalStateException.class, ()-> {
+            FunctionCallReference functionCallReference = FunctionParser.addFunction("uuid", "printString", "printString", "print a string",
+                    this, null, callbackParameters, new String[]{"Not_Existing_Event"}, new HashMap<>());
+
+            Assertions.assertNotNull(functionCallReference,"response events of function call reference is null");
+            Assertions.assertNull(functionCallReference.getMethod(), "method of function call reference not null");
+            Assertions.assertEquals(this, functionCallReference.getFunctionHandlerInstance(),"functionHandler class of function call reference not equals");
+            Assertions.assertEquals("{\"arg0\":{\"type\":\"string\"}}", functionCallReference.getDataFormat(),"dataFormat of function call reference not equals");
+            Assertions.assertNotNull(functionCallReference.getParameters(),"parameters of function call reference is null");
+            Assertions.assertEquals(1, functionCallReference.getParameters().size(),"parameters of function call reference is empty");
+            Assertions.assertNotNull(functionCallReference.getResponseEvents(),"response events of function call reference is null");
+            Assertions.assertTrue(functionCallReference.getResponseEvents().isEmpty(), "response events of function call reference is empty");
+        });
+    }
+
+    @Test
+    void testEmpty() {
         FunctionCallReference functionCallReference = FunctionParser.addFunction("uuid", "printString", "printString", "print a string",
                 null, null, null, null, new HashMap<>());
 
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference);
-        Assert.assertNull("method of function call reference not null", functionCallReference.getMethod());
-        Assert.assertNull("functionHandler class of function call reference not equals", functionCallReference.getFunctionHandlerInstance());
-        Assert.assertEquals("dataFormat of function call reference not equals", "{}", functionCallReference.getDataFormat());
-        Assert.assertNotNull("parameters of function call reference is null", functionCallReference.getParameters());
-        Assert.assertTrue("parameters of function call reference is empty", functionCallReference.getParameters().isEmpty());
-        Assert.assertNotNull("response events of function call reference is null", functionCallReference.getResponseEvents());
-        Assert.assertTrue("response events of function call reference is empty",functionCallReference.getResponseEvents().isEmpty());
+        Assertions.assertNotNull(functionCallReference,"response events of function call reference is null");
+        Assertions.assertNull(functionCallReference.getMethod(), "method of function call reference not null");
+        Assertions.assertNull(functionCallReference.getFunctionHandlerInstance(),"functionHandler class of function call reference not equals");
+        Assertions.assertEquals("{}", functionCallReference.getDataFormat(),"dataFormat of function call reference not equals");
+        Assertions.assertNotNull(functionCallReference.getParameters(),"parameters of function call reference is null");
+        Assertions.assertTrue(functionCallReference.getParameters().isEmpty(), "parameters of function call reference is empty");
+        Assertions.assertNotNull(functionCallReference.getResponseEvents(),"response events of function call reference is null");
+        Assertions.assertTrue(functionCallReference.getResponseEvents().isEmpty(), "response events of function call reference is empty");
     }
 
     @Test
-    public void testParseFunctionFailsByConstructor() throws JsonProcessingException {
+    void testParseFunctionFailsByConstructor() throws JsonProcessingException {
         LOG.info("testParseFunctionByInstance");
         Map<String, FunctionCallReference> functionCallbackMap = new HashMap<>();
         Map<String, EventReference> eventMap = new HashMap<>();
         List<Function> functions = FunctionParser.parseFunctionHandlers("uuid", new Class[]{FailingClazz.class}, functionCallbackMap, eventMap);
 
-        Assert.assertEquals("functions size not equals",0, functions.size());
-        Assert.assertEquals("function call references size not equals", 0, functionCallbackMap.size());
+        Assertions.assertEquals(0, functions.size(), "functions size not equals");
+        Assertions.assertEquals( 0, functionCallbackMap.size(), "function call references size not equals");
     }
 
     @FunctionCall(path="/print")
@@ -385,7 +388,7 @@ public class FunctionParserTest {
     @FunctionHandler(path="FunctionParserTest.FailingClazz")
     public static class FailingClazz {
 
-        public FailingClazz(String missingDefaultConstructor){ }
+        FailingClazz(String missingDefaultConstructor){ }
 
     }
 }

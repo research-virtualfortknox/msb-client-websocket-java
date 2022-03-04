@@ -21,8 +21,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ListProcessingReport;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 /**
@@ -30,7 +30,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
  *
  * @author des
  */
-public class DataFormatValidatorTest {
+class DataFormatValidatorTest {
 
     /**
      * Test validate event json.
@@ -39,10 +39,10 @@ public class DataFormatValidatorTest {
      * @throws ProcessingException     the processing exception
      */
     @Test
-	public void testValidateEventJson() throws JsonProcessingException, ProcessingException{
+	void testValidateEventJson() throws JsonProcessingException, ProcessingException{
 		String s = "{\"dataObject\":{\"type\":\"integer\",\"format\":\"int32\"}}";
 		ListProcessingReport lp = DataFormatValidator.validateEventDataformat(s);
-		Assert.assertTrue(lp.toString(),lp.isSuccess());
+		Assertions.assertTrue(lp.isSuccess(), lp.toString());
 	}
 
     /**
@@ -52,11 +52,11 @@ public class DataFormatValidatorTest {
      * @throws ProcessingException     the processing exception
      */
     @Test
-	public void testValidateEventObjectJson() throws JsonProcessingException, ProcessingException, JSONException {
+	void testValidateEventObjectJson() throws JsonProcessingException, ProcessingException, JSONException {
 		String s = DataFormatParser.parseToString(DataFormatParserTest.InnerTestObject.class);
 		JSONAssert.assertEquals("{\"dataObject\":{\"$ref\":\"#/definitions/InnerTestObject\"},\"InnerTestObject\":{\"type\":\"object\",\"properties\":{\"integer\":{\"type\":\"integer\",\"format\":\"int32\"},\"list\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"map\":{\"type\":\"object\",\"additionalProperties\":{\"type\":\"string\"}}}}}", s,true);
 		ListProcessingReport lp = DataFormatValidator.validateEventDataformat(s);
-		Assert.assertTrue(lp.toString(),lp.isSuccess());
+		Assertions.assertTrue(lp.isSuccess(), lp.toString());
 	}
 
     /**
@@ -66,10 +66,10 @@ public class DataFormatValidatorTest {
      * @throws ProcessingException     the processing exception
      */
     @Test
-	public void testValidateEventFailingJson() throws JsonProcessingException, ProcessingException{
+	void testValidateEventFailingJson() throws JsonProcessingException, ProcessingException{
 		String s = "{\"failing schema\"}";
 		ListProcessingReport lp = DataFormatValidator.validateEventDataformat(s);
-		Assert.assertFalse(lp.toString(),lp.isSuccess());
+		Assertions.assertFalse(lp.isSuccess(), lp.toString());
 	}
 
     /**
@@ -79,10 +79,10 @@ public class DataFormatValidatorTest {
      * @throws ProcessingException     the processing exception
      */
     @Test
-	public void testValidateEventJsonWithoutDataObject() throws JsonProcessingException, ProcessingException{
+	void testValidateEventJsonWithoutDataObject() throws JsonProcessingException, ProcessingException{
 		String s = "{\"xyz\":{\"$ref\":\"#/definitions/InnerTestObject\"},\"InnerTestObject\":{\"type\":\"object\",\"properties\":{\"integer\":{\"type\":\"integer\",\"format\":\"int32\"},\"list\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"map\":{\"type\":\"object\",\"additionalProperties\":{\"type\":\"string\"}}}}}";
 		ListProcessingReport lp = DataFormatValidator.validateEventDataformat(s);
-		Assert.assertFalse(lp.toString(),lp.isSuccess());
+		Assertions.assertFalse(lp.isSuccess(), lp.toString());
 	}
 
     /**
@@ -92,10 +92,10 @@ public class DataFormatValidatorTest {
      * @throws ProcessingException     the processing exception
      */
     @Test
-	public void testValidateMirroredEventObjectJson() throws JsonProcessingException, ProcessingException{
+	void testValidateMirroredEventObjectJson() throws JsonProcessingException, ProcessingException{
         String s = "{\"InnerTestObject\":{\"type\":\"object\",\"properties\":{\"integer\":{\"type\":\"integer\",\"format\":\"int32\"},\"list\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"map\":{\"type\":\"object\",\"additionalProperties\":{\"type\":\"string\"}}}},\"dataObject\":{\"$ref\":\"#/definitions/InnerTestObject\"}}";
 		ListProcessingReport lp = DataFormatValidator.validateEventDataformat(s);
-		Assert.assertTrue(lp.toString(),lp.isSuccess());
+		Assertions.assertTrue(lp.isSuccess(), lp.toString());
 	}
 
     /**
@@ -105,10 +105,10 @@ public class DataFormatValidatorTest {
      * @throws ProcessingException     the processing exception
      */
     @Test
-	public void testValidateFunctionJsonWithoutDataObject() throws JsonProcessingException, ProcessingException{
+	void testValidateFunctionJsonWithoutDataObject() throws JsonProcessingException, ProcessingException{
 		String s = "{\"xyz\":{\"$ref\":\"#/definitions/InnerTestObject\"},\"InnerTestObject\":{\"type\":\"object\",\"properties\":{\"integer\":{\"type\":\"integer\",\"format\":\"int32\"},\"list\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"map\":{\"type\":\"object\",\"additionalProperties\":{\"type\":\"string\"}}}}}";
 		ListProcessingReport lp = DataFormatValidator.validateFunctionDataformat(s);
-		Assert.assertTrue(lp.toString(),lp.isSuccess());
+		Assertions.assertTrue(lp.isSuccess(), lp.toString());
 	}
 
     /**
@@ -118,10 +118,10 @@ public class DataFormatValidatorTest {
      * @throws ProcessingException     the processing exception
      */
     @Test
-	public void testValidateFunctionFailingJson() throws JsonProcessingException, ProcessingException{
+	void testValidateFunctionFailingJson() throws JsonProcessingException, ProcessingException{
 		String s = "{\"failing schema\"}";
 		ListProcessingReport lp = DataFormatValidator.validateFunctionDataformat(s);
-		Assert.assertFalse(lp.toString(),lp.isSuccess());
+		Assertions.assertFalse(lp.isSuccess(), lp.toString());
 	}
 
     /**
@@ -131,11 +131,11 @@ public class DataFormatValidatorTest {
      * @throws ProcessingException     the processing exception
      */
     @Test
-	public void testValidateFunctionObjectJson() throws JsonProcessingException, ProcessingException, JSONException {
+	void testValidateFunctionObjectJson() throws JsonProcessingException, ProcessingException, JSONException {
 		String s = DataFormatParser.parseToString(DataFormatParserTest.InnerTestObject.class);
 		JSONAssert.assertEquals("{\"dataObject\":{\"$ref\":\"#/definitions/InnerTestObject\"},\"InnerTestObject\":{\"type\":\"object\",\"properties\":{\"integer\":{\"type\":\"integer\",\"format\":\"int32\"},\"list\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"map\":{\"type\":\"object\",\"additionalProperties\":{\"type\":\"string\"}}}}}", s,true);
 		ListProcessingReport lp = DataFormatValidator.validateFunctionDataformat(s);
-		Assert.assertTrue(lp.toString(),lp.isSuccess());
+		Assertions.assertTrue(lp.isSuccess(), lp.toString());
 	}
 
 }

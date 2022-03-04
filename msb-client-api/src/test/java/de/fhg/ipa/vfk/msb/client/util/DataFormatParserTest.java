@@ -20,8 +20,8 @@ package de.fhg.ipa.vfk.msb.client.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import de.fhg.ipa.vfk.msb.client.api.DataFormat;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class DataFormatParserTest {
 	 * @throws JsonProcessingException the json processing exception
 	 */
 	@Test
-	public void testParseObjectToString() throws JsonProcessingException, JSONException {
+	void testParseObjectToString() throws JsonProcessingException, JSONException {
 		String s = DataFormatParser.parseToString(InnerTestObject.class);
 		JSONAssert.assertEquals("{\"dataObject\":{\"$ref\":\"#/definitions/InnerTestObject\"},\"InnerTestObject\":{\"type\":\"object\",\"properties\":{\"integer\":{\"type\":\"integer\",\"format\":\"int32\"},\"list\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"map\":{\"type\":\"object\",\"additionalProperties\":{\"type\":\"string\"}}}}}", s,true);
 	}
@@ -50,9 +50,9 @@ public class DataFormatParserTest {
 	 * Test parse short.
 	 */
 	@Test
-	public void testParseShort() {
+	void testParseShort() {
 		DataFormat dataFormat = new DataFormat(DataFormatParser.parse("test", Short.class));
-		Assert.assertEquals("{\"test\":{\"type\":\"integer\",\"format\":\"int32\",\"minimum\":-32768,\"maximum\":32767}}", dataFormat.toString());
+		Assertions.assertEquals("{\"test\":{\"type\":\"integer\",\"format\":\"int32\",\"minimum\":-32768,\"maximum\":32767}}", dataFormat.toString());
 	}
 
 	/**
@@ -61,13 +61,13 @@ public class DataFormatParserTest {
 	 * @throws IOException the io exception
 	 */
 	@Test
-	public void testReadString() throws IOException {
+	void testReadString() throws IOException {
 		Map<String, Object> dataFormat = DataFormatParser.readFromString("{\"dataObject\":{\"$ref\":\"#/definitions/InnerTestObject\"},\"InnerTestObject\":{\"type\":\"object\",\"properties\":{\"integer\":{\"type\":\"integer\",\"format\":\"int32\"},\"list\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"map\":{\"type\":\"object\",\"additionalProperties\":{\"type\":\"string\"}}}}}");
-		Assert.assertEquals(2,dataFormat.keySet().size());
-		Assert.assertTrue(dataFormat.containsKey("dataObject"));
-		Assert.assertTrue(dataFormat.containsKey("InnerTestObject"));
-		Assert.assertEquals(1,((Map<String, Object>)dataFormat.get("dataObject")).keySet().size());
-		Assert.assertTrue(((Map<String, Object>)dataFormat.get("dataObject")).containsKey("$ref"));
+		Assertions.assertEquals(2,dataFormat.keySet().size());
+		Assertions.assertTrue(dataFormat.containsKey("dataObject"));
+		Assertions.assertTrue(dataFormat.containsKey("InnerTestObject"));
+		Assertions.assertEquals(1,((Map<String, Object>)dataFormat.get("dataObject")).keySet().size());
+		Assertions.assertTrue(((Map<String, Object>)dataFormat.get("dataObject")).containsKey("$ref"));
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class DataFormatParserTest {
 	 * @throws JsonProcessingException the json processing exception
 	 */
 	@Test
-	public void testParseNestedObjects() throws JsonProcessingException, JSONException {
+	void testParseNestedObjects() throws JsonProcessingException, JSONException {
 		String s = DataFormatParser.parseToString(TestObject.class);
 		JSONAssert.assertEquals("{\"dataObject\":{\"$ref\":\"#/definitions/TestObject\"},"
 				+ "\"InnerTestObject\":{\"type\":\"object\","

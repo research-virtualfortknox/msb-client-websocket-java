@@ -24,8 +24,8 @@ import de.fhg.ipa.vfk.msb.client.annotation.EventDeclaration;
 import de.fhg.ipa.vfk.msb.client.annotation.Events;
 import de.fhg.ipa.vfk.msb.client.api.Event;
 import de.fhg.ipa.vfk.msb.client.api.messages.EventPriority;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ import java.util.Map;
         @EventDeclaration(eventId = "WAIT", name = "Wait", description = "start waiting", dataType = String[].class),
 
 })
-public class EventParserTest {
+class EventParserTest {
 
     private final static Logger LOG = LoggerFactory.getLogger(EventParserTest.class);
 
@@ -54,41 +54,43 @@ public class EventParserTest {
      * @throws JsonProcessingException the json processing exception
      */
     @Test
-    public void testParseEventByPackageScan() throws JsonProcessingException {
+    void testParseEventByPackageScan() throws JsonProcessingException {
         Map<String, EventReference> eventMap = new HashMap<>();
         List<Event> events = EventParser.parseEvents("uuid","de.fhg.ipa.vfk.msb.client.parser", eventMap);
 
         LOG.debug("eventReference: {}",eventMap);
-        Assert.assertEquals("events size not equals", 3, events.size());
-        Assert.assertEquals("event references size not equals", 3, eventMap.size());
+        Assertions.assertEquals(3, events.size(), "events size not equals");
+        Assertions.assertEquals(3, eventMap.size(), "event references size not equals");
 
         EventReference eventReference = eventMap.get("uuid_START");
-        Assert.assertNotNull("event reference is null", eventReference);
-        Assert.assertNull("data format of event reference is null", eventReference.getDataFormat());
-        Assert.assertNotNull("data type of event reference is null", eventReference.getDataType());
-        Assert.assertNotNull("name of event reference is null", eventReference.getName());
-        Assert.assertNotNull("priority of event reference is null", eventReference.getPriority());
+        Assertions.assertNotNull(eventReference, "event reference is null");
+        Assertions.assertNull(eventReference.getDataFormat(), "data format of event reference is null");
+        Assertions.assertNotNull(eventReference.getDataType(), "data type of event reference is null");
+        Assertions.assertNotNull(eventReference.getName(), "name of event reference is null");
+        Assertions.assertNotNull(eventReference.getPriority(), "priority of event reference is null");
 
         Event event = eventReference.getEvent();
-        Assert.assertNotNull("event of event reference is null", event);
-        Assert.assertTrue("events not contains event",events.contains(event));
-        Assert.assertEquals("eventId not equals", "START", event.getEventId());
-        Assert.assertEquals("name not equals", "Start", event.getName());
-        Assert.assertEquals("description not equals", "started", event.getDescription());
-        Assert.assertNull("data format is not null", event.getDataFormat());
+        Assertions.assertNotNull(event, "event of event reference is null");
+        Assertions.assertTrue(events.contains(event), "events not contains event");
+        Assertions.assertEquals( "START", event.getEventId(), "eventId not equals");
+        Assertions.assertEquals( "Start", event.getName(),"name not equals");
+        Assertions.assertEquals("started", event.getDescription(), "description not equals");
+        Assertions.assertNull(event.getDataFormat(), "data format is not null");
 
         EventReference eventReference2 = eventMap.get("uuid_WAIT");
-        Assert.assertNotNull("event reference is null", eventReference2);
-        Assert.assertNotNull("data format of event reference is null", eventReference2.getDataFormat());
-        Assert.assertNotNull("data type of event reference is null", eventReference2.getDataType());
+        Assertions.assertNotNull(eventReference2, "event reference is null");
+        Assertions.assertNotNull(eventReference2.getDataFormat(),"data format of event reference is null");
+        Assertions.assertNotNull(eventReference2.getDataType(),"data type of event reference is null");
+        Assertions.assertNotNull(eventReference2.getName(), "name of event reference is null");
+        Assertions.assertNotNull(eventReference2.getPriority(),"priority of event reference is null");
 
         Event event2 = eventReference2.getEvent();
-        Assert.assertNotNull("event of event reference is null", event2);
-        Assert.assertTrue("events not contains event",events.contains(event2));
-        Assert.assertEquals("eventId not equals", "WAIT", event2.getEventId());
-        Assert.assertEquals("name not equals", "Wait", event2.getName());
-        Assert.assertEquals("description not equals", "start waiting", event2.getDescription());
-        Assert.assertNotNull("data format is null", event2.getDataFormat());
+        Assertions.assertNotNull(event2,"event of event reference is null");
+        Assertions.assertTrue(events.contains(event2),"events not contains event");
+        Assertions.assertEquals("WAIT", event2.getEventId(),"eventId not equals");
+        Assertions.assertEquals("Wait", event2.getName(), "name not equals");
+        Assertions.assertEquals("start waiting", event2.getDescription(), "description not equals");
+        Assertions.assertNotNull(event2.getDataFormat(), "data format is null");
     }
 
     /**
@@ -97,70 +99,70 @@ public class EventParserTest {
      * @throws JsonProcessingException the json processing exception
      */
     @Test
-    public void testParseEventByInstance() throws JsonProcessingException {
+    void testParseEventByInstance() throws JsonProcessingException {
         Map<String, EventReference> eventMap = new HashMap<>();
         List<Class<?>> annotatedClasses = new ArrayList<>();
         annotatedClasses.add(EventParserTest.class);
         List<Event> events = EventParser.parseEvents("uuid",annotatedClasses, eventMap);
 
         LOG.debug("eventReference: {}",eventMap);
-        Assert.assertEquals("events size not equals", 2, events.size());
-        Assert.assertEquals("event references size not equals", 2, eventMap.size());
+        Assertions.assertEquals(2, events.size(), "events size not equals");
+        Assertions.assertEquals(2, eventMap.size(), "event references size not equals");
 
         EventReference eventReference = eventMap.get("uuid_START");
-        Assert.assertNotNull("event reference is null", eventReference);
-        Assert.assertNull("data format of event reference is null", eventReference.getDataFormat());
-        Assert.assertNotNull("data type of event reference is null", eventReference.getDataType());
-        Assert.assertNotNull("name of event reference is null", eventReference.getName());
-        Assert.assertNotNull("priority of event reference is null", eventReference.getPriority());
+        Assertions.assertNotNull(eventReference, "event reference is null");
+        Assertions.assertNull(eventReference.getDataFormat(), "data format of event reference is null");
+        Assertions.assertNotNull(eventReference.getDataType(), "data type of event reference is null");
+        Assertions.assertNotNull(eventReference.getName(), "name of event reference is null");
+        Assertions.assertNotNull(eventReference.getPriority(), "priority of event reference is null");
 
         Event event = eventReference.getEvent();
-        Assert.assertNotNull("event of event reference is null", event);
-        Assert.assertTrue("events not contains event",events.contains(event));
-        Assert.assertEquals("eventId not equals", "START", event.getEventId());
-        Assert.assertEquals("name not equals", "Start", event.getName());
-        Assert.assertEquals("description not equals", "started", event.getDescription());
-        Assert.assertNull("data format is not null", event.getDataFormat());
+        Assertions.assertNotNull(event, "event of event reference is null");
+        Assertions.assertTrue(events.contains(event), "events not contains event");
+        Assertions.assertEquals( "START", event.getEventId(), "eventId not equals");
+        Assertions.assertEquals( "Start", event.getName(),"name not equals");
+        Assertions.assertEquals("started", event.getDescription(), "description not equals");
+        Assertions.assertNull(event.getDataFormat(), "data format is not null");
 
         EventReference eventReference2 = eventMap.get("uuid_WAIT");
-        Assert.assertNotNull("event reference is null", eventReference2);
-        Assert.assertNotNull("data format of event reference is null", eventReference2.getDataFormat());
-        Assert.assertNotNull("data type of event reference is null", eventReference2.getDataType());
-        Assert.assertNotNull("name of event reference is null", eventReference2.getName());
-        Assert.assertNotNull("priority of event reference is null", eventReference2.getPriority());
+        Assertions.assertNotNull(eventReference2, "event reference is null");
+        Assertions.assertNotNull(eventReference2.getDataFormat(),"data format of event reference is null");
+        Assertions.assertNotNull(eventReference2.getDataType(),"data type of event reference is null");
+        Assertions.assertNotNull(eventReference2.getName(), "name of event reference is null");
+        Assertions.assertNotNull(eventReference2.getPriority(),"priority of event reference is null");
 
         Event event2 = eventReference2.getEvent();
-        Assert.assertNotNull("event of event reference is null", event2);
-        Assert.assertTrue("events not contains event",events.contains(event2));
-        Assert.assertEquals("eventId not equals", "WAIT", event2.getEventId());
-        Assert.assertEquals("name not equals", "Wait", event2.getName());
-        Assert.assertEquals("description not equals", "start waiting", event2.getDescription());
-        Assert.assertNotNull("data format is null", event2.getDataFormat());
+        Assertions.assertNotNull(event2,"event of event reference is null");
+        Assertions.assertTrue(events.contains(event2),"events not contains event");
+        Assertions.assertEquals("WAIT", event2.getEventId(),"eventId not equals");
+        Assertions.assertEquals("Wait", event2.getName(), "name not equals");
+        Assertions.assertEquals("start waiting", event2.getDescription(), "description not equals");
+        Assertions.assertNotNull(event2.getDataFormat(), "data format is null");
     }
 
     /**
      * Test add event.
      */
     @Test
-    public void testAddEvent() {
+    void testAddEvent() {
         Map<String, EventReference> eventMap = new HashMap<>();
         List<Event> events = new ArrayList<>();
         EventParser.addEvent("uuid",eventMap,events,"TEST","test","", NullNode.class,EventPriority.MEDIUM);
 
         EventReference eventReference = eventMap.get("uuid_TEST");
-        Assert.assertNotNull("event reference is null", eventReference);
-        Assert.assertNull("data format of event reference is null", eventReference.getDataFormat());
-        Assert.assertNotNull("data type of event reference is null", eventReference.getDataType());
-        Assert.assertNotNull("name of event reference is null", eventReference.getName());
-        Assert.assertNotNull("priority of event reference is null", eventReference.getPriority());
+        Assertions.assertNotNull(eventReference, "event reference is null");
+        Assertions.assertNull(eventReference.getDataFormat(), "data format of event reference is null");
+        Assertions.assertNotNull(eventReference.getDataType(), "data type of event reference is null");
+        Assertions.assertNotNull(eventReference.getName(), "name of event reference is null");
+        Assertions.assertNotNull(eventReference.getPriority(), "priority of event reference is null");
 
         Event event = eventReference.getEvent();
-        Assert.assertNotNull("event of event reference is null", event);
-        Assert.assertTrue("events not contains event",events.contains(event));
-        Assert.assertEquals("eventId not equals", "TEST", event.getEventId());
-        Assert.assertEquals("name not equals", "test", event.getName());
-        Assert.assertEquals("description not equals", "", event.getDescription());
-        Assert.assertNull("data format is not null", event.getDataFormat());
+        Assertions.assertNotNull(event, "event of event reference is null");
+        Assertions.assertTrue(events.contains(event), "events not contains event");
+        Assertions.assertEquals( "TEST", event.getEventId(), "eventId not equals");
+        Assertions.assertEquals( "test", event.getName(),"name not equals");
+        Assertions.assertEquals("", event.getDescription(), "description not equals");
+        Assertions.assertNull(event.getDataFormat(), "data format is not null");
 
         LOG.debug("eventReference: {}",eventReference.toString());
     }

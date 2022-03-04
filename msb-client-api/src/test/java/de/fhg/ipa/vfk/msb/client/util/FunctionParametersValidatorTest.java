@@ -19,8 +19,8 @@
 package de.fhg.ipa.vfk.msb.client.util;
 
 import de.fhg.ipa.vfk.msb.client.api.AllTypes;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,114 +30,114 @@ import java.util.Map;
  *
  * @author des
  */
-public class FunctionParametersValidatorTest {
+class FunctionParametersValidatorTest {
 
     /**
      * Validate correct none function parameter.
      */
     @Test
-    public void validateCorrectNoneFunctionParameter() {
+    void validateCorrectNoneFunctionParameter() {
         String jsonDataFormatString = "{}";
-        Assert.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, null));
+        Assertions.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, null));
     }
 
     /**
      * Validate incorrect none function parameter.
      */
     @Test
-    public void validateIncorrectNoneFunctionParameter() {
+    void validateIncorrectNoneFunctionParameter() {
         String jsonDataFormatString = "{}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", "");
 
-        Assert.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
     /**
      * Validate correct simple function parameter.
      */
     @Test
-    public void validateCorrectSimpleFunctionParameter() {
+    void validateCorrectSimpleFunctionParameter() {
         String jsonDataFormatString = "{\"param\": {\"type\": \"boolean\"}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", true);
 
-        Assert.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
     /**
      * Validate incorrect simple function parameter type.
      */
     @Test
-    public void validateIncorrectSimpleFunctionParameterType() {
+    void validateIncorrectSimpleFunctionParameterType() {
         String jsonDataFormatString = "{\"param\": {\"type\": \"boolean\"}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", "");
 
-        Assert.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
     /**
      * Validate incorrect simple function parameter name.
      */
     @Test
-    public void validateIncorrectSimpleFunctionParameterName() {
+    void validateIncorrectSimpleFunctionParameterName() {
         String jsonDataFormatString = "{\"param\": {\"type\": \"boolean\"}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("test", true);
 
-        Assert.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
     /**
      * Validate correct simple function parameters.
      */
     @Test
-    public void validateCorrectSimpleFunctionParameters() {
+    void validateCorrectSimpleFunctionParameters() {
         String jsonDataFormatString = "{\"param\": {\"type\": \"boolean\"}, \"param2\": {\"type\": \"string\"}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", true);
         dataObject.put("param2", "test");
 
-        Assert.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
     /**
      * Validate incorrect simple function parameters type.
      */
     @Test
-    public void validateIncorrectSimpleFunctionParametersType() {
+    void validateIncorrectSimpleFunctionParametersType() {
         String jsonDataFormatString = "{\"param\": {\"type\": \"boolean\"}, \"param2\": {\"type\": \"string\"}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", true);
         dataObject.put("param2", true);
 
-        Assert.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
     /**
      * Validate incorrect simple function parameters name.
      */
     @Test
-    public void validateIncorrectSimpleFunctionParametersName() {
+    void validateIncorrectSimpleFunctionParametersName() {
         String jsonDataFormatString = "{\"param\": {\"type\": \"boolean\"}, \"param2\": {\"type\": \"string\"}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", true);
         dataObject.put("test", "");
 
-        Assert.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
     /**
      * Validate incorrect simple function parameters count.
      */
     @Test
-    public void validateIncorrectSimpleFunctionParametersCount() {
+    void validateIncorrectSimpleFunctionParametersCount() {
         String jsonDataFormatString = "{\"param\": {\"type\": \"boolean\"}, \"param2\": {\"type\": \"string\"}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", true);
 
-        Assert.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
 
@@ -145,7 +145,7 @@ public class FunctionParametersValidatorTest {
      * Validate correct complex data object.
      */
     @Test
-    public void validateCorrectComplexDataObject() {
+    void validateCorrectComplexDataObject() {
         String jsonDataFormatString = "{ \"param\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct1\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct1.SubField1_1\": { \"type\": \"integer\", \"format\": \"int32\", \"minimum\": 0, \"maximum\": 4.2949673E9 } } }, \"ns=3;s=StructVar.Field2\": { \"type\": \"array\", \"items\": { \"type\": \"number\", \"format\": \"float\" }, \"maxItems\": 5 }, \"ns=3;s=StructVar.SubStruct2\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct2.SubField2_1\": { \"type\": \"boolean\" }, \"ns=3;s=StructVar.SubStruct2.SubField2_2\": { \"type\": \"number\", \"format\": \"float\" } } }, \"ns=3;s=StructVar.Field1\": { \"type\": \"boolean\" } } } }";
 
         Map<String, Object> SubStruct1 = new HashMap<>();
@@ -161,14 +161,14 @@ public class FunctionParametersValidatorTest {
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", struct);
 
-        Assert.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
     /**
      * Validate incorrect complex data object.
      */
     @Test
-    public void validateIncorrectComplexDataObject() {
+    void validateIncorrectComplexDataObject() {
         String jsonDataFormatString = "{ \"param\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct1\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct1.SubField1_1\": { \"type\": \"integer\", \"format\": \"int32\", \"minimum\": 0, \"maximum\": 4.2949673E9 } } }, \"ns=3;s=StructVar.Field2\": { \"type\": \"array\", \"items\": { \"type\": \"number\", \"format\": \"float\" }, \"maxItems\": 5 }, \"ns=3;s=StructVar.SubStruct2\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct2.SubField2_1\": { \"type\": \"boolean\" }, \"ns=3;s=StructVar.SubStruct2.SubField2_2\": { \"type\": \"number\", \"format\": \"float\" } } }, \"ns=3;s=StructVar.Field1\": { \"type\": \"boolean\" } } } }";
 
         Map<String, Object> SubStruct1 = new HashMap<>();
@@ -184,19 +184,19 @@ public class FunctionParametersValidatorTest {
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", struct);
 
-        Assert.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
     /**
      * Validate referenced complex data object.
      */
     @Test
-    public void validateReferencedComplexDataObject() {
+    void validateReferencedComplexDataObject() {
         String jsonDataFormatString = "{\"param\":{\"$ref\":\"#/definitions/AllTypes\"},\"AllTypes\":{\"type\":\"object\",\"properties\":{\"double_type\":{\"type\":\"number\",\"format\":\"double\"},\"float_type\":{\"type\":\"number\",\"format\":\"float\"},\"bool_type\":{\"type\":\"boolean\",\"default\":false},\"string_type\":{\"type\":\"string\"},\"count_type\":{\"type\":\"integer\",\"format\":\"int32\"},\"date_type\":{\"type\":\"string\",\"format\":\"date-time\"}}}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("param", AllTypes.getTestEntity());
 
-        Assert.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
+        Assertions.assertTrue(FunctionParametersValidator.validateFunctionParameters(jsonDataFormatString, dataObject));
     }
 
 }

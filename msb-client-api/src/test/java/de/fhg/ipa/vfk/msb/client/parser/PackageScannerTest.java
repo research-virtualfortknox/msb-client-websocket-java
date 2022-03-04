@@ -25,8 +25,8 @@ import de.fhg.ipa.vfk.msb.client.annotation.SelfDescription;
 import de.fhg.ipa.vfk.msb.client.parser.entities.TestApplication;
 import de.fhg.ipa.vfk.msb.client.parser.entities.TestGateway;
 import de.fhg.ipa.vfk.msb.client.parser.entities.TestSmartObject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +36,7 @@ import java.util.List;
  *
  * @author des
  */
-public class PackageScannerTest {
+class PackageScannerTest {
 
     /**
      * Test package scan.
@@ -45,11 +45,11 @@ public class PackageScannerTest {
      * @throws ClassNotFoundException the class not found exception
      */
     @Test
-    public void testPackageScan() throws IOException, ClassNotFoundException {
+    void testPackageScan() throws IOException, ClassNotFoundException {
         List<Class<?>> found = PackageScanner.findMyType("de.fhg.ipa.vfk.msb.client.parser.entities", SelfDescription.class);
-        Assert.assertNotNull(found);
-        Assert.assertEquals(3,found.size());
-        Assert.assertTrue(TestApplication.class.equals(found.get(0)) || TestSmartObject.class.equals(found.get(0)) ||
+        Assertions.assertNotNull(found);
+        Assertions.assertEquals(3,found.size());
+        Assertions.assertTrue(TestApplication.class.equals(found.get(0)) || TestSmartObject.class.equals(found.get(0)) ||
                 TestGateway.class.equals(found.get(0)));
     }
 
@@ -60,12 +60,12 @@ public class PackageScannerTest {
      * @throws ClassNotFoundException the class not found exception
      */
     @Test
-    public void testPackageScanMultiple() throws IOException, ClassNotFoundException {
+    void testPackageScanMultiple() throws IOException, ClassNotFoundException {
         List<Class<?>> found = PackageScanner.findMyTypes("de.fhg.ipa.vfk.msb.client.parser", new Class[] { FunctionHandler.class, FunctionCall.class });
-        Assert.assertNotNull(found);
-        Assert.assertEquals(2,found.size());
-        Assert.assertTrue(found.contains(FunctionParserTest.class));
-        Assert.assertTrue(found.contains(FunctionParserTest.FailingClazz.class));
+        Assertions.assertNotNull(found);
+        Assertions.assertEquals(2,found.size());
+        Assertions.assertTrue(found.contains(FunctionParserTest.class));
+        Assertions.assertTrue(found.contains(FunctionParserTest.FailingClazz.class));
     }
 
     /**
@@ -75,10 +75,10 @@ public class PackageScannerTest {
      * @throws ClassNotFoundException the class not found exception
      */
     @Test
-    public void testPackageScanNothing() throws IOException, ClassNotFoundException {
+    void testPackageScanNothing() throws IOException, ClassNotFoundException {
         List<Class<?>> found = PackageScanner.findMyTypes("dead.package.path", new Class[] { Events.class });
-        Assert.assertNotNull("list is null",found);
-        Assert.assertTrue("found classes",found.isEmpty());
+        Assertions.assertNotNull(found,"list is null");
+        Assertions.assertTrue(found.isEmpty(), "found classes");
     }
 
 }

@@ -19,8 +19,8 @@
 package de.fhg.ipa.vfk.msb.client.util;
 
 import de.fhg.ipa.vfk.msb.client.api.AllTypes;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,52 +30,52 @@ import java.util.Map;
  *
  * @author maes
  */
-public class DataObjectValidatorTest {
+class DataObjectValidatorTest {
 
     @Test
-    public void validateInvalidJson() {
+    void validateInvalidJson() {
         String jsonDataFormatString = "wrong_json";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("dataObject", "");
-        Assert.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
     }
 
     @Test
-    public void validateCorrectNoneDataObject() {
+    void validateCorrectNoneDataObject() {
         String jsonDataFormatString = "{}";
-        Assert.assertTrue(DataObjectValidator.validateDataObject(jsonDataFormatString, null));
+        Assertions.assertTrue(DataObjectValidator.validateDataObject(jsonDataFormatString, null));
     }
 
     @Test
-    public void validateIncorrectNoneDataObject() {
+    void validateIncorrectNoneDataObject() {
         String jsonDataFormatString = "{}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("dataObject", "");
 
-        Assert.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
     }
 
     @Test
-    public void validateCorrectSimpleDataObject() {
+    void validateCorrectSimpleDataObject() {
         String jsonDataFormatString = "{\"dataObject\": {\"type\": \"boolean\"}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("dataObject", true);
 
-        Assert.assertTrue(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
+        Assertions.assertTrue(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
     }
 
     @Test
-    public void validateIncorrectSimpleDataObject() {
+    void validateIncorrectSimpleDataObject() {
         String jsonDataFormatString = "{\"dataObject\": {\"type\": \"boolean\"}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("dataObject2", true);
 
-        Assert.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
-        Assert.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, true));
+        Assertions.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, true));
     }
 
     @Test
-    public void validateCorrectComplexDataObject() {
+    void validateCorrectComplexDataObject() {
         String jsonDataFormatString = "{ \"dataObject\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct1\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct1.SubField1_1\": { \"type\": \"integer\", \"format\": \"int32\", \"minimum\": 0, \"maximum\": 4.2949673E9 } } }, \"ns=3;s=StructVar.Field2\": { \"type\": \"array\", \"items\": { \"type\": \"number\", \"format\": \"float\" }, \"maxItems\": 5 }, \"ns=3;s=StructVar.SubStruct2\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct2.SubField2_1\": { \"type\": \"boolean\" }, \"ns=3;s=StructVar.SubStruct2.SubField2_2\": { \"type\": \"number\", \"format\": \"float\" } } }, \"ns=3;s=StructVar.Field1\": { \"type\": \"boolean\" } } } }";
 
         Map<String, Object> SubStruct1 = new HashMap<>();
@@ -91,11 +91,11 @@ public class DataObjectValidatorTest {
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("dataObject", struct);
 
-        Assert.assertTrue(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
+        Assertions.assertTrue(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
     }
 
     @Test
-    public void validateIncorrectComplexDataObject() {
+    void validateIncorrectComplexDataObject() {
         String jsonDataFormatString = "{ \"dataObject\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct1\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct1.SubField1_1\": { \"type\": \"integer\", \"format\": \"int32\", \"minimum\": 0, \"maximum\": 4.2949673E9 } } }, \"ns=3;s=StructVar.Field2\": { \"type\": \"array\", \"items\": { \"type\": \"number\", \"format\": \"float\" }, \"maxItems\": 5 }, \"ns=3;s=StructVar.SubStruct2\": { \"type\": \"object\", \"properties\": { \"ns=3;s=StructVar.SubStruct2.SubField2_1\": { \"type\": \"boolean\" }, \"ns=3;s=StructVar.SubStruct2.SubField2_2\": { \"type\": \"number\", \"format\": \"float\" } } }, \"ns=3;s=StructVar.Field1\": { \"type\": \"boolean\" } } } }";
 
         Map<String, Object> SubStruct1 = new HashMap<>();
@@ -111,15 +111,15 @@ public class DataObjectValidatorTest {
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("dataObject", struct);
 
-        Assert.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
+        Assertions.assertFalse(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
     }
 
     @Test
-    public void validateReferencedComplexDataObject() {
+    void validateReferencedComplexDataObject() {
         String jsonDataFormatString = "{\"dataObject\":{\"$ref\":\"#/definitions/AllTypes\"},\"AllTypes\":{\"type\":\"object\",\"properties\":{\"double_type\":{\"type\":\"number\",\"format\":\"double\"},\"float_type\":{\"type\":\"number\",\"format\":\"float\"},\"bool_type\":{\"type\":\"boolean\",\"default\":false},\"string_type\":{\"type\":\"string\"},\"count_type\":{\"type\":\"integer\",\"format\":\"int32\"},\"date_type\":{\"type\":\"string\",\"format\":\"date-time\"}}}}";
         Map<String, Object> dataObject = new HashMap<>();
         dataObject.put("dataObject", AllTypes.getTestEntity());
 
-        Assert.assertTrue(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
+        Assertions.assertTrue(DataObjectValidator.validateDataObject(jsonDataFormatString, dataObject));
     }
 }

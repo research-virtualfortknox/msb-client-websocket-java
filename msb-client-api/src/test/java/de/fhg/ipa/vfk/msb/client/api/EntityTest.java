@@ -20,8 +20,8 @@ package de.fhg.ipa.vfk.msb.client.api;
 
 import de.fhg.ipa.vfk.msb.client.util.DataFormatParser;
 import io.swagger.models.HttpMethod;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-public class EntityTest {
+class EntityTest {
 
     private static final String SERVICE_UUID = UUID.randomUUID().toString();
     private static final String SERVICE_NAME = "name";
@@ -41,7 +41,7 @@ public class EntityTest {
     private static final String SERVICE_TOKEN = "token";
 
     @Test
-    public void testApplicationSetter(){
+    void testApplicationSetter(){
         Connection connection = new Connection();
         connection.setConnectionState(ConnectionState.UNCONNECTED);
         connection.setConnectionType(ConnectionType.OPC_UA);
@@ -58,25 +58,25 @@ public class EntityTest {
         addFunctions(application);
         addEndpoints(application);
 
-        Assert.assertEquals(SERVICE_UUID,application.getUuid());
-        Assert.assertEquals(SERVICE_NAME,application.getName());
-        Assert.assertEquals(SERVICE_DESCRIPTION,application.getDescription());
-        Assert.assertEquals(SERVICE_TOKEN,application.getToken());
-        Assert.assertNotNull(application.getConfiguration());
-        Assert.assertNotNull(application.getConnection());
-        Assert.assertEquals(ConnectionState.UNCONNECTED, application.getConnection().getConnectionState());
-        Assert.assertEquals(ConnectionType.OPC_UA, application.getConnection().getConnectionType());
-        Assert.assertEquals(ConnectionFormat.JSON, application.getConnection().getConnectionFormat());
-        Assert.assertNotNull(application.getEvents());
-        Assert.assertEquals(2,application.getEvents().size());
-        Assert.assertNotNull(application.getFunctions());
-        Assert.assertEquals(2,application.getFunctions().size());
-        Assert.assertNotNull(application.getEndpoints());
-        Assert.assertEquals(2,application.getEndpoints().size());
+        Assertions.assertEquals(SERVICE_UUID,application.getUuid());
+        Assertions.assertEquals(SERVICE_NAME,application.getName());
+        Assertions.assertEquals(SERVICE_DESCRIPTION,application.getDescription());
+        Assertions.assertEquals(SERVICE_TOKEN,application.getToken());
+        Assertions.assertNotNull(application.getConfiguration());
+        Assertions.assertNotNull(application.getConnection());
+        Assertions.assertEquals(ConnectionState.UNCONNECTED, application.getConnection().getConnectionState());
+        Assertions.assertEquals(ConnectionType.OPC_UA, application.getConnection().getConnectionType());
+        Assertions.assertEquals(ConnectionFormat.JSON, application.getConnection().getConnectionFormat());
+        Assertions.assertNotNull(application.getEvents());
+        Assertions.assertEquals(2,application.getEvents().size());
+        Assertions.assertNotNull(application.getFunctions());
+        Assertions.assertEquals(2,application.getFunctions().size());
+        Assertions.assertNotNull(application.getEndpoints());
+        Assertions.assertEquals(2,application.getEndpoints().size());
     }
 
     @Test
-    public void testApplicationConstructor(){
+    void testApplicationConstructor(){
         Application application = new Application(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN, new ArrayList<Endpoint>());
         application.setConfiguration(getConfiguration());
         application.setConnection(new Connection(ConnectionState.CONNECTED, ConnectionType.OPC_UA, ConnectionFormat.JSON, new Date()));
@@ -84,45 +84,45 @@ public class EntityTest {
         addFunctions(application);
         addEndpoints(application);
 
-        Assert.assertEquals(SERVICE_UUID,application.getUuid());
-        Assert.assertEquals(SERVICE_NAME,application.getName());
-        Assert.assertEquals(SERVICE_DESCRIPTION,application.getDescription());
-        Assert.assertEquals(SERVICE_TOKEN,application.getToken());
-        Assert.assertNotNull(application.getConfiguration());
-        Assert.assertNotNull(application.getConnection());
-        Assert.assertEquals(ConnectionState.CONNECTED, application.getConnection().getConnectionState());
-        Assert.assertEquals(ConnectionType.OPC_UA, application.getConnection().getConnectionType());
-        Assert.assertEquals(ConnectionFormat.JSON, application.getConnection().getConnectionFormat());
-        Assert.assertNotNull(application.getEvents());
-        Assert.assertEquals(2,application.getEvents().size());
-        Assert.assertNotNull(application.getFunctions());
-        Assert.assertEquals(2,application.getFunctions().size());
-        Assert.assertNotNull(application.getEndpoints());
-        Assert.assertEquals(2,application.getEndpoints().size());
+        Assertions.assertEquals(SERVICE_UUID,application.getUuid());
+        Assertions.assertEquals(SERVICE_NAME,application.getName());
+        Assertions.assertEquals(SERVICE_DESCRIPTION,application.getDescription());
+        Assertions.assertEquals(SERVICE_TOKEN,application.getToken());
+        Assertions.assertNotNull(application.getConfiguration());
+        Assertions.assertNotNull(application.getConnection());
+        Assertions.assertEquals(ConnectionState.CONNECTED, application.getConnection().getConnectionState());
+        Assertions.assertEquals(ConnectionType.OPC_UA, application.getConnection().getConnectionType());
+        Assertions.assertEquals(ConnectionFormat.JSON, application.getConnection().getConnectionFormat());
+        Assertions.assertNotNull(application.getEvents());
+        Assertions.assertEquals(2,application.getEvents().size());
+        Assertions.assertNotNull(application.getFunctions());
+        Assertions.assertEquals(2,application.getFunctions().size());
+        Assertions.assertNotNull(application.getEndpoints());
+        Assertions.assertEquals(2,application.getEndpoints().size());
     }
 
     @Test
-    public void testApplicationConstructor2(){
+    void testApplicationConstructor2(){
         Application application = new Application(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN,getConfiguration(), new ArrayList<Endpoint>());
         addEvents(application);
         addFunctions(application);
         addEndpoints(application);
 
-        Assert.assertEquals(SERVICE_UUID,application.getUuid());
-        Assert.assertEquals(SERVICE_NAME,application.getName());
-        Assert.assertEquals(SERVICE_DESCRIPTION,application.getDescription());
-        Assert.assertEquals(SERVICE_TOKEN,application.getToken());
-        Assert.assertNotNull(application.getConfiguration());
-        Assert.assertNotNull(application.getEvents());
-        Assert.assertEquals(2,application.getEvents().size());
-        Assert.assertNotNull(application.getFunctions());
-        Assert.assertEquals(2,application.getFunctions().size());
-        Assert.assertNotNull(application.getEndpoints());
-        Assert.assertEquals(2,application.getEndpoints().size());
+        Assertions.assertEquals(SERVICE_UUID,application.getUuid());
+        Assertions.assertEquals(SERVICE_NAME,application.getName());
+        Assertions.assertEquals(SERVICE_DESCRIPTION,application.getDescription());
+        Assertions.assertEquals(SERVICE_TOKEN,application.getToken());
+        Assertions.assertNotNull(application.getConfiguration());
+        Assertions.assertNotNull(application.getEvents());
+        Assertions.assertEquals(2,application.getEvents().size());
+        Assertions.assertNotNull(application.getFunctions());
+        Assertions.assertEquals(2,application.getFunctions().size());
+        Assertions.assertNotNull(application.getEndpoints());
+        Assertions.assertEquals(2,application.getEndpoints().size());
     }
 
     @Test
-    public void testSmartObjectSetter(){
+    void testSmartObjectSetter(){
         Connection connection = new Connection();
         connection.setConnectionState(ConnectionState.UNCONNECTED);
         connection.setConnectionType(ConnectionType.OPC_UA);
@@ -138,63 +138,63 @@ public class EntityTest {
         addEvents(smartObject);
         addFunctions(smartObject);
 
-        Assert.assertEquals(SERVICE_UUID,smartObject.getUuid());
-        Assert.assertEquals(SERVICE_NAME,smartObject.getName());
-        Assert.assertEquals(SERVICE_DESCRIPTION,smartObject.getDescription());
-        Assert.assertEquals(SERVICE_TOKEN,smartObject.getToken());
-        Assert.assertNotNull(smartObject.getConfiguration());
-        Assert.assertNotNull(smartObject.getConnection());
-        Assert.assertEquals(ConnectionState.UNCONNECTED, smartObject.getConnection().getConnectionState());
-        Assert.assertEquals(ConnectionType.OPC_UA, smartObject.getConnection().getConnectionType());
-        Assert.assertEquals(ConnectionFormat.JSON, smartObject.getConnection().getConnectionFormat());
-        Assert.assertNotNull(smartObject.getEvents());
-        Assert.assertEquals(2,smartObject.getEvents().size());
-        Assert.assertNotNull(smartObject.getFunctions());
-        Assert.assertEquals(2,smartObject.getFunctions().size());
+        Assertions.assertEquals(SERVICE_UUID,smartObject.getUuid());
+        Assertions.assertEquals(SERVICE_NAME,smartObject.getName());
+        Assertions.assertEquals(SERVICE_DESCRIPTION,smartObject.getDescription());
+        Assertions.assertEquals(SERVICE_TOKEN,smartObject.getToken());
+        Assertions.assertNotNull(smartObject.getConfiguration());
+        Assertions.assertNotNull(smartObject.getConnection());
+        Assertions.assertEquals(ConnectionState.UNCONNECTED, smartObject.getConnection().getConnectionState());
+        Assertions.assertEquals(ConnectionType.OPC_UA, smartObject.getConnection().getConnectionType());
+        Assertions.assertEquals(ConnectionFormat.JSON, smartObject.getConnection().getConnectionFormat());
+        Assertions.assertNotNull(smartObject.getEvents());
+        Assertions.assertEquals(2,smartObject.getEvents().size());
+        Assertions.assertNotNull(smartObject.getFunctions());
+        Assertions.assertEquals(2,smartObject.getFunctions().size());
     }
 
     @Test
-    public void testSmartObjectConstructor(){
+    void testSmartObjectConstructor(){
         SmartObject smartObject = new SmartObject(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
         smartObject.setConfiguration(getConfiguration());
         smartObject.setConnection(new Connection(ConnectionState.CONNECTED, ConnectionType.OPC_UA, ConnectionFormat.JSON, new Date()));
         addEvents(smartObject);
         addFunctions(smartObject);
 
-        Assert.assertEquals(SERVICE_UUID,smartObject.getUuid());
-        Assert.assertEquals(SERVICE_NAME,smartObject.getName());
-        Assert.assertEquals(SERVICE_DESCRIPTION,smartObject.getDescription());
-        Assert.assertEquals(SERVICE_TOKEN,smartObject.getToken());
-        Assert.assertNotNull(smartObject.getConfiguration());
-        Assert.assertNotNull(smartObject.getConnection());
-        Assert.assertEquals(ConnectionState.CONNECTED, smartObject.getConnection().getConnectionState());
-        Assert.assertEquals(ConnectionType.OPC_UA, smartObject.getConnection().getConnectionType());
-        Assert.assertEquals(ConnectionFormat.JSON, smartObject.getConnection().getConnectionFormat());
-        Assert.assertNotNull(smartObject.getEvents());
-        Assert.assertEquals(2,smartObject.getEvents().size());
-        Assert.assertNotNull(smartObject.getFunctions());
-        Assert.assertEquals(2,smartObject.getFunctions().size());
+        Assertions.assertEquals(SERVICE_UUID,smartObject.getUuid());
+        Assertions.assertEquals(SERVICE_NAME,smartObject.getName());
+        Assertions.assertEquals(SERVICE_DESCRIPTION,smartObject.getDescription());
+        Assertions.assertEquals(SERVICE_TOKEN,smartObject.getToken());
+        Assertions.assertNotNull(smartObject.getConfiguration());
+        Assertions.assertNotNull(smartObject.getConnection());
+        Assertions.assertEquals(ConnectionState.CONNECTED, smartObject.getConnection().getConnectionState());
+        Assertions.assertEquals(ConnectionType.OPC_UA, smartObject.getConnection().getConnectionType());
+        Assertions.assertEquals(ConnectionFormat.JSON, smartObject.getConnection().getConnectionFormat());
+        Assertions.assertNotNull(smartObject.getEvents());
+        Assertions.assertEquals(2,smartObject.getEvents().size());
+        Assertions.assertNotNull(smartObject.getFunctions());
+        Assertions.assertEquals(2,smartObject.getFunctions().size());
     }
 
     @Test
-    public void testSmartObjectConstructor2(){
+    void testSmartObjectConstructor2(){
         SmartObject smartObject = new SmartObject(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN,getConfiguration());
         addEvents(smartObject);
         addFunctions(smartObject);
 
-        Assert.assertEquals(SERVICE_UUID,smartObject.getUuid());
-        Assert.assertEquals(SERVICE_NAME,smartObject.getName());
-        Assert.assertEquals(SERVICE_DESCRIPTION,smartObject.getDescription());
-        Assert.assertEquals(SERVICE_TOKEN,smartObject.getToken());
-        Assert.assertNotNull(smartObject.getConfiguration());
-        Assert.assertNotNull(smartObject.getEvents());
-        Assert.assertEquals(2,smartObject.getEvents().size());
-        Assert.assertNotNull(smartObject.getFunctions());
-        Assert.assertEquals(2,smartObject.getFunctions().size());
+        Assertions.assertEquals(SERVICE_UUID,smartObject.getUuid());
+        Assertions.assertEquals(SERVICE_NAME,smartObject.getName());
+        Assertions.assertEquals(SERVICE_DESCRIPTION,smartObject.getDescription());
+        Assertions.assertEquals(SERVICE_TOKEN,smartObject.getToken());
+        Assertions.assertNotNull(smartObject.getConfiguration());
+        Assertions.assertNotNull(smartObject.getEvents());
+        Assertions.assertEquals(2,smartObject.getEvents().size());
+        Assertions.assertNotNull(smartObject.getFunctions());
+        Assertions.assertEquals(2,smartObject.getFunctions().size());
     }
 
     @Test
-    public void testGatewaySetter(){
+    void testGatewaySetter(){
         Gateway gateway = new Gateway("","","","");
         gateway.setUuid(SERVICE_UUID);
         gateway.setName(SERVICE_NAME);
@@ -205,42 +205,42 @@ public class EntityTest {
         addFunctions(gateway);
         gateway.setServices(Collections.singleton(new SmartObject("uuid", "name", "description", "token")));
 
-        Assert.assertEquals(SERVICE_UUID,gateway.getUuid());
-        Assert.assertEquals(SERVICE_NAME,gateway.getName());
-        Assert.assertEquals(SERVICE_DESCRIPTION,gateway.getDescription());
-        Assert.assertEquals(SERVICE_TOKEN,gateway.getToken());
-        Assert.assertNotNull(gateway.getConfiguration());
-        Assert.assertNotNull(gateway.getEvents());
-        Assert.assertEquals(2,gateway.getEvents().size());
-        Assert.assertNotNull(gateway.getFunctions());
-        Assert.assertEquals(2,gateway.getFunctions().size());
-        Assert.assertNotNull(gateway.getServices());
-        Assert.assertEquals(1,gateway.getServices().size());
+        Assertions.assertEquals(SERVICE_UUID,gateway.getUuid());
+        Assertions.assertEquals(SERVICE_NAME,gateway.getName());
+        Assertions.assertEquals(SERVICE_DESCRIPTION,gateway.getDescription());
+        Assertions.assertEquals(SERVICE_TOKEN,gateway.getToken());
+        Assertions.assertNotNull(gateway.getConfiguration());
+        Assertions.assertNotNull(gateway.getEvents());
+        Assertions.assertEquals(2,gateway.getEvents().size());
+        Assertions.assertNotNull(gateway.getFunctions());
+        Assertions.assertEquals(2,gateway.getFunctions().size());
+        Assertions.assertNotNull(gateway.getServices());
+        Assertions.assertEquals(1,gateway.getServices().size());
     }
 
     @Test
-    public void testGatewayConstructor(){
+    void testGatewayConstructor(){
         Gateway gateway = new Gateway(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN, new HashSet<>());
         gateway.setConfiguration(getConfiguration());
         addEvents(gateway);
         addFunctions(gateway);
         gateway.addService(new SmartObject("uuid","name","description","token"));
 
-        Assert.assertEquals(SERVICE_UUID,gateway.getUuid());
-        Assert.assertEquals(SERVICE_NAME,gateway.getName());
-        Assert.assertEquals(SERVICE_DESCRIPTION,gateway.getDescription());
-        Assert.assertEquals(SERVICE_TOKEN,gateway.getToken());
-        Assert.assertNotNull(gateway.getConfiguration());
-        Assert.assertNotNull(gateway.getEvents());
-        Assert.assertEquals(2,gateway.getEvents().size());
-        Assert.assertNotNull(gateway.getFunctions());
-        Assert.assertEquals(2,gateway.getFunctions().size());
-        Assert.assertNotNull(gateway.getServices());
-        Assert.assertEquals(1,gateway.getServices().size());
+        Assertions.assertEquals(SERVICE_UUID,gateway.getUuid());
+        Assertions.assertEquals(SERVICE_NAME,gateway.getName());
+        Assertions.assertEquals(SERVICE_DESCRIPTION,gateway.getDescription());
+        Assertions.assertEquals(SERVICE_TOKEN,gateway.getToken());
+        Assertions.assertNotNull(gateway.getConfiguration());
+        Assertions.assertNotNull(gateway.getEvents());
+        Assertions.assertEquals(2,gateway.getEvents().size());
+        Assertions.assertNotNull(gateway.getFunctions());
+        Assertions.assertEquals(2,gateway.getFunctions().size());
+        Assertions.assertNotNull(gateway.getServices());
+        Assertions.assertEquals(1,gateway.getServices().size());
     }
 
     @Test
-    public void testGatewayConstructor2(){
+    void testGatewayConstructor2(){
         Gateway gateway = new Gateway(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN,getConfiguration(), new HashSet<Service>());
         addEvents(gateway);
         addFunctions(gateway);
@@ -249,38 +249,38 @@ public class EntityTest {
         services.add(new SmartObject("uuid1","name1","description1","token1"));
         gateway.setServices(services);
 
-        Assert.assertEquals(SERVICE_UUID,gateway.getUuid());
-        Assert.assertEquals(SERVICE_NAME,gateway.getName());
-        Assert.assertEquals(SERVICE_DESCRIPTION,gateway.getDescription());
-        Assert.assertEquals(SERVICE_TOKEN,gateway.getToken());
-        Assert.assertNotNull(gateway.getConfiguration());
-        Assert.assertNotNull(gateway.getEvents());
-        Assert.assertEquals(2,gateway.getEvents().size());
-        Assert.assertNotNull(gateway.getFunctions());
-        Assert.assertEquals(2,gateway.getFunctions().size());
-        Assert.assertNotNull(gateway.getServices());
-        Assert.assertEquals(2,gateway.getServices().size());
+        Assertions.assertEquals(SERVICE_UUID,gateway.getUuid());
+        Assertions.assertEquals(SERVICE_NAME,gateway.getName());
+        Assertions.assertEquals(SERVICE_DESCRIPTION,gateway.getDescription());
+        Assertions.assertEquals(SERVICE_TOKEN,gateway.getToken());
+        Assertions.assertNotNull(gateway.getConfiguration());
+        Assertions.assertNotNull(gateway.getEvents());
+        Assertions.assertEquals(2,gateway.getEvents().size());
+        Assertions.assertNotNull(gateway.getFunctions());
+        Assertions.assertEquals(2,gateway.getFunctions().size());
+        Assertions.assertNotNull(gateway.getServices());
+        Assertions.assertEquals(2,gateway.getServices().size());
     }
 
     @Test
-    public void testServiceNotEquals(){
+    void testServiceNotEquals(){
         Service smartObject = new SmartObject(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
         Service gateway = new Gateway(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
-        Assert.assertNotEquals(smartObject,gateway);
-        Assert.assertEquals(smartObject.hashCode(),gateway.hashCode());
+        Assertions.assertNotEquals(smartObject,gateway);
+        Assertions.assertEquals(smartObject.hashCode(),gateway.hashCode());
     }
 
     @Test
-    public void testServiceEquals(){
+    void testServiceEquals(){
         Application application = new Application(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
-        Assert.assertEquals(application,application);
-        Assert.assertEquals(application.hashCode(),application.hashCode());
+        Assertions.assertEquals(application,application);
+        Assertions.assertEquals(application.hashCode(),application.hashCode());
     }
 
     @Test
-    public void testServiceEqualsNull(){
+    void testServiceEqualsNull(){
         Gateway gateway = new Gateway(SERVICE_UUID,SERVICE_NAME,SERVICE_DESCRIPTION,SERVICE_TOKEN);
-        Assert.assertNotEquals(gateway,null);
+        Assertions.assertNotEquals(gateway,null);
     }
 
     private Configuration getConfiguration(){

@@ -25,9 +25,9 @@ import de.fhg.ipa.vfk.msb.client.api.ComplexType;
 import de.fhg.ipa.vfk.msb.client.api.messages.FunctionCallMessage;
 import de.fhg.ipa.vfk.msb.client.util.MsbDateFormat;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ import java.util.Map;
  *
  * @author des
  */
-public class FunctionInvokerTest {
+class FunctionInvokerTest {
 
     private static Logger LOG = LoggerFactory.getLogger(FunctionInvokerTest.class);
 
@@ -69,8 +69,8 @@ public class FunctionInvokerTest {
      *
      * @throws NoSuchMethodException the no such method exception
      */
-    @Before
-    public void init() throws NoSuchMethodException {
+    @BeforeEach
+    void init() throws NoSuchMethodException {
         Map<String, Type> functionCallbackParameters = new LinkedHashMap<>();
         functionCallbackParameters.put("obj",Object.class);
         functionCallbackParameters.put("number",int.class);
@@ -96,7 +96,7 @@ public class FunctionInvokerTest {
      * @throws JSONException             the json exception
      */
     @Test
-    public void testComplexTypeParameter() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, JsonProcessingException, JSONException {
+    void testComplexTypeParameter() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, JsonProcessingException, JSONException {
         Map<String, Type> functionCallbackParameters = new LinkedHashMap<>();
         functionCallbackParameters.put("complexType",ComplexType.class);
         FunctionCallReference callback = new FunctionCallReference();
@@ -114,10 +114,10 @@ public class FunctionInvokerTest {
         functionParameters.put("complexType", complexType);
         FunctionCallMessage functionCall = new FunctionCallMessage("","testFunction",null,functionParameters);
         Object result = FunctionInvoker.callFunctions(functionCall,callback);
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result instanceof ComplexType);
-        Assert.assertEquals(this.complexType, result);
-        Assert.assertNotNull("is null",this.complexType);
+        Assertions.assertNotNull(result);
+        Assertions.assertTrue(result instanceof ComplexType);
+        Assertions.assertEquals(this.complexType, result);
+        Assertions.assertNotNull(this.complexType, "is null");
         JSONAssert.assertEquals(new ObjectMapper().writeValueAsString(complexType), new ObjectMapper().writeValueAsString(this.complexType),true);
         LOG.debug(new ObjectMapper().writeValueAsString(this.complexType));
     }
@@ -132,7 +132,7 @@ public class FunctionInvokerTest {
      * @throws ParseException            the parse exception
      */
     @Test
-    public void testCallFunction() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, ParseException {
+    void testCallFunction() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, ParseException {
         obj=null;
         number=0;
         longNumber=0L;
@@ -153,14 +153,14 @@ public class FunctionInvokerTest {
         functionParameters.put("bigDecimal",BigDecimal.valueOf(1.2));
         FunctionCallMessage functionCall = new FunctionCallMessage("","testFunction",null,functionParameters);
         FunctionInvoker.callFunctions(functionCall,callback);
-        Assert.assertNotNull("is null",obj);
-        Assert.assertEquals("is not 1",1,number);
-        Assert.assertEquals("is not 2",2L, longNumber.longValue());
-        Assert.assertTrue("is false",bool);
-        Assert.assertNotNull("is null",array);
-        Assert.assertEquals("date not equals",new MsbDateFormat().parse("2018-03-01T12:48:58.771+01"),date);
-        Assert.assertEquals("byte array not equals","test byte string",new String(byteArray));
-        Assert.assertEquals("bigDecimal not equals",BigDecimal.valueOf(1.2),bigDecimal);
+        Assertions.assertNotNull(obj, "not null");
+        Assertions.assertEquals(1,number, "is not 1");
+        Assertions.assertEquals(2L, longNumber.longValue(), "is not 2");
+        Assertions.assertTrue(bool,"is false");
+        Assertions.assertNotNull(array, "not null");
+        Assertions.assertEquals(new MsbDateFormat().parse("2018-03-01T12:48:58.771+01"), date, "date not equals");
+        Assertions.assertEquals("test byte string",new String(byteArray), "byte array not equals");
+        Assertions.assertEquals(BigDecimal.valueOf(1.2), bigDecimal, "bigDecimal not equals");
     }
 
     /**
@@ -172,7 +172,7 @@ public class FunctionInvokerTest {
      * @throws IOException               the io exception
      */
     @Test
-    public void testCallFunctionWithMissingSomeParameters() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
+    void testCallFunctionWithMissingSomeParameters() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
         obj=null;
         number=0;
         longNumber=0L;
@@ -185,14 +185,14 @@ public class FunctionInvokerTest {
         functionParameters.put("number",2);
         FunctionCallMessage functionCall = new FunctionCallMessage("","testFunction",null,functionParameters);
         FunctionInvoker.callFunctions(functionCall,callback);
-        Assert.assertNull("not null",obj);
-        Assert.assertEquals("is not 2",2, number);
-        Assert.assertEquals("is not 0",0L, longNumber.longValue());
-        Assert.assertFalse("is true",bool);
-        Assert.assertNull("not null",array);
-        Assert.assertNull("not null",date);
-        Assert.assertNull("not null",byteArray);
-        Assert.assertNull("not null",bigDecimal);
+        Assertions.assertNull(obj, "not null");
+        Assertions.assertEquals(2, number, "is not 2");
+        Assertions.assertEquals(0L, longNumber.longValue(), "is not 0");
+        Assertions.assertFalse(bool,"is true");
+        Assertions.assertNull(array, "not null");
+        Assertions.assertNull(date, "not null");
+        Assertions.assertNull(byteArray, "not null");
+        Assertions.assertNull(bigDecimal, "not null");
     }
 
     /**
@@ -204,7 +204,7 @@ public class FunctionInvokerTest {
      * @throws IOException               the io exception
      */
     @Test
-    public void testCallFunctionWithMissingAllParameters() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
+    void testCallFunctionWithMissingAllParameters() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
         obj=null;
         number=0;
         longNumber=0L;
@@ -215,14 +215,14 @@ public class FunctionInvokerTest {
         bigDecimal = null;
         FunctionCallMessage functionCall = new FunctionCallMessage("","testFunction",null,new HashMap<String, Object>());
         FunctionInvoker.callFunctions(functionCall,callback);
-        Assert.assertNull("not null",obj);
-        Assert.assertEquals("is not 0",0,number);
-        Assert.assertEquals("is not 0",0L, longNumber.longValue());
-        Assert.assertFalse("is true",bool);
-        Assert.assertNull("not null",array);
-        Assert.assertNull("not null",date);
-        Assert.assertNull("not null",byteArray);
-        Assert.assertNull("not null",bigDecimal);
+        Assertions.assertNull(obj,"not null");
+        Assertions.assertEquals(0,number,"is not 0");
+        Assertions.assertEquals(0L, longNumber.longValue(),"is not 0");
+        Assertions.assertFalse(bool,"is true");
+        Assertions.assertNull(array, "not null");
+        Assertions.assertNull(date, "not null");
+        Assertions.assertNull(byteArray, "not null");
+        Assertions.assertNull(bigDecimal, "not null");
     }
 
     /**
@@ -233,8 +233,8 @@ public class FunctionInvokerTest {
      * @throws IllegalAccessException    the illegal access exception
      * @throws IOException               the io exception
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testFailCallFunction() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
+    @Test
+    void testFailCallFunction() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
         obj=null;
         number=0;
         longNumber=0L;
@@ -246,7 +246,7 @@ public class FunctionInvokerTest {
         functionParameters.put("number",null);
         functionParameters.put("bool",null);
         FunctionCallMessage functionCall = new FunctionCallMessage("","testFunction",null,functionParameters);
-        FunctionInvoker.callFunctions(functionCall,callback);
+        Assertions.assertThrows(IllegalArgumentException.class, ()->FunctionInvoker.callFunctions(functionCall,callback));
     }
 
     /**
@@ -257,10 +257,10 @@ public class FunctionInvokerTest {
      * @throws IllegalAccessException    the illegal access exception
      * @throws IOException               the io exception
      */
-    @Test(expected = IllegalAccessException.class)
-    public void testFailCallFunction2() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
+    @Test
+    void testFailCallFunction2() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
         FunctionCallMessage functionCall = new FunctionCallMessage("","testFunction",null,new HashMap<String,Object>());
-        FunctionInvoker.callFunctions(functionCall,null);
+        Assertions.assertThrows(IllegalAccessException.class, ()->FunctionInvoker.callFunctions(functionCall,null));
     }
 
     /**
@@ -273,14 +273,14 @@ public class FunctionInvokerTest {
      * @throws NoSuchMethodException     the no such method exception
      */
     @Test
-    public void testFailCallFunctionWithoutParameters() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
+    void testFailCallFunctionWithoutParameters() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
         called = false;
         FunctionCallMessage functionCall = new FunctionCallMessage("", "testFunction", null, new HashMap<String, Object>());
         FunctionCallReference callback = new FunctionCallReference();
         callback.setFunctionHandlerInstance(this);
         callback.setMethod(this.getClass().getDeclaredMethod("testFunction" ));
         FunctionInvoker.callFunctions(functionCall, callback);
-        Assert.assertTrue(called);
+        Assertions.assertTrue(called);
     }
 
     /**
@@ -292,11 +292,11 @@ public class FunctionInvokerTest {
      * @throws IOException               the io exception
      */
     @Test
-    public void testFailCallFunctionFails() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
+    void testFailCallFunctionFails() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException {
         FunctionCallMessage functionCall = new FunctionCallMessage("", "testFunction", null, new HashMap<String, Object>());
         FunctionCallReference callback = new FunctionCallReference();
         Object result = FunctionInvoker.callFunctions(functionCall, callback);
-        Assert.assertNull(result);
+        Assertions.assertNull(result);
     }
 
     /**
@@ -308,8 +308,8 @@ public class FunctionInvokerTest {
      * @throws IOException               the io exception
      * @throws NoSuchMethodException     the no such method exception
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void testFailCallFunctionFailsCauseNullParameter() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
+    @Test
+    void testFailCallFunctionFailsCauseNullParameter() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
         Map<String,Object> functionParameters = new LinkedHashMap<>();
         functionParameters.put("obj",new Object());
         functionParameters.put("number",1);
@@ -333,7 +333,7 @@ public class FunctionInvokerTest {
         callback.setFunctionHandlerInstance(this);
         callback.setMethod(this.getClass().getDeclaredMethod("testFunction", Object.class, int.class, Long.class, boolean.class, String[].class, Date.class, byte[].class, BigDecimal.class));
         callback.setParameters(functionCallbackParameters);
-        FunctionInvoker.callFunctions(functionCall, callback);
+        Assertions.assertThrows(IllegalArgumentException.class, ()->FunctionInvoker.callFunctions(functionCall, callback));
     }
 
     /**
@@ -346,7 +346,7 @@ public class FunctionInvokerTest {
      * @throws ParseException            the parse exception
      */
     @Test
-    public void testCallFunctionWithConvertibleTypes() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, ParseException {
+    void testCallFunctionWithConvertibleTypes() throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, IOException, ParseException {
         obj=null;
         number=0;
         longNumber=0L;
@@ -366,14 +366,14 @@ public class FunctionInvokerTest {
         functionParameters.put("bigDecimal",1.2);
         FunctionCallMessage functionCall = new FunctionCallMessage("","testFunction",null,functionParameters);
         FunctionInvoker.callFunctions(functionCall, callback);
-        Assert.assertNotNull("is null",obj);
-        Assert.assertEquals("is not 1",1,number);
-        Assert.assertEquals("is not 2",2L, longNumber.longValue());
-        Assert.assertTrue("is false",bool);
-        Assert.assertNotNull("is null",array);
-        Assert.assertEquals("date not equals",new MsbDateFormat().parse("2018-03-01T12:48:58.771+01"),date);
-        Assert.assertEquals("byte array not equals","test byte string",new String(byteArray));
-        Assert.assertEquals("bigDecimal not equals",BigDecimal.valueOf(1.2),bigDecimal);
+        Assertions.assertNotNull(obj,"is null");
+        Assertions.assertEquals(1,number,"is not 1");
+        Assertions.assertEquals(2L, longNumber.longValue(),"is not 2");
+        Assertions.assertTrue(bool,"is false");
+        Assertions.assertNotNull(array,"is null");
+        Assertions.assertEquals(new MsbDateFormat().parse("2018-03-01T12:48:58.771+01"), date, "date not equals");
+        Assertions.assertEquals("test byte string",new String(byteArray), "byte array not equals");
+        Assertions.assertEquals(BigDecimal.valueOf(1.2), bigDecimal, "bigDecimal not equals");
     }
 
     /**
@@ -384,7 +384,7 @@ public class FunctionInvokerTest {
      * @throws NoSuchMethodException     the no such method exception
      */
     @Test
-    public void testCallFunctionReturningNull() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    void testCallFunctionReturningNull() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
         Map<String, Type> functionCallbackParameters = new LinkedHashMap<>();
         functionCallbackParameters.put("bool", boolean.class);
         FunctionCallReference callback = new FunctionCallReference();
@@ -396,13 +396,13 @@ public class FunctionInvokerTest {
         functionParameters.put("bool",true);
         FunctionCallMessage functionCall = new FunctionCallMessage("","testFunction",null,functionParameters);
         Object obj = FunctionInvoker.callFunctions(functionCall,callback);
-        Assert.assertNotNull("is null",obj);
-        Assert.assertTrue("is false",(Boolean) obj);
+        Assertions.assertNotNull(obj,"is null");
+        Assertions.assertTrue((Boolean) obj,"is false");
 
         functionParameters.put("bool",false);
         functionCall = new FunctionCallMessage("","testFunction",null,functionParameters);
         obj = FunctionInvoker.callFunctions(functionCall,callback);
-        Assert.assertNull("is not null",obj);
+        Assertions.assertNull(obj,"is not null");
     }
 
     /**

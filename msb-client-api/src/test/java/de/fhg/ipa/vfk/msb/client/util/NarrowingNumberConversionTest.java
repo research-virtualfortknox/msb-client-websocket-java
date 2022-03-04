@@ -17,8 +17,8 @@
  */
 package de.fhg.ipa.vfk.msb.client.util;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -28,42 +28,42 @@ import java.math.BigInteger;
  *
  * @author des
  */
-public class NarrowingNumberConversionTest {
+class NarrowingNumberConversionTest {
 
 	/**
 	 * Test parse object.
 	 */
 	@Test
-	public void testNumberConversion() {
-		Assert.assertEquals(1, NarrowingNumberConversion.convert(Integer.class, new Integer(1)).intValue());
-		Assert.assertEquals(1.2D, NarrowingNumberConversion.convert(Double.class, 1.2D));
-		Assert.assertEquals(BigDecimal.valueOf(1.2), NarrowingNumberConversion.convert(BigDecimal.class, BigDecimal.valueOf(1.2)));
-		Assert.assertEquals(BigInteger.valueOf(1), NarrowingNumberConversion.convert(BigInteger.class, BigInteger.valueOf(1)));
-		Assert.assertEquals(Short.MAX_VALUE, NarrowingNumberConversion.convert(Short.class, Short.MAX_VALUE));
-		Assert.assertEquals(Byte.MAX_VALUE, NarrowingNumberConversion.convert(Byte.class, Byte.MAX_VALUE));
-		Assert.assertNull(NarrowingNumberConversion.convert(BigInteger.class, null));
+	void testNumberConversion() {
+		Assertions.assertEquals(1, NarrowingNumberConversion.convert(Integer.class, new Integer(1)).intValue());
+		Assertions.assertEquals(1.2D, NarrowingNumberConversion.convert(Double.class, 1.2D));
+		Assertions.assertEquals(BigDecimal.valueOf(1.2), NarrowingNumberConversion.convert(BigDecimal.class, BigDecimal.valueOf(1.2)));
+		Assertions.assertEquals(BigInteger.valueOf(1), NarrowingNumberConversion.convert(BigInteger.class, BigInteger.valueOf(1)));
+		Assertions.assertEquals(Short.MAX_VALUE, NarrowingNumberConversion.convert(Short.class, Short.MAX_VALUE));
+		Assertions.assertEquals(Byte.MAX_VALUE, NarrowingNumberConversion.convert(Byte.class, Byte.MAX_VALUE));
+		Assertions.assertNull(NarrowingNumberConversion.convert(BigInteger.class, null));
 	}
 	
 	/**
 	 * Test number conversion type change.
 	 */
 	@Test
-	public void testNumberConversionTypeChange() {
-		Assert.assertEquals(1, NarrowingNumberConversion.convert(Integer.class, 1.2D));
-		Assert.assertEquals(1L, NarrowingNumberConversion.convert(Long.class, 1.2D));
-		Assert.assertEquals(1.2F, NarrowingNumberConversion.convert(Float.class, 1.2D));
-		Assert.assertEquals(BigDecimal.valueOf(1.2), NarrowingNumberConversion.convert(BigDecimal.class, 1.2));
-		Assert.assertEquals(BigInteger.valueOf(1), NarrowingNumberConversion.convert(BigInteger.class, 1));
-		Assert.assertEquals(Short.valueOf("1"), NarrowingNumberConversion.convert(Short.class, 1.2));
-		Assert.assertEquals(Byte.valueOf("1"), NarrowingNumberConversion.convert(Byte.class, 1.2));
+	void testNumberConversionTypeChange() {
+		Assertions.assertEquals(1, NarrowingNumberConversion.convert(Integer.class, 1.2D));
+		Assertions.assertEquals(1L, NarrowingNumberConversion.convert(Long.class, 1.2D));
+		Assertions.assertEquals(1.2F, NarrowingNumberConversion.convert(Float.class, 1.2D));
+		Assertions.assertEquals(BigDecimal.valueOf(1.2), NarrowingNumberConversion.convert(BigDecimal.class, 1.2));
+		Assertions.assertEquals(BigInteger.valueOf(1), NarrowingNumberConversion.convert(BigInteger.class, 1));
+		Assertions.assertEquals(Short.valueOf("1"), NarrowingNumberConversion.convert(Short.class, 1.2));
+		Assertions.assertEquals(Byte.valueOf("1"), NarrowingNumberConversion.convert(Byte.class, 1.2));
 	}
 
 	/**
 	 * Test number conversion exception.
 	 */
-	@Test(expected= TypeMismatchException.class)
-	public void testNumberConversionException() {
-		NarrowingNumberConversion.convert(String.class, new BigInteger("112"));
+	@Test
+	void testNumberConversionException() {
+		Assertions.assertThrows(TypeMismatchException.class,()->NarrowingNumberConversion.convert(String.class, new BigInteger("112")));
 	}
 	
 }

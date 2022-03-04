@@ -19,8 +19,8 @@
 package de.fhg.ipa.vfk.msb.client.util;
 
 import de.fhg.ipa.vfk.msb.client.util.WrapperTypes;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -32,94 +32,94 @@ import java.util.Date;
  *
  * @author des
  */
-public class WrapperTypesTest {
+class WrapperTypesTest {
 
     /**
      * Test boolean wrapper types.
      */
     @Test
-    public void testBooleanWrapperTypes(){
-        Assert.assertTrue(WrapperTypes.isBooleanWrapperType(boolean.class));
-        Assert.assertTrue(WrapperTypes.isBooleanWrapperType(Boolean.class));
+    void testBooleanWrapperTypes(){
+        Assertions.assertTrue(WrapperTypes.isBooleanWrapperType(boolean.class));
+        Assertions.assertTrue(WrapperTypes.isBooleanWrapperType(Boolean.class));
 
-        Assert.assertFalse(WrapperTypes.isBooleanWrapperType(int.class));
+        Assertions.assertFalse(WrapperTypes.isBooleanWrapperType(int.class));
     }
 
     /**
      * Test number wrapper types.
      */
     @Test
-    public void testNumberWrapperTypes(){
-        Assert.assertTrue(WrapperTypes.isNumberWrapperType(float.class));
-        Assert.assertTrue(WrapperTypes.isNumberWrapperType(double.class));
-        Assert.assertTrue(WrapperTypes.isNumberWrapperType(Float.class));
-        Assert.assertTrue(WrapperTypes.isNumberWrapperType(Double.class));
-        Assert.assertTrue(WrapperTypes.isNumberWrapperType(int.class));
-        Assert.assertTrue(WrapperTypes.isNumberWrapperType(long.class));
-        Assert.assertTrue(WrapperTypes.isNumberWrapperType(Integer.class));
-        Assert.assertTrue(WrapperTypes.isNumberWrapperType(Long.class));
+    void testNumberWrapperTypes(){
+        Assertions.assertTrue(WrapperTypes.isNumberWrapperType(float.class));
+        Assertions.assertTrue(WrapperTypes.isNumberWrapperType(double.class));
+        Assertions.assertTrue(WrapperTypes.isNumberWrapperType(Float.class));
+        Assertions.assertTrue(WrapperTypes.isNumberWrapperType(Double.class));
+        Assertions.assertTrue(WrapperTypes.isNumberWrapperType(int.class));
+        Assertions.assertTrue(WrapperTypes.isNumberWrapperType(long.class));
+        Assertions.assertTrue(WrapperTypes.isNumberWrapperType(Integer.class));
+        Assertions.assertTrue(WrapperTypes.isNumberWrapperType(Long.class));
 
-        Assert.assertFalse(WrapperTypes.isNumberWrapperType(String.class));
+        Assertions.assertFalse(WrapperTypes.isNumberWrapperType(String.class));
     }
 
     /**
      * Test date wrapper types.
      */
     @Test
-    public void testDateWrapperTypes(){
-        Assert.assertTrue(WrapperTypes.isDateWrapperType(Date.class));
-        Assert.assertTrue(WrapperTypes.isDateWrapperType(java.sql.Time.class));
-        Assert.assertTrue(WrapperTypes.isDateWrapperType(java.sql.Date.class));
-        Assert.assertTrue(WrapperTypes.isDateWrapperType(java.sql.Timestamp.class));
+    void testDateWrapperTypes(){
+        Assertions.assertTrue(WrapperTypes.isDateWrapperType(Date.class));
+        Assertions.assertTrue(WrapperTypes.isDateWrapperType(java.sql.Time.class));
+        Assertions.assertTrue(WrapperTypes.isDateWrapperType(java.sql.Date.class));
+        Assertions.assertTrue(WrapperTypes.isDateWrapperType(java.sql.Timestamp.class));
 
-        Assert.assertFalse(WrapperTypes.isDateWrapperType(Object.class));
+        Assertions.assertFalse(WrapperTypes.isDateWrapperType(Object.class));
     }
 
     /**
      * Test wrapper types without conversation.
      */
     @Test
-    public void testWrapperTypesWithoutConversation(){
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(char.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(byte.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(short.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(void.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Character.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Byte.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Short.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Void.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(String.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(BigInteger.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(BigDecimal.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(int.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Long.class));
-        Assert.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Boolean.class));
+    void testWrapperTypesWithoutConversation(){
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(char.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(byte.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(short.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(void.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Character.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Byte.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Short.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Void.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(String.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(BigInteger.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(BigDecimal.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(int.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Long.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperTypeWithoutConversation(Boolean.class));
 
-        Assert.assertFalse(WrapperTypes.isWrapperTypeWithoutConversation(Date.class));
-        Assert.assertFalse(WrapperTypes.isWrapperTypeWithoutConversation(Object.class));
+        Assertions.assertFalse(WrapperTypes.isWrapperTypeWithoutConversation(Date.class));
+        Assertions.assertFalse(WrapperTypes.isWrapperTypeWithoutConversation(Object.class));
     }
 
     /**
      * Test wrapper types.
      */
     @Test
-    public void testWrapperTypes(){
-        Assert.assertTrue(WrapperTypes.isWrapperType(char.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(byte.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(short.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(void.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(Character.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(Byte.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(Short.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(Void.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(String.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(BigDecimal.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(int.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(long.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(boolean.class));
-        Assert.assertTrue(WrapperTypes.isWrapperType(java.sql.Timestamp.class));
+    void testWrapperTypes(){
+        Assertions.assertTrue(WrapperTypes.isWrapperType(char.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(byte.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(short.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(void.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(Character.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(Byte.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(Short.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(Void.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(String.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(BigDecimal.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(int.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(long.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(boolean.class));
+        Assertions.assertTrue(WrapperTypes.isWrapperType(java.sql.Timestamp.class));
 
-        Assert.assertFalse(WrapperTypes.isWrapperType(Object.class));
+        Assertions.assertFalse(WrapperTypes.isWrapperType(Object.class));
     }
 
 }

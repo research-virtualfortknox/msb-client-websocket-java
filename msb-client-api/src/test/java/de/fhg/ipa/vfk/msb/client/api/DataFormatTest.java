@@ -18,41 +18,41 @@
 
 package de.fhg.ipa.vfk.msb.client.api;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DataFormatTest {
+class DataFormatTest {
 
     @Test
-    public void testDataFormat(){
+    void testDataFormat(){
         DataFormat dataFormat = new DataFormat();
         dataFormat.put("type","string");
-        Assert.assertEquals("{\"type\":\"string\"}",dataFormat.toString());
+        Assertions.assertEquals("{\"type\":\"string\"}",dataFormat.toString());
     }
 
     @Test
-    public void testDataFormatStringConstructor(){
-        Assert.assertEquals("{\"type\":\"string\"}",new DataFormat("{\"type\":\"string\"}").toString());
+    void testDataFormatStringConstructor(){
+        Assertions.assertEquals("{\"type\":\"string\"}",new DataFormat("{\"type\":\"string\"}").toString());
     }
 
     @Test
-    public void testDataFormatWrongInput(){
-        Assert.assertEquals("{}",new DataFormat("{wrong}").toString());
+    void testDataFormatWrongInput(){
+        Assertions.assertEquals("{}",new DataFormat("{wrong}").toString());
     }
 
     @Test
-    public void testDataFormatMapConstructor(){
+    void testDataFormatMapConstructor(){
         Map<String, Object> map = new HashMap<>();
         map.put("type","string");
-        Assert.assertEquals("{\"type\":\"string\"}",new DataFormat(map).toString());
+        Assertions.assertEquals("{\"type\":\"string\"}",new DataFormat(map).toString());
     }
 
     @Test
-    public void testDataFormatClassConstructor(){
-        Assert.assertEquals("{\"dataObject\":{\"type\":\"integer\",\"format\":\"int32\"}}",new DataFormat(Integer.class).toString());
+    void testDataFormatClassConstructor(){
+        Assertions.assertEquals("{\"dataObject\":{\"type\":\"integer\",\"format\":\"int32\"}}",new DataFormat(Integer.class).toString());
     }
 
 }

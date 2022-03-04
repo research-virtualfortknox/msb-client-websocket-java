@@ -24,8 +24,8 @@ import de.fhg.ipa.vfk.msb.client.api.Configuration;
 import de.fhg.ipa.vfk.msb.client.api.ParameterValue;
 import de.fhg.ipa.vfk.msb.client.api.PrimitiveFormat;
 import de.fhg.ipa.vfk.msb.client.api.PrimitiveType;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,65 +38,65 @@ import java.util.Map;
  *
  * @author des
  */
-public class ConfigParamParserTest {
+class ConfigParamParserTest {
 
     @Test
-    public void testParseConfigParamByPackageScan() {
+    void testParseConfigParamByPackageScan() {
         Configuration configuration = ConfigParamParser.parse("de.fhg.ipa.vfk.msb.client.parser");
 
-        Assert.assertNotNull("configuration is null",configuration);
-        Assert.assertEquals("configuration parameter size not equals", 10, configuration.getParameters().size());
+        Assertions.assertNotNull(configuration, "configuration is null");
+        Assertions.assertEquals( 10, configuration.getParameters().size(), "configuration parameter size not equals");
 
         ParameterValue parameterValue = configuration.getParameters().get("helloParam");
-        Assert.assertNotNull("config param is null", parameterValue);
-        Assert.assertEquals("type of config param", PrimitiveType.STRING, parameterValue.getType());
-        Assert.assertNull("format of config param", parameterValue.getFormat());
-        Assert.assertEquals("value of config param", "hello", parameterValue.getValue());
+        Assertions.assertNotNull(parameterValue,"config param is null");
+        Assertions.assertEquals(PrimitiveType.STRING, parameterValue.getType(), "type of config param");
+        Assertions.assertNull(parameterValue.getFormat(), "format of config param");
+        Assertions.assertEquals("hello", parameterValue.getValue(), "value of config param");
 
         ParameterValue parameterValue2 = configuration.getParameters().get("testParam2");
-        Assert.assertNotNull("config param is null", parameterValue2);
-        Assert.assertEquals("type of config param", PrimitiveType.NUMBER, parameterValue2.getType());
-        Assert.assertEquals("format of config param", PrimitiveFormat.DOUBLE, parameterValue2.getFormat());
-        Assert.assertEquals("value of config param", 1.234D, parameterValue2.getValue());
+        Assertions.assertNotNull(parameterValue2, "config param is null");
+        Assertions.assertEquals(PrimitiveType.NUMBER, parameterValue2.getType(), "type of config param");
+        Assertions.assertEquals(PrimitiveFormat.DOUBLE, parameterValue2.getFormat(), "format of config param");
+        Assertions.assertEquals(1.234D, parameterValue2.getValue(), "value of config param");
     }
 
     @Test
-    public void testParseConfigParamByInstance() {
+    void testParseConfigParamByInstance() {
         List<Class<?>> annotatedClasses = new ArrayList<>();
         annotatedClasses.add(SuccessfulClazz.class);
         Configuration configuration = ConfigParamParser.parseConfig(annotatedClasses);
 
-        Assert.assertNotNull("configuration is null",configuration);
-        Assert.assertEquals("configuration parameter size not equals", 10, configuration.getParameters().size());
+        Assertions.assertNotNull(configuration, "configuration is null");
+        Assertions.assertEquals( 10, configuration.getParameters().size(), "configuration parameter size not equals");
 
         ParameterValue parameterValue = configuration.getParameters().get("helloParam");
-        Assert.assertNotNull("config param is null", parameterValue);
-        Assert.assertEquals("type of config param", PrimitiveType.STRING, parameterValue.getType());
-        Assert.assertNull("format of config param", parameterValue.getFormat());
-        Assert.assertEquals("value of config param", "hello", parameterValue.getValue());
+        Assertions.assertNotNull(parameterValue,"config param is null");
+        Assertions.assertEquals(PrimitiveType.STRING, parameterValue.getType(), "type of config param");
+        Assertions.assertNull(parameterValue.getFormat(), "format of config param");
+        Assertions.assertEquals("hello", parameterValue.getValue(), "value of config param");
 
         ParameterValue parameterValue2 = configuration.getParameters().get("testParam2");
-        Assert.assertNotNull("config param is null", parameterValue2);
-        Assert.assertEquals("type of config param", PrimitiveType.NUMBER, parameterValue2.getType());
-        Assert.assertEquals("format of config param", PrimitiveFormat.DOUBLE, parameterValue2.getFormat());
-        Assert.assertEquals("value of config param", 1.234D, parameterValue2.getValue());
+        Assertions.assertNotNull(parameterValue2, "config param is null");
+        Assertions.assertEquals(PrimitiveType.NUMBER, parameterValue2.getType(), "type of config param");
+        Assertions.assertEquals(PrimitiveFormat.DOUBLE, parameterValue2.getFormat(), "format of config param");
+        Assertions.assertEquals(1.234D, parameterValue2.getValue(), "value of config param");
     }
 
     @Test
-    public void testParseConfigParamFailsByConstructor() {
+    void testParseConfigParamFailsByConstructor() {
         List<Class<?>> annotatedClasses = new ArrayList<>();
         annotatedClasses.add(FailingClazz.class);
         Configuration configuration = ConfigParamParser.parseConfig(annotatedClasses);
 
-        Assert.assertNotNull("configuration is null",configuration);
-        Assert.assertEquals("configuration parameter size not equals", 0, configuration.getParameters().size());
+        Assertions.assertNotNull(configuration, "configuration is null");
+        Assertions.assertEquals( 0, configuration.getParameters().size(), "configuration parameter size not equals");
     }
 
     @Events({})
     public static class SuccessfulClazz {
 
         @ConfigurationParam(name = "helloParam")
-        public String testParam1 = "hello";
+        String testParam1 = "hello";
         @ConfigurationParam
         protected double testParam2 = 1.234D;
         @ConfigurationParam

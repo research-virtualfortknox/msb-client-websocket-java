@@ -21,9 +21,10 @@ package de.fhg.ipa.vfk.msb.client.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -34,17 +35,17 @@ import java.util.Date;
  *
  * @author des
  */
-public class DateSerializerDeserializerTest {
+class DateSerializerDeserializerTest {
 
-    private ObjectMapper mapper;
+    private static ObjectMapper mapper = new ObjectMapper();
 
-    private final SimpleDateFormat dateFormat = new MsbDateFormat();
+    private static final SimpleDateFormat dateFormat = new MsbDateFormat();
 
     /**
      * Before test.
      */
-    @Before
-    public void beforeTest(){
+    @BeforeAll
+    static void beforeTest(){
         mapper = new ObjectMapper();
         mapper.setDateFormat(dateFormat);
         SimpleModule module = new SimpleModule();
@@ -59,10 +60,10 @@ public class DateSerializerDeserializerTest {
      * @throws JsonProcessingException the json processing exception
      */
     @Test
-    public void testDateSerializer() throws JsonProcessingException {
+    void testDateSerializer() throws JsonProcessingException {
         Date date = new Date();
         String stringDate = mapper.writeValueAsString(date);
-        Assert.assertEquals("\""+dateFormat.format(date)+"\"",stringDate);
+        Assertions.assertEquals("\""+dateFormat.format(date)+"\"",stringDate);
     }
 
     /**
@@ -71,9 +72,9 @@ public class DateSerializerDeserializerTest {
      * @throws JsonProcessingException the json processing exception
      */
     @Test
-    public void testDateSerializerNull() throws JsonProcessingException {
+    void testDateSerializerNull() throws JsonProcessingException {
         String stringDate = mapper.writeValueAsString(null);
-        Assert.assertEquals("null",stringDate);
+        Assertions.assertEquals("null",stringDate);
     }
 
     /**
@@ -82,11 +83,11 @@ public class DateSerializerDeserializerTest {
      * @throws IOException the io exception
      */
     @Test
-    public void testDateDeserializer() throws IOException {
+    void testDateDeserializer() throws IOException {
         Date date = new Date();
         String stringDate = mapper.writeValueAsString(date);
         Date result = mapper.readValue(stringDate, Date.class);
-        Assert.assertEquals(date,result);
+        Assertions.assertEquals(date,result);
     }
 
     /**
@@ -95,10 +96,10 @@ public class DateSerializerDeserializerTest {
      * @throws IOException the io exception
      */
     @Test
-    public void testDateDeserializerEmpty() throws IOException {
+    void testDateDeserializerEmpty() throws IOException {
         String stringDate = "{}";
         Date result = mapper.readValue(stringDate, Date.class);
-        Assert.assertNull(result);
+        Assertions.assertNull(result);
     }
 
     /**
@@ -107,10 +108,10 @@ public class DateSerializerDeserializerTest {
      * @throws IOException the io exception
      */
     @Test
-    public void testDateDeserializerWrongString() throws IOException {
+    void testDateDeserializerWrongString() throws IOException {
         String stringDate = "\"wrong_date\"";
         Date result = mapper.readValue(stringDate, Date.class);
-        Assert.assertNull(result);
+        Assertions.assertNull(result);
     }
 
 

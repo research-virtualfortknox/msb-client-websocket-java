@@ -18,8 +18,8 @@
 
 package de.fhg.ipa.vfk.msb.client.websocket;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -30,49 +30,49 @@ import java.util.concurrent.TimeoutException;
  *
  * @author des
  */
-public class MsbClientTest {
+class MsbClientTest {
 
     /**
      * Test build msb client without url.
      */
-    @Test(expected=IllegalStateException.class)
-    public void testBuildMsbClientWithoutUrl(){
-        new MsbClient.Builder()
+    @Test
+    void testBuildMsbClientWithoutUrl(){
+        Assertions.assertThrows(IllegalStateException.class ,()->new MsbClient.Builder()
                 .trustStore("/path","password")
                 .enabledDataFormatValidation()
                 .disableHostnameVerification()
                 .disableFunctionCallsInvocation()
                 .disableAutoReconnect()
                 .disableEventCache()
-                .build();
+                .build());
     }
 
     /**
      * Test build msb client default.
      */
     @Test
-    public void testBuildMsbClientDefault(){
+    void testBuildMsbClientDefault(){
         MsbClient msbClient = new MsbClient.Builder()
                 .url("url").build();
-        Assert.assertNotNull(msbClient.getClientHandler());
-        Assert.assertFalse(msbClient.isConnected());
-        Assert.assertFalse(msbClient.isRegistered());
-        Assert.assertEquals("https://url/websocket/data",msbClient.getUrl());
-        Assert.assertFalse(msbClient.isDataFormatValidation());
-        Assert.assertFalse(msbClient.isHostnameVerificationDisabled());
-        Assert.assertTrue(msbClient.isInvokableFunctionCalls());
-        Assert.assertTrue(msbClient.isAutoReconnect());
-        Assert.assertTrue(msbClient.isEventCache());
-        Assert.assertEquals(1000,msbClient.getEventCacheSize());
-        Assert.assertEquals(10000,msbClient.getReconnectInterval());
-        Assert.assertEquals(1000000,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertNotNull(msbClient.getClientHandler());
+        Assertions.assertFalse(msbClient.isConnected());
+        Assertions.assertFalse(msbClient.isRegistered());
+        Assertions.assertEquals("https://url/websocket/data",msbClient.getUrl());
+        Assertions.assertFalse(msbClient.isDataFormatValidation());
+        Assertions.assertFalse(msbClient.isHostnameVerificationDisabled());
+        Assertions.assertTrue(msbClient.isInvokableFunctionCalls());
+        Assertions.assertTrue(msbClient.isAutoReconnect());
+        Assertions.assertTrue(msbClient.isEventCache());
+        Assertions.assertEquals(1000,msbClient.getEventCacheSize());
+        Assertions.assertEquals(10000,msbClient.getReconnectInterval());
+        Assertions.assertEquals(1000000,msbClient.getWebsocketTextMessageSize());
     }
 
     /**
      * Test build msb client only url.
      */
     @Test
-    public void testBuildMsbClientOnlyUrl(){
+    void testBuildMsbClientOnlyUrl(){
         MsbClient msbClient = new MsbClient.Builder()
                 .url("url")
                 .trustStore("/path","password")
@@ -82,23 +82,23 @@ public class MsbClientTest {
                 .disableAutoReconnect()
                 .disableEventCache()
                 .build();
-        Assert.assertNotNull(msbClient.getClientHandler());
-        Assert.assertEquals("https://url/websocket/data",msbClient.getUrl());
-        Assert.assertTrue(msbClient.isDataFormatValidation());
-        Assert.assertTrue(msbClient.isHostnameVerificationDisabled());
-        Assert.assertFalse(msbClient.isInvokableFunctionCalls());
-        Assert.assertFalse(msbClient.isAutoReconnect());
-        Assert.assertFalse(msbClient.isEventCache());
-        Assert.assertEquals(1000,msbClient.getEventCacheSize());
-        Assert.assertEquals(10000,msbClient.getReconnectInterval());
-        Assert.assertEquals(1000000,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertNotNull(msbClient.getClientHandler());
+        Assertions.assertEquals("https://url/websocket/data",msbClient.getUrl());
+        Assertions.assertTrue(msbClient.isDataFormatValidation());
+        Assertions.assertTrue(msbClient.isHostnameVerificationDisabled());
+        Assertions.assertFalse(msbClient.isInvokableFunctionCalls());
+        Assertions.assertFalse(msbClient.isAutoReconnect());
+        Assertions.assertFalse(msbClient.isEventCache());
+        Assertions.assertEquals(1000,msbClient.getEventCacheSize());
+        Assertions.assertEquals(10000,msbClient.getReconnectInterval());
+        Assertions.assertEquals(1000000,msbClient.getWebsocketTextMessageSize());
     }
 
     /**
      * Test build msb client event cache size.
      */
     @Test
-    public void testBuildMsbClientEventCacheSize(){
+    void testBuildMsbClientEventCacheSize(){
         MsbClient msbClient = new MsbClient.Builder()
                 .url("http://url")
                 .trustStore("/path","password")
@@ -109,23 +109,23 @@ public class MsbClientTest {
                 .disableEventCache()
                 .eventCacheSize(1)
                 .build();
-        Assert.assertNotNull(msbClient.getClientHandler());
-        Assert.assertEquals("http://url/websocket/data",msbClient.getUrl());
-        Assert.assertTrue(msbClient.isDataFormatValidation());
-        Assert.assertTrue(msbClient.isHostnameVerificationDisabled());
-        Assert.assertFalse(msbClient.isInvokableFunctionCalls());
-        Assert.assertFalse(msbClient.isAutoReconnect());
-        Assert.assertFalse(msbClient.isEventCache());
-        Assert.assertEquals(1,msbClient.getEventCacheSize());
-        Assert.assertEquals(10000,msbClient.getReconnectInterval());
-        Assert.assertEquals(1000000,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertNotNull(msbClient.getClientHandler());
+        Assertions.assertEquals("http://url/websocket/data",msbClient.getUrl());
+        Assertions.assertTrue(msbClient.isDataFormatValidation());
+        Assertions.assertTrue(msbClient.isHostnameVerificationDisabled());
+        Assertions.assertFalse(msbClient.isInvokableFunctionCalls());
+        Assertions.assertFalse(msbClient.isAutoReconnect());
+        Assertions.assertFalse(msbClient.isEventCache());
+        Assertions.assertEquals(1,msbClient.getEventCacheSize());
+        Assertions.assertEquals(10000,msbClient.getReconnectInterval());
+        Assertions.assertEquals(1000000,msbClient.getWebsocketTextMessageSize());
     }
 
     /**
      * Test build msb client websocket text message size.
      */
     @Test
-    public void testBuildMsbClientWebsocketTextMessageSize(){
+    void testBuildMsbClientWebsocketTextMessageSize(){
         MsbClient msbClient = new MsbClient.Builder()
                 .url("https://url/websocket/data")
                 .trustStore("/path","password")
@@ -138,23 +138,23 @@ public class MsbClientTest {
                 .websocketTextMessageSize(3)
                 .reconnectInterval(4)
                 .build();
-        Assert.assertNotNull(msbClient.getClientHandler());
-        Assert.assertEquals("https://url/websocket/data",msbClient.getUrl());
-        Assert.assertTrue(msbClient.isDataFormatValidation());
-        Assert.assertTrue(msbClient.isHostnameVerificationDisabled());
-        Assert.assertFalse(msbClient.isInvokableFunctionCalls());
-        Assert.assertFalse(msbClient.isAutoReconnect());
-        Assert.assertFalse(msbClient.isEventCache());
-        Assert.assertEquals(1,msbClient.getEventCacheSize());
-        Assert.assertEquals(10000,msbClient.getReconnectInterval());
-        Assert.assertEquals(3,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertNotNull(msbClient.getClientHandler());
+        Assertions.assertEquals("https://url/websocket/data",msbClient.getUrl());
+        Assertions.assertTrue(msbClient.isDataFormatValidation());
+        Assertions.assertTrue(msbClient.isHostnameVerificationDisabled());
+        Assertions.assertFalse(msbClient.isInvokableFunctionCalls());
+        Assertions.assertFalse(msbClient.isAutoReconnect());
+        Assertions.assertFalse(msbClient.isEventCache());
+        Assertions.assertEquals(1,msbClient.getEventCacheSize());
+        Assertions.assertEquals(10000,msbClient.getReconnectInterval());
+        Assertions.assertEquals(3,msbClient.getWebsocketTextMessageSize());
     }
 
     /**
      * Test build msb client all.
      */
     @Test
-    public void testBuildMsbClientAll(){
+    void testBuildMsbClientAll(){
         MsbClient msbClient = new MsbClient.Builder()
                 .url("url")
                 .trustStore("/path","password")
@@ -168,16 +168,16 @@ public class MsbClientTest {
                 .websocketTextMessageSize(3)
                 .functionCallExecutorPoolSize(1)
                 .build();
-        Assert.assertNotNull(msbClient.getClientHandler());
-        Assert.assertEquals("https://url/websocket/data",msbClient.getUrl());
-        Assert.assertTrue(msbClient.isDataFormatValidation());
-        Assert.assertTrue(msbClient.isHostnameVerificationDisabled());
-        Assert.assertFalse(msbClient.isInvokableFunctionCalls());
-        Assert.assertFalse(msbClient.isAutoReconnect());
-        Assert.assertFalse(msbClient.isEventCache());
-        Assert.assertEquals(1,msbClient.getEventCacheSize());
-        Assert.assertEquals(20000,msbClient.getReconnectInterval());
-        Assert.assertEquals(3,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertNotNull(msbClient.getClientHandler());
+        Assertions.assertEquals("https://url/websocket/data",msbClient.getUrl());
+        Assertions.assertTrue(msbClient.isDataFormatValidation());
+        Assertions.assertTrue(msbClient.isHostnameVerificationDisabled());
+        Assertions.assertFalse(msbClient.isInvokableFunctionCalls());
+        Assertions.assertFalse(msbClient.isAutoReconnect());
+        Assertions.assertFalse(msbClient.isEventCache());
+        Assertions.assertEquals(1,msbClient.getEventCacheSize());
+        Assertions.assertEquals(20000,msbClient.getReconnectInterval());
+        Assertions.assertEquals(3,msbClient.getWebsocketTextMessageSize());
     }
 
     /**
@@ -185,12 +185,12 @@ public class MsbClientTest {
      *
      * @throws Exception the exception
      */
-    @Test(expected = IllegalStateException.class)
-    public void testClosedMsbClientConnect() throws Exception {
+    @Test
+    void testClosedMsbClientConnect() throws Exception {
         MsbClient msbClient = new MsbClient.Builder().url("url").build();
         msbClient.disconnect();
         msbClient.close();
-        msbClient.connect();
+        Assertions.assertThrows(IllegalStateException.class, msbClient::connect);
     }
 
     /**
@@ -199,7 +199,7 @@ public class MsbClientTest {
      * @throws Exception the exception
      */
     @Test
-    public void testConnectMsbClient() throws Exception {
+    void testConnectMsbClient() throws Exception {
         MsbClient msbClient = new MsbClient.Builder()
                 .url("url")
                 .trustStore("/path","password")
@@ -209,9 +209,9 @@ public class MsbClientTest {
         try {
             future.get(1000,TimeUnit.MILLISECONDS);
         } catch (TimeoutException e){}
-        Assert.assertFalse(future.isDone());
+        Assertions.assertFalse(future.isDone());
         msbClient.disconnect();
-        Assert.assertFalse(msbClient.isConnected());
+        Assertions.assertFalse(msbClient.isConnected());
         msbClient.close();
     }
 
@@ -221,14 +221,14 @@ public class MsbClientTest {
      * @throws Exception the exception
      */
     @Test
-    public void testReconnectMsbClient() throws Exception {
+    void testReconnectMsbClient() throws Exception {
         MsbClient msbClient = new MsbClient.Builder().url("url").disableAutoReconnect().build();
         msbClient.connect();
-        Assert.assertFalse(msbClient.isConnected());
+        Assertions.assertFalse(msbClient.isConnected());
         msbClient.disconnect();
-        Assert.assertFalse(msbClient.isConnected());
+        Assertions.assertFalse(msbClient.isConnected());
         msbClient.connect();
-        Assert.assertFalse(msbClient.isConnected());
+        Assertions.assertFalse(msbClient.isConnected());
         msbClient.close();
     }
 

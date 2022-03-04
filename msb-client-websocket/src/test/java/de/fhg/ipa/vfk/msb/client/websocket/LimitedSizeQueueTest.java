@@ -18,8 +18,8 @@
 
 package de.fhg.ipa.vfk.msb.client.websocket;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,199 +29,199 @@ import java.util.List;
  *
  * @author des
  */
-public class LimitedSizeQueueTest {
+class LimitedSizeQueueTest {
 
     /**
      * Test limited size queue poll.
      */
     @Test
-    public void testLimitedSizeQueuePoll(){
+    void testLimitedSizeQueuePoll(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
-        Assert.assertEquals("size not 1",1,limitedSizeQueue.size());
-        Assert.assertNotNull("queue return null",limitedSizeQueue.poll());
-        Assert.assertTrue("queue is not empty",limitedSizeQueue.isEmpty());
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
+        Assertions.assertEquals(1,limitedSizeQueue.size(),"size not 1");
+        Assertions.assertNotNull(limitedSizeQueue.poll(),"queue return null");
+        Assertions.assertTrue(limitedSizeQueue.isEmpty(), "queue is not empty");
     }
 
     /**
      * Test limited size queue peek.
      */
     @Test
-    public void testLimitedSizeQueuePeek(){
+    void testLimitedSizeQueuePeek(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
-        Assert.assertEquals("size not 1",1,limitedSizeQueue.size());
-        Assert.assertNotNull("queue return null",limitedSizeQueue.peek());
-        Assert.assertFalse("queue is empty",limitedSizeQueue.isEmpty());
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
+        Assertions.assertEquals(1,limitedSizeQueue.size(),"size not 1");
+        Assertions.assertNotNull(limitedSizeQueue.peek(),"queue return null");
+        Assertions.assertFalse(limitedSizeQueue.isEmpty(), "queue is empty");
     }
 
     /**
      * Test limited size queue remove.
      */
     @Test
-    public void testLimitedSizeQueueRemove(){
+    void testLimitedSizeQueueRemove(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
-        Assert.assertEquals("size not 1",1,limitedSizeQueue.size());
-        Assert.assertNotNull("queue return null",limitedSizeQueue.remove());
-        Assert.assertTrue("queue is not empty",limitedSizeQueue.isEmpty());
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
+        Assertions.assertEquals(1,limitedSizeQueue.size(),"size not 1");
+        Assertions.assertNotNull(limitedSizeQueue.remove(),"queue return null");
+        Assertions.assertTrue(limitedSizeQueue.isEmpty(), "queue is not empty");
     }
 
     /**
      * Test limited size queue element.
      */
     @Test
-    public void testLimitedSizeQueueElement(){
+    void testLimitedSizeQueueElement(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
-        Assert.assertEquals("size not 1",1,limitedSizeQueue.size());
-        Assert.assertNotNull("queue return null",limitedSizeQueue.element());
-        Assert.assertFalse("queue is empty",limitedSizeQueue.isEmpty());
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
+        Assertions.assertEquals(1,limitedSizeQueue.size(),"size not 1");
+        Assertions.assertNotNull(limitedSizeQueue.element(),"queue return null");
+        Assertions.assertFalse(limitedSizeQueue.isEmpty(), "queue is empty");
     }
 
     /**
      * Test limited size queue max size.
      */
     @Test
-    public void testLimitedSizeQueueMaxSize(){
+    void testLimitedSizeQueueMaxSize(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>(2);
-        Assert.assertEquals("max size not 2",2,limitedSizeQueue.maximumSize());
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
-        Assert.assertEquals("size not 1", 1,limitedSizeQueue.size());
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
-        Assert.assertEquals("size not 1",2,limitedSizeQueue.size());
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
-        Assert.assertEquals("size not 1", 2,limitedSizeQueue.size());
+        Assertions.assertEquals(2,limitedSizeQueue.maximumSize(),"max size not 2");
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
+        Assertions.assertEquals(1,limitedSizeQueue.size(),"size not 1");
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
+        Assertions.assertEquals(2,limitedSizeQueue.size(),"size not 1");
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
+        Assertions.assertEquals(2,limitedSizeQueue.size(),"size not 1");
     }
 
     /**
      * Test limited size queue clear.
      */
     @Test
-    public void testLimitedSizeQueueClear(){
+    void testLimitedSizeQueueClear(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>(2);
-        Assert.assertEquals("max size not 2",2,limitedSizeQueue.maximumSize());
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
-        Assert.assertTrue("is false",limitedSizeQueue.add(new Object()));
+        Assertions.assertEquals(2,limitedSizeQueue.maximumSize(),"max size not 2");
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
+        Assertions.assertTrue(limitedSizeQueue.add(new Object()), "is false");
         limitedSizeQueue.clear();
-        Assert.assertTrue("queue is not empty",limitedSizeQueue.isEmpty());
+        Assertions.assertTrue(limitedSizeQueue.isEmpty(), "queue is not empty");
     }
 
     /**
      * Test limited size queue add all.
      */
     @Test
-    public void testLimitedSizeQueueAddAll(){
+    void testLimitedSizeQueueAddAll(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(getList()));
-        Assert.assertEquals("queue is not empty",3,limitedSizeQueue.size());
+        Assertions.assertTrue(limitedSizeQueue.addAll(getList()), "is false");
+        Assertions.assertEquals(3,limitedSizeQueue.size(),"queue is not empty");
     }
 
     /**
      * Test limited size queue add all to many.
      */
     @Test
-    public void testLimitedSizeQueueAddAllToMany(){
+    void testLimitedSizeQueueAddAllToMany(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>(2);
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(getList()));
-        Assert.assertEquals("queue is not empty",2,limitedSizeQueue.size());
+        Assertions.assertTrue(limitedSizeQueue.addAll(getList()), "is false");
+        Assertions.assertEquals(2,limitedSizeQueue.size(),"queue is not empty");
     }
 
     /**
      * Test limited size queue remove entry.
      */
     @Test
-    public void testLimitedSizeQueueRemoveEntry(){
+    void testLimitedSizeQueueRemoveEntry(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
         Object obj = new Object();
         List<Object> objects = getList();
         objects.add(obj);
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(objects));
-        Assert.assertTrue("is false",limitedSizeQueue.remove(obj));
-        Assert.assertFalse("is true",limitedSizeQueue.contains(obj));
+        Assertions.assertTrue(limitedSizeQueue.addAll(objects), "is false");
+        Assertions.assertTrue(limitedSizeQueue.remove(obj), "is false");
+        Assertions.assertFalse(limitedSizeQueue.contains(obj), "is true");
     }
 
     /**
      * Test limited size queue remove all.
      */
     @Test
-    public void testLimitedSizeQueueRemoveAll(){
+    void testLimitedSizeQueueRemoveAll(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
         List<Object> objects = getList();
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(objects));
-        Assert.assertTrue("is false",limitedSizeQueue.removeAll(objects));
-        Assert.assertTrue("queue is not empty",limitedSizeQueue.isEmpty());
+        Assertions.assertTrue(limitedSizeQueue.addAll(objects), "is false");
+        Assertions.assertTrue(limitedSizeQueue.removeAll(objects), "is false");
+        Assertions.assertTrue(limitedSizeQueue.isEmpty(), "queue is not empty");
     }
 
     /**
      * Test limited size queue retain all.
      */
     @Test
-    public void testLimitedSizeQueueRetainAll(){
+    void testLimitedSizeQueueRetainAll(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
         List<Object> objects = getList();
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(objects));
+        Assertions.assertTrue(limitedSizeQueue.addAll(objects), "is false");
         objects.remove(0);
-        Assert.assertTrue("is false",limitedSizeQueue.retainAll(objects));
-        Assert.assertEquals("queue size not 2",2,limitedSizeQueue.size());
+        Assertions.assertTrue(limitedSizeQueue.retainAll(objects), "is false");
+        Assertions.assertEquals(2,limitedSizeQueue.size(),"queue size not 2");
     }
 
     /**
      * Test limited size queue contains.
      */
     @Test
-    public void testLimitedSizeQueueContains(){
+    void testLimitedSizeQueueContains(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
         Object obj = new Object();
         List<Object> objects = getList();
         objects.add(obj);
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(objects));
-        Assert.assertTrue("is false",limitedSizeQueue.contains(obj));
+        Assertions.assertTrue(limitedSizeQueue.addAll(objects), "is false");
+        Assertions.assertTrue(limitedSizeQueue.contains(obj), "is false");
     }
 
     /**
      * Test limited size queue contains all.
      */
     @Test
-    public void testLimitedSizeQueueContainsAll(){
+    void testLimitedSizeQueueContainsAll(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(getList()));
-        Assert.assertTrue("is false",limitedSizeQueue.containsAll(getList()));
+        Assertions.assertTrue(limitedSizeQueue.addAll(getList()), "is false");
+        Assertions.assertTrue(limitedSizeQueue.containsAll(getList()), "is false");
     }
 
     /**
      * Test limited size queue to array.
      */
     @Test
-    public void testLimitedSizeQueueToArray(){
+    void testLimitedSizeQueueToArray(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(getList()));
+        Assertions.assertTrue(limitedSizeQueue.addAll(getList()), "is false");
         Object[] obj = limitedSizeQueue.toArray();
-        Assert.assertNotNull("is null",obj);
-        Assert.assertEquals("length not 3",3,obj.length);
+        Assertions.assertNotNull(obj, "is null");
+        Assertions.assertEquals(3,obj.length, "length not 3");
     }
 
     /**
      * Test limited size queue to typed array.
      */
     @Test
-    public void testLimitedSizeQueueToTypedArray(){
+    void testLimitedSizeQueueToTypedArray(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(getList()));
+        Assertions.assertTrue(limitedSizeQueue.addAll(getList()), "is false");
         String[] strings = limitedSizeQueue.toArray(new String[0]);
-        Assert.assertNotNull("is null",strings);
-        Assert.assertEquals("length not 3",3,strings.length);
+        Assertions.assertNotNull(strings, "is null");
+        Assertions.assertEquals(3,strings.length, "length not 3");
     }
 
     /**
      * Test limited size queue to iterator.
      */
     @Test
-    public void testLimitedSizeQueueToIterator(){
+    void testLimitedSizeQueueToIterator(){
         LimitedSizeQueue<Object> limitedSizeQueue = new LimitedSizeQueue<>();
-        Assert.assertTrue("is false",limitedSizeQueue.addAll(getList()));
-        Assert.assertTrue("is false",limitedSizeQueue.iterator().hasNext());
+        Assertions.assertTrue(limitedSizeQueue.addAll(getList()), "is false");
+        Assertions.assertTrue(limitedSizeQueue.iterator().hasNext(), "is false");
     }
 
     private List<Object> getList(){
