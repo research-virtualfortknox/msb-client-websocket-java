@@ -18,16 +18,19 @@
 package de.fhg.ipa.vfk.msb.client.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.fhg.ipa.vfk.msb.client.api.messages.ConfigurationMessage;
-import de.fhg.ipa.vfk.msb.client.api.messages.EventMessage;
-import de.fhg.ipa.vfk.msb.client.api.messages.FunctionCallMessage;
 import de.fhg.ipa.vfk.msb.client.api.Configuration;
 import de.fhg.ipa.vfk.msb.client.api.Event;
 import de.fhg.ipa.vfk.msb.client.api.Function;
 import de.fhg.ipa.vfk.msb.client.api.Gateway;
 import de.fhg.ipa.vfk.msb.client.api.MultipleResponseEvent;
 import de.fhg.ipa.vfk.msb.client.api.ParameterValue;
+import de.fhg.ipa.vfk.msb.client.api.PrimitiveFormat;
+import de.fhg.ipa.vfk.msb.client.api.PrimitiveType;
 import de.fhg.ipa.vfk.msb.client.api.Service;
+import de.fhg.ipa.vfk.msb.client.api.messages.ConfigurationMessage;
+import de.fhg.ipa.vfk.msb.client.api.messages.EventMessage;
+import de.fhg.ipa.vfk.msb.client.api.messages.EventPriority;
+import de.fhg.ipa.vfk.msb.client.api.messages.FunctionCallMessage;
 import de.fhg.ipa.vfk.msb.client.listener.ConfigurationListener;
 import de.fhg.ipa.vfk.msb.client.listener.ConnectionListener;
 import de.fhg.ipa.vfk.msb.client.listener.FunctionCallsListener;
@@ -44,9 +47,6 @@ import de.fhg.ipa.vfk.msb.client.util.DataFormatParser;
 import de.fhg.ipa.vfk.msb.client.util.DataObjectValidator;
 import de.fhg.ipa.vfk.msb.client.util.TypeMismatchException;
 import de.fhg.ipa.vfk.msb.client.util.WrongDataFormatException;
-import de.fhg.ipa.vfk.msb.client.api.PrimitiveFormat;
-import de.fhg.ipa.vfk.msb.client.api.PrimitiveType;
-import de.fhg.ipa.vfk.msb.client.api.messages.EventPriority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -83,6 +83,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -486,18 +488,22 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      *
      * @return the client handler
      */
-    protected boolean establishConnection() {
+    protected Future<Boolean> establishConnection() {
         LOG.info("establish connection to: {}", url);
         if(sockJsClient == null || state == INITIAL) {
             sockJsClient = createClient(url, trustStorePath, trustStorePwd);
         }
 
-        if (!sessionWrapper.isOpen()) {
-            state = STARTED;
-            WebSocketSession session = connect(sockJsClient, this, url, websocketTextMessageSize, reconnectIntervalMillis);
-            return session.isOpen();
-        }
-        return isConnected();
+        FutureTask<Boolean> future = new FutureTask<>(() -> {
+            if (!sessionWrapper.isOpen()) {
+                state = STARTED;
+                WebSocketSession session = connect(sockJsClient, this, url, websocketTextMessageSize, reconnectIntervalMillis);
+                return session.isOpen();
+            }
+            return isConnected();
+        });
+        functionCallExecutorService.execute(future);
+        return future;
     }
 
     /**
@@ -1058,7 +1064,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
             }
             simpleWebSocketClient.setUserProperties(userProperties);
         }
-        List<Transport> transports = new ArrayList<>(2);
+        List<Transport> transports = new ArrayList<>(1);
         WebSocketTransport w = new WebSocketTransport(simpleWebSocketClient);
         transports.add(w);
        return new SockJsClient(transports);
@@ -1087,15 +1093,15 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         while (session == null || !session.isOpen()) {
             try {
                 ListenableFuture<WebSocketSession> f = sockJsClient.doHandshake(webSocketHandler, url);
-                session = f.get(2,TimeUnit.MINUTES);
+                session = f.get(2, TimeUnit.MINUTES);
                 session.setTextMessageSizeLimit(websocketTextMessageSize);
             } catch (Exception e) {
-                LOG.error("Exception during connect",e);
-                if(session!=null) {
+                LOG.error("Exception during connect", e);
+                if (session != null) {
                     try {
                         session.close();
                     } catch (IOException e1) {
-                        LOG.error(e1.getMessage(),e1);
+                        LOG.error(e1.getMessage(), e1);
                     }
                 }
                 try {

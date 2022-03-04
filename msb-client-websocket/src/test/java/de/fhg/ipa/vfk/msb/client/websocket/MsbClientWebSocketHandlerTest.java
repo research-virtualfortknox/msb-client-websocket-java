@@ -57,6 +57,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.mockito.internal.stubbing.answers.AnswersWithDelay;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.web.socket.CloseStatus;
@@ -735,7 +736,14 @@ public class MsbClientWebSocketHandlerTest {
     @Test
     public void testReconnect() throws Exception {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
-        Mockito.when(sockJsClient.doHandshake(Mockito.same(msbClientWebSocketHandler),Mockito.anyString(), Mockito.any())).thenReturn(new AsyncResult<>(mockSession));
+
+        Mockito.when(sockJsClient.doHandshake(Mockito.same(msbClientWebSocketHandler),Mockito.anyString(), Mockito.any())).thenAnswer(
+                new AnswersWithDelay(500L, invocation -> {
+                    msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
+                    msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_CONNECTED"));
+                    return new AsyncResult<>(mockSession);
+                }));
+
         Mockito.when(msbClientWebSocketHandler.createClient(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(sockJsClient);
 
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
@@ -749,8 +757,7 @@ public class MsbClientWebSocketHandlerTest {
 
         msbClientWebSocketHandler.afterConnectionClosed(mockSession, CloseStatus.NORMAL);
 
-        msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
-        msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_CONNECTED"));
+
 
         Mockito.verify(mockSession,Mockito.after(1000).times(2)).sendMessage(captor.capture());
         String reconnectMessage = captor.getValue().getPayload().toString();

@@ -56,7 +56,7 @@ public class MsbClient implements AutoCloseable {
      */
     protected static boolean hostnameVerification = false;
 
-    private ExecutorService executor = new ThreadPoolExecutor(1, 5, 1000, TimeUnit.MILLISECONDS, new SynchronousQueue<Runnable>());
+    private final ExecutorService executor = new ThreadPoolExecutor(1, 5, 1000, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
 
     private final MsbClientWebSocketHandler clientHandler;
 
@@ -281,7 +281,7 @@ public class MsbClient implements AutoCloseable {
         LOG.info("connect client");
 
         FutureTask<MsbClientHandler> future = new FutureTask<>(() -> {
-                    if(clientHandler.establishConnection()) {
+                    if(clientHandler.establishConnection().get()) {
                         LOG.info("client connected");
                         return clientHandler;
                     } else {
