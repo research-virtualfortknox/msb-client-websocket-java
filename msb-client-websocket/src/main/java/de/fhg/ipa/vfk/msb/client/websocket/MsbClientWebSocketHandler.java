@@ -49,7 +49,6 @@ import de.fhg.ipa.vfk.msb.client.util.TypeMismatchException;
 import de.fhg.ipa.vfk.msb.client.util.WrongDataFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
@@ -81,10 +80,12 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -122,12 +123,13 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     private static final int STOPPED = 3;
 
     private String url = "wss://localhost:8084"+ DEFAULT_URL_PATH;
-    private int websocketTextMessageSize = 1000000;
-    private int functionCallExecutorPoolSize =10;
+    private int websocketTextMessageSize = 1_000_000;
+    private int functionCallExecutorPoolSize = 10;
     private boolean invokeFunctionCallEnabled = true;
     private boolean eventCacheEnabled = true;
     private boolean reconnect = true;
-    private int reconnectIntervalMillis = 10000;
+    private int reconnectIntervalMillis = 10_000;
+    private long connectTimeoutMillis = 120_000;
     private boolean dataFormatValidationEnabled = false;
     private String trustStorePath;
     private String trustStorePwd;
@@ -175,7 +177,9 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      */
     protected MsbClientWebSocketHandler(String url, int eventCacheSize) {
         this(url);
-        if (this.eventCache.maximumSize() != eventCacheSize) {
+        if (eventCacheSize < 0) {
+            throw new IllegalArgumentException("event cache size < 0 is not allowed");
+        } else if (eventCacheSize != this.eventCache.maximumSize()) {
             this.eventCache = new LimitedSizeQueue<>(eventCacheSize);
         }
     }
@@ -189,7 +193,11 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      */
     protected MsbClientWebSocketHandler(String url, int eventCacheSize, int websocketTextMessageSize) {
         this(url, eventCacheSize);
-        this.websocketTextMessageSize = websocketTextMessageSize;
+        if(websocketTextMessageSize <= 0 ) {
+            throw new IllegalArgumentException("websocket text message size <= 0 is not allowed");
+        } else {
+            this.websocketTextMessageSize = websocketTextMessageSize;
+        }
     }
 
     /**
@@ -203,7 +211,11 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     protected MsbClientWebSocketHandler(String url, int eventCacheSize, int websocketTextMessageSize, int functionCallExecutorPoolSize) {
         this(url, eventCacheSize);
         this.websocketTextMessageSize = websocketTextMessageSize;
-        this.functionCallExecutorPoolSize = functionCallExecutorPoolSize;
+        if(functionCallExecutorPoolSize <= 0 ) {
+            throw new IllegalArgumentException("function call executor pool size <= 0 is not allowed");
+        } else {
+            this.functionCallExecutorPoolSize = functionCallExecutorPoolSize;
+        }
     }
 
     /**
@@ -235,22 +247,22 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         String payload = message.getPayload();
         if (payload.startsWith(FUNCTION_CALLBACK)) {
             payload = payload.replaceFirst(FUNCTION_CALLBACK, "");
-            FunctionCallMessage functionCall = null;
+            FunctionCallMessage functionCall;
             try {
                 functionCall = mapper.readValue(payload, FunctionCallMessage.class);
                 callFunction(functionCall);
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                LOG.error("{}",e.getMessage(), e);
             }
         } else if (payload.startsWith(CONFIG)) {
             for (ConfigurationListener configurationListener : configurationListeners) {
                 payload = payload.replaceFirst(CONFIG, "");
-                ConfigurationMessage configuration = null;
+                ConfigurationMessage configuration;
                 try {
                     configuration = mapper.readValue(payload, ConfigurationMessage.class);
                     configurationListener.configurationRemoteChanged(configuration);
                 } catch (Exception e) {
-                    LOG.error(e.getMessage(), e);
+                    LOG.error("{}",e.getMessage(), e);
                 }
             }
         } else if (payload.startsWith(PING)) {
@@ -448,6 +460,24 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     }
 
     /**
+     * Sets connect timeout.
+     *
+     * @param millis the millis
+     */
+    protected void setConnectTimeout(long millis) {
+        this.connectTimeoutMillis = millis;
+    }
+
+    /**
+     * Gets connect timeout.
+     *
+     * @return the connect timeout
+     */
+    protected long getConnectTimeout() {
+        return connectTimeoutMillis;
+    }
+
+    /**
      * Is invokable function calls boolean.
      *
      * @return the boolean
@@ -488,22 +518,19 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      *
      * @return the client handler
      */
-    protected Future<Boolean> establishConnection() {
+    protected CompletableFuture<Boolean> establishConnection() {
         LOG.info("establish connection to: {}", url);
         if(sockJsClient == null || state == INITIAL) {
             sockJsClient = createClient(url, trustStorePath, trustStorePwd);
         }
-
-        FutureTask<Boolean> future = new FutureTask<>(() -> {
-            if (!sessionWrapper.isOpen()) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (!isConnected()) {
                 state = STARTED;
-                WebSocketSession session = connect(sockJsClient, this, url, websocketTextMessageSize, reconnectIntervalMillis);
+                WebSocketSession session = connect(sockJsClient, this, url, websocketTextMessageSize, connectTimeoutMillis, reconnectIntervalMillis);
                 return session.isOpen();
             }
             return isConnected();
         });
-        functionCallExecutorService.execute(future);
-        return future;
     }
 
     /**
@@ -530,10 +557,8 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
 
     /**
      * Close connection.
-     *
-     * @param interrupt the interrupt
      */
-    protected void closeConnection(boolean interrupt) {
+    protected void closeConnection() {
         LOG.info("close connection called");
         state = STOPPED;
         closeSession(CloseStatus.NORMAL.withReason("client disconnected"));
@@ -554,6 +579,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
             LOG.warn("MsbClientHandler close called");
             state = STOPPED;
             closeSession(CloseStatus.NORMAL.withReason("client closed"));
+            functionCallExecutorService.shutdown();
         }
     }
 
@@ -989,7 +1015,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                         Object response = FunctionInvoker.callFunctions(functionCall, functionCallReference);
                         publishResponseEvent(functionCallReference, functionCall.getFunctionId(), functionCall.getCorrelationId(), response);
                     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IOException | TypeMismatchException e) {
-                        LOG.error(e.getMessage(), e);
+                        LOG.error("{}",e.getMessage(), e);
                     }
                 }
             } else {
@@ -1082,38 +1108,42 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         return sslContext;
     }
 
-    /**
-     * Connect.
-     *
-     * @param websocketTextMessageSize the websocket text message size
-     * @return the web socket session
-     */
-    private static WebSocketSession connect(WebSocketClient sockJsClient, WebSocketHandler webSocketHandler, String url, int websocketTextMessageSize, int reconnectIntervalMillis) {
-        WebSocketSession session = null;
-        while (session == null || !session.isOpen()) {
-            try {
-                ListenableFuture<WebSocketSession> f = sockJsClient.doHandshake(webSocketHandler, url);
-                session = f.get(2, TimeUnit.MINUTES);
-                session.setTextMessageSizeLimit(websocketTextMessageSize);
-            } catch (Exception e) {
-                LOG.error("Exception during connect", e);
-                if (session != null) {
-                    try {
-                        session.close();
-                    } catch (IOException e1) {
-                        LOG.error(e1.getMessage(), e1);
-                    }
-                }
+    private static WebSocketSession connect(WebSocketClient sockJsClient, WebSocketHandler webSocketHandler, String url, int websocketTextMessageSize, long connectTimeoutMillis, int reconnectIntervalMillis) {
+        // first connect
+        WebSocketSession session = connect(sockJsClient, webSocketHandler, url, websocketTextMessageSize, connectTimeoutMillis);
+        if(session == null) {
+            // periodic re-try
+            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+            while (session == null || !session.isOpen()) {
+                ScheduledFuture<WebSocketSession> future = scheduler.schedule(() -> connect(sockJsClient, webSocketHandler, url, websocketTextMessageSize, connectTimeoutMillis), reconnectIntervalMillis, TimeUnit.MILLISECONDS);
                 try {
-                    Thread.sleep(reconnectIntervalMillis);
-                } catch (InterruptedException e1) {
-                    LOG.error(e1.getMessage(), e1);
+                    session = future.get();
+                } catch (InterruptedException e) {
+                    LOG.error("{}",e.getMessage(), e);
                     // Restore interrupted state...
                     Thread.currentThread().interrupt();
+                } catch (ExecutionException e) {
+                    LOG.error("{}",e.getMessage(), e);
                 }
             }
         }
         return session;
+    }
+
+    private static WebSocketSession connect(WebSocketClient sockJsClient, WebSocketHandler webSocketHandler, String url, int websocketTextMessageSize, long connectTimeoutMillis) {
+        try {
+            CompletableFuture<WebSocketSession> f = sockJsClient.doHandshake(webSocketHandler, url).completable().thenApply(webSocketSession -> {
+                webSocketSession.setTextMessageSizeLimit(websocketTextMessageSize);
+                return webSocketSession;
+            });
+            return f.get(connectTimeoutMillis, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            LOG.error("Exception during connect", e);
+            if(e instanceof InterruptedException){
+                Thread.currentThread().interrupt();
+            }
+        }
+        return null;
     }
 
     private static class SkipX509TrustManager extends X509ExtendedTrustManager implements X509TrustManager {

@@ -21,14 +21,8 @@ package de.fhg.ipa.vfk.msb.client.websocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * The type Client to establish a connection with an MSB instance.
@@ -55,8 +49,6 @@ public class MsbClient implements AutoCloseable {
      * The constant hostnameVerification.
      */
     protected static boolean hostnameVerification = false;
-
-    private final ExecutorService executor = new ThreadPoolExecutor(1, 5, 1000, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
 
     private final MsbClientWebSocketHandler clientHandler;
 
@@ -280,21 +272,12 @@ public class MsbClient implements AutoCloseable {
         }
         LOG.info("connect client");
 
-        FutureTask<MsbClientHandler> future = new FutureTask<>(() -> {
-                    if(clientHandler.establishConnection().get()) {
-                        LOG.info("client connected");
-                        return clientHandler;
-                    } else {
-                        return null;
-                    }
-                });
-
-        long waitingTime = getReconnectInterval() - (new Date().getTime() - disconnectTimestamp);
+        long waitingTime = getReconnectInterval() - (System.currentTimeMillis() - disconnectTimestamp);
         if (state==STOPPED && waitingTime > 0 ){
             LOG.debug("Client wait {} ms until connect client again", waitingTime);
             try {
-                synchronized (lock) {
-                    while (new Date().getTime() - disconnectTimestamp < waitingTime){
+                synchronized(lock) {
+                    while (System.currentTimeMillis() - disconnectTimestamp < waitingTime) {
                         lock.wait(waitingTime);
                     }
                 }
@@ -305,7 +288,15 @@ public class MsbClient implements AutoCloseable {
             }
         }
 
-        executor.execute(future);
+        CompletableFuture<MsbClientHandler> future = clientHandler.establishConnection().thenApply(aBoolean -> {
+            if (Boolean.TRUE.equals(aBoolean)) {
+                LOG.info("client connected");
+                return clientHandler;
+            } else {
+                return null;
+            }
+        });
+
         state=STARTED;
         LOG.info("client connecting");
         return future;
@@ -334,8 +325,8 @@ public class MsbClient implements AutoCloseable {
      */
     public synchronized void disconnect() {
         LOG.info("disconnect client");
-        disconnectTimestamp =new Date().getTime();
-        clientHandler.closeConnection(true);
+        disconnectTimestamp = System.currentTimeMillis();
+        clientHandler.closeConnection();
         state=STOPPED;
         LOG.info("client disconnected");
     }
@@ -346,7 +337,6 @@ public class MsbClient implements AutoCloseable {
             disconnect();
         }
         clientHandler.close();
-        executor.shutdown();
         state=CLOSED;
         LOG.info("client terminated");
     }
