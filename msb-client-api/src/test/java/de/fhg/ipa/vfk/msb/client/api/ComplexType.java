@@ -1,6 +1,5 @@
 package de.fhg.ipa.vfk.msb.client.api;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class ComplexType {

@@ -37,14 +37,14 @@ class MsbClientTest {
      */
     @Test
     void testBuildMsbClientWithoutUrl(){
-        Assertions.assertThrows(IllegalStateException.class ,()->new MsbClient.Builder()
+        MsbClient.Builder builder = new MsbClient.Builder()
                 .trustStore("/path","password")
                 .enabledDataFormatValidation()
                 .disableHostnameVerification()
                 .disableFunctionCallsInvocation()
                 .disableAutoReconnect()
-                .disableEventCache()
-                .build());
+                .disableEventCache();
+        Assertions.assertThrows(IllegalStateException.class , builder::build);
     }
 
     /**

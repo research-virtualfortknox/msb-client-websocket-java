@@ -73,6 +73,35 @@ class EntityTest {
         Assertions.assertEquals(2,application.getFunctions().size());
         Assertions.assertNotNull(application.getEndpoints());
         Assertions.assertEquals(2,application.getEndpoints().size());
+        application.getEndpoints().forEach(endpoint -> {
+            if(endpoint.getConnectionType().equals(ConnectionType.REST)){
+                Assertions.assertEquals("url",endpoint.getUrl());
+                Assertions.assertEquals(1,endpoint.getFunctions().size(),"e");
+                EndpointFunction function = endpoint.getFunctions().get(0);
+                Assertions.assertEquals(ConnectionFormat.JSON, function.getConnectionFormat());
+                Assertions.assertEquals(HttpMethod.PUT, function.getHttpMethod());
+                Assertions.assertEquals(0, function.getStatusCodes().size(), "f");
+                Assertions.assertEquals(application.getFunctions().get(1), function.getFunction());
+            }
+            if(endpoint.getConnectionType().equals(ConnectionType.SOAP)){
+                Assertions.assertEquals("http://url.com",endpoint.getUrl());
+                Assertions.assertEquals(2,endpoint.getFunctions().size());
+                endpoint.getFunctions().forEach(function -> {
+                    if (function.getConnectionFormat().equals(ConnectionFormat.XML)){
+                        Assertions.assertEquals(HttpMethod.GET, function.getHttpMethod());
+                        Assertions.assertEquals(2, function.getStatusCodes().size());
+                        Assertions.assertTrue(function.getStatusCodes().containsKey("200"));
+                        Assertions.assertTrue(function.getStatusCodes().containsKey("400"));
+                        Assertions.assertEquals(application.getFunctions().get(0), function.getFunction());
+                    }
+                    if (function.getConnectionFormat().equals(ConnectionFormat.JSON)){
+                        Assertions.assertEquals(HttpMethod.PUT, function.getHttpMethod());
+                        Assertions.assertEquals(0, function.getStatusCodes().size(), "f");
+                        Assertions.assertEquals(application.getFunctions().get(1), function.getFunction());
+                    }
+                });
+            }
+        });
     }
 
     @Test
@@ -290,7 +319,7 @@ class EntityTest {
         parameterValue.setValue("test");
         ParameterValue parameterValue1 = new ParameterValue("value");
         Configuration configuration = new Configuration();
-        configuration.setParameters(new HashMap<String, ParameterValue>());
+        configuration.setParameters(new HashMap<>());
         configuration.addParameter("param",parameterValue);
         configuration.addParameter("param1",parameterValue1);
         configuration.addParameter("param2",new ParameterValue("value", PrimitiveType.NUMBER, PrimitiveFormat.FLOAT));
@@ -348,10 +377,10 @@ class EntityTest {
         endpoint.setUrl("http://url.com");
         endpoint.setConnectionType(ConnectionType.SOAP);
         endpoint.setFunctions(null);
-        endpoint.setFunctions(new ArrayList<EndpointFunction>());
+        endpoint.setFunctions(new ArrayList<>());
         endpoint.addFunctions(endpointFunctions);
         endpoint.addFunction(endpointFunction);
-        application.setEndpoints(new ArrayList<Endpoint>());
+        application.setEndpoints(new ArrayList<>());
         application.setEndpoints(null);
         List<Endpoint> endpoints = new ArrayList<>();
         endpoints.add(endpoint);

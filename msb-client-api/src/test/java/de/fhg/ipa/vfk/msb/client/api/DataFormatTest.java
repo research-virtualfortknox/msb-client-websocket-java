@@ -55,4 +55,12 @@ class DataFormatTest {
         Assertions.assertEquals("{\"dataObject\":{\"type\":\"integer\",\"format\":\"int32\"}}",new DataFormat(Integer.class).toString());
     }
 
+    @Test
+    void testEquals(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("type","string");
+        Assertions.assertEquals(new DataFormat(map),new DataFormat("{\"type\":\"string\"}"));
+        Assertions.assertEquals(new DataFormat(map).hashCode(),new DataFormat("{\"type\":\"string\"}").hashCode());
+    }
+
 }

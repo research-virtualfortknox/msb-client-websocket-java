@@ -18,7 +18,6 @@
 
 package de.fhg.ipa.vfk.msb.client.util;
 
-import de.fhg.ipa.vfk.msb.client.util.WrapperTypes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

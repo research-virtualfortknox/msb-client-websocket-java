@@ -20,15 +20,13 @@ package de.fhg.ipa.vfk.msb.client.parser;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.fhg.ipa.vfk.msb.client.annotation.ConfigurationParam;
-import de.fhg.ipa.vfk.msb.client.annotation.Events;
 import de.fhg.ipa.vfk.msb.client.annotation.FunctionCall;
 import de.fhg.ipa.vfk.msb.client.annotation.FunctionHandler;
 import de.fhg.ipa.vfk.msb.client.annotation.FunctionParam;
 import de.fhg.ipa.vfk.msb.client.api.Function;
 import de.fhg.ipa.vfk.msb.client.api.MultipleResponseEvent;
-import de.fhg.ipa.vfk.msb.client.util.DataFormatParser;
 import de.fhg.ipa.vfk.msb.client.api.messages.EventPriority;
+import de.fhg.ipa.vfk.msb.client.util.DataFormatParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
