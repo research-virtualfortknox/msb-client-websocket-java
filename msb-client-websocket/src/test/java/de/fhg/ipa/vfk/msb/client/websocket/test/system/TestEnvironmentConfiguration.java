@@ -55,6 +55,8 @@ public class TestEnvironmentConfiguration {
     private static final String TOKEN_PATH = "/token";
     private static final int RETRY_TIME = 1500;
 
+    private String ownerUuid;
+
     private final String urlSmartObjMgmtHttp;
     private final String urlIntegrationDesignMgmtHttp;
     private final String urlInterfaceWebSocket;
@@ -65,6 +67,7 @@ public class TestEnvironmentConfiguration {
     public TestEnvironmentConfiguration() {
         LOG.info("Looking for system property testEnvUrl defining the test environment to use.");
         String testEnvUrl = System.getProperty("TESTENV_CUSTOMIP");
+        String testEnvOwnerUuid = System.getProperty("TESTENV_OWNER_UUID");
         String testEnvWebsocketUrl = System.getProperty("MSB_WEBSOCKET_INTERFACE_URL");
         String testEnvSmartObjectUrl = System.getProperty("MSB_SMARTOBJECTMGMT_URL");
         String testEnvIntegrationDesignUrl = System.getProperty("MSB_INTEGRATIONDESIGNMGMT_URL");
@@ -75,6 +78,13 @@ public class TestEnvironmentConfiguration {
             LOG.info("No testEnvUrl set! Using default (localhost)!");
             testEnvUrl = "localhost";
         }
+
+        if (testEnvOwnerUuid != null && !"".equalsIgnoreCase(testEnvOwnerUuid)) {
+            this.ownerUuid = testEnvOwnerUuid;
+        } else {
+            this.ownerUuid = OWNER_UUID;
+        }
+        LOG.info("Test Env Owner Uuid: {}", ownerUuid);
 
         if (testEnvSmartObjectUrl != null && !"".equalsIgnoreCase(testEnvSmartObjectUrl)) {
             this.urlSmartObjMgmtHttp = testEnvSmartObjectUrl;
@@ -104,7 +114,7 @@ public class TestEnvironmentConfiguration {
      * @return the owner uuid
      */
     public String getOwnerUuid() {
-        return OWNER_UUID;
+        return ownerUuid;
     }
 
     /**
@@ -151,7 +161,9 @@ public class TestEnvironmentConfiguration {
         } catch (NoSuchFileException e){
             Files.lines(Paths.get("./msb-client-websocket/src/test/resources/integration_flow.json")).forEach(stringBuilder::append);
         }
-        return stringBuilder.toString().replace("%%%%FLOWNAME%%%%", "TestFlow-" + UUID.randomUUID().toString().substring(24, 36))
+        return stringBuilder.toString()
+                .replace("%%%%FLOWNAME%%%%", "TestFlow-" + UUID.randomUUID().toString().substring(24, 36))
+                .replace("%%%%OWNERUUID%%%%", ownerUuid)
                 .replace("%%%%SOUUID1%%%%", serviceUuid1)
                 .replace("%%%%SONAME1%%%%", serviceName1)
                 .replace("%%%%SOUUID2%%%%", serviceUuid2)
@@ -186,7 +198,7 @@ public class TestEnvironmentConfiguration {
                     synchronized (lock) {
                         lock.wait(RETRY_TIME);
                     }
-                    LOG.info("Trying to connect to SmartObjectMgmt with URL: " + urlSmartObjMgmtHttp);
+                    LOG.info("Trying to connect to SmartObjectMgmt with URL: {}", urlSmartObjMgmtHttp);
                     try {
                         ResponseEntity<String> entity = restTemplate.exchange(getUrlSmartObjMgmtHttp() + "/actuator/info", HttpMethod.GET, null, String.class);
                         statusCode = entity.getStatusCode();
@@ -198,7 +210,7 @@ public class TestEnvironmentConfiguration {
                 doneSignal.countDown();
             } catch (InterruptedException e) {
                 LOG.error("InterruptedException: ", e);
-                // Restore interrupted state...      
+                // Restore interrupted state...
                 Thread.currentThread().interrupt();
             }
         }).start();
@@ -221,7 +233,7 @@ public class TestEnvironmentConfiguration {
                     synchronized (lock) {
                         lock.wait(RETRY_TIME);
                     }
-                    LOG.info("Trying to connect to IntegrationDesignMgmt with URL: " + urlIntegrationDesignMgmtHttp);
+                    LOG.info("Trying to connect to IntegrationDesignMgmt with URL: {}", urlIntegrationDesignMgmtHttp);
                     try {
                         ResponseEntity<String> entity = restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + "/actuator/info", HttpMethod.GET, null, String.class);
                         statusCode = entity.getStatusCode();
@@ -232,7 +244,7 @@ public class TestEnvironmentConfiguration {
                 LOG.info("Connected to IntegrationDesignMgmt.");
             } catch (InterruptedException e) {
                 LOG.error("InterruptedException: ", e);
-                // Restore interrupted state...      
+                // Restore interrupted state...
                 Thread.currentThread().interrupt();
             }
             doneSignal.countDown();
@@ -268,7 +280,7 @@ public class TestEnvironmentConfiguration {
                 } while (!statusCode.is2xxSuccessful());
             } catch (InterruptedException e) {
                 LOG.error("InterruptedException: ", e);
-                // Restore interrupted state...      
+                // Restore interrupted state...
                 Thread.currentThread().interrupt();
             }
             return entity;
