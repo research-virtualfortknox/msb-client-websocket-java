@@ -48,7 +48,7 @@ public class MsbClient implements AutoCloseable {
     /**
      * The constant hostnameVerification.
      */
-    protected static boolean hostnameVerification = false;
+    protected static boolean hostnameVerificationDisabled = false;
 
     private final MsbClientWebSocketHandler clientHandler;
 
@@ -114,10 +114,10 @@ public class MsbClient implements AutoCloseable {
      * Disable hostname checking when establishing a secure connection,
      * if self-signed certificates are used or an ip is used instead of a domain name.
      *
-     * @param disable the disable
+     * @param disable the hostname verification
      */
     public static void disableHostnameVerification(boolean disable) {
-        hostnameVerification = disable;
+        hostnameVerificationDisabled = disable;
     }
 
 
@@ -127,7 +127,7 @@ public class MsbClient implements AutoCloseable {
      * @return the boolean
      */
     public boolean isHostnameVerificationDisabled() {
-        return hostnameVerification;
+        return hostnameVerificationDisabled;
     }
 
     /**

@@ -1076,7 +1076,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                 userProperties.put("org.apache.tomcat.websocket.SSL_TRUSTSTORE", trustStorePath);
                 userProperties.put("org.apache.tomcat.websocket.SSL_TRUSTSTORE_PWD", trustStorePwd);
             }
-            if (MsbClient.hostnameVerification) {
+            if (MsbClient.hostnameVerificationDisabled) {
                 LOG.warn("Hostname verification is disabled. Use this option only for testing. In production, use the option to define a truststore.");
                 try {
                     SSLContext sslContext = loadSSLContext();
