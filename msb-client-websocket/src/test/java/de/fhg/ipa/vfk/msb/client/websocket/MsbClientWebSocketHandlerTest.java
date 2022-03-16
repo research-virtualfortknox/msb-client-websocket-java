@@ -586,7 +586,7 @@ class MsbClientWebSocketHandlerTest {
         Mockito.when(sockJsClient.doHandshake(Mockito.same(msbClientWebSocketHandler),Mockito.anyString(), Mockito.any())).thenReturn(new AsyncResult<>(mockSession));
         Mockito.when(msbClientWebSocketHandler.createClient(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(sockJsClient);
 
-        ConnectionAdapter connectionListener = Mockito.spy(ConnectionAdapter.class);
+        ConnectionAdapter connectionListener = Mockito.mock(ConnectionAdapter.class);
         msbClientWebSocketHandler.addConnectionListener(connectionListener);
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
