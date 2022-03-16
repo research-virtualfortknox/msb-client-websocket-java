@@ -61,7 +61,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-      - name: Prepare Coveralls Agent
+      - name: Build Codecov Report
         run: bash <(curl -s https://codecov.io/bash)
 
       - name: Build Coveralls Report

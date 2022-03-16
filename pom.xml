@@ -173,6 +173,13 @@
 				<groupId>org.eluder.coveralls</groupId>
 				<artifactId>coveralls-maven-plugin</artifactId>
 				<version>${coveralls-maven-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>javax.xml.bind</groupId>
+						<artifactId>jaxb-api</artifactId>
+						<version>2.3.1</version>
+					</dependency>
+				</dependencies>
 				<configuration>
 					<jacocoReports>coverage/target/site/jacoco-aggregate-ut/jacoco.xml</jacocoReports>
 				</configuration>
