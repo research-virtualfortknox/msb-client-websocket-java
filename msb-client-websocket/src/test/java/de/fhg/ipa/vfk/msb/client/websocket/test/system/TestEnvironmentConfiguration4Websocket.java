@@ -86,7 +86,7 @@ public class TestEnvironmentConfiguration4Websocket extends TestEnvironmentConfi
             try {
                 handler.close();
             } catch (Exception e) {
-                LOG.info("Exception: " + e.getMessage());
+                LOG.info("Exception: {}", e.getMessage());
             }
             LOG.info("Closed connection to InterfaceWebsocket.");
             doneSignal.countDown();
@@ -99,7 +99,7 @@ public class TestEnvironmentConfiguration4Websocket extends TestEnvironmentConfi
      * @return the msb client handler
      */
     public MsbClientHandler returnClientHandlerForWebSocket() {
-        LOG.info("Trying to connect to WebSocket Interface with URL: " + getUrlInterfaceWebSocket());
+        LOG.info("Trying to connect to WebSocket Interface with URL: {}", getUrlInterfaceWebSocket());
         MsbClient msbClient = new MsbClient.Builder().url(getUrlInterfaceWebSocket()).trustStore("./src/test/resources/CERTS.trs", "password").disableHostnameVerification().enabledDataFormatValidation().build();
         Future<MsbClientHandler> future = msbClient.connect();
         try {

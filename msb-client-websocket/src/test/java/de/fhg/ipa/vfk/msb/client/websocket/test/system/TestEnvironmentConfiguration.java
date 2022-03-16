@@ -73,7 +73,7 @@ public class TestEnvironmentConfiguration {
         String testEnvIntegrationDesignUrl = System.getProperty("MSB_INTEGRATIONDESIGNMGMT_URL");
 
         if (testEnvUrl != null && !"".equalsIgnoreCase(testEnvUrl)) {
-            LOG.info("Found testEnvUrl: " + testEnvUrl);
+            LOG.info("Found testEnvUrl: {}", testEnvUrl);
         } else {
             LOG.info("No testEnvUrl set! Using default (localhost)!");
             testEnvUrl = "localhost";
@@ -204,6 +204,12 @@ public class TestEnvironmentConfiguration {
                         statusCode = entity.getStatusCode();
                     } catch (HttpClientErrorException e) {
                         LOG.error("Connecting to SmartObjectMgmt not yet possible", e);
+                        try {
+                            ResponseEntity<String> entity = restTemplate.exchange(getUrlSmartObjMgmtHttp() + "/info", HttpMethod.GET, null, String.class);
+                            statusCode = entity.getStatusCode();
+                        } catch (HttpClientErrorException e1) {
+                            LOG.error("Connecting to SmartObjectMgmt not yet possible", e1);
+                        }
                     }
                 } while (!statusCode.is2xxSuccessful());
                 LOG.info("Connected to SmartObjectMgmt.");
@@ -239,6 +245,12 @@ public class TestEnvironmentConfiguration {
                         statusCode = entity.getStatusCode();
                     } catch (HttpClientErrorException e) {
                         LOG.error("Connecting to IntegrationDesignMgmt not yet possible", e);
+                        try {
+                            ResponseEntity<String> entity = restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + "/info", HttpMethod.GET, null, String.class);
+                            statusCode = entity.getStatusCode();
+                        } catch (HttpClientErrorException e1) {
+                            LOG.error("Connecting to IntegrationDesignMgmt not yet possible", e1);
+                        }
                     }
                 } while (!statusCode.is2xxSuccessful());
                 LOG.info("Connected to IntegrationDesignMgmt.");
