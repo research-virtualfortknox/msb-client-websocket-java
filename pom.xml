@@ -48,6 +48,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+
 		<spring.version>5.3.15</spring.version>
 		<tomcat.version>9.0.59</tomcat.version>
 		<jackson.version>2.12.5</jackson.version>
@@ -76,6 +77,9 @@
 		<jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
 		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
 		<dependency-check-maven.version>5.0.0</dependency-check-maven.version>
+
+		<sonar.organization>research-virtualfortknox</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<modules>
