@@ -12,6 +12,10 @@ on:
 jobs:
   build_java_8:
     environment: MSB_1.5
+    env:
+      MSB_WEBSOCKET_INTERFACE_URL: ${{ secrets.MSB_WEBSOCKET_INTERFACE_URL }}
+      MSB_SMARTOBJECTMGMT_URL: ${{ secrets.MSB_SMARTOBJECTMGMT_URL }}
+      MSB_INTEGRATIONDESIGNMGMT_URL: ${{ secrets.MSB_INTEGRATIONDESIGNMGMT_URL }}
     runs-on: ubuntu-latest
 
     steps:
@@ -24,11 +28,7 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
-      run: mvn -B install --file pom.xml
-      env:
-        MSB_WEBSOCKET_INTERFACE_URL: ${{ secrets.MSB_WEBSOCKET_INTERFACE_URL }}
-        MSB_SMARTOBJECTMGMT_URL: ${{ secrets.MSB_SMARTOBJECTMGMT_URL }}
-        MSB_INTEGRATIONDESIGNMGMT_URL: ${{ secrets.MSB_INTEGRATIONDESIGNMGMT_URL }}
+      run: mvn -B -DMSB_WEBSOCKET_INTERFACE_URL=$MSB_WEBSOCKET_INTERFACE_URL -DMSB_SMARTOBJECTMGMT_URL=$MSB_SMARTOBJECTMGMT_URL -DMSB_INTEGRATIONDESIGNMGMT_URL=$MSB_INTEGRATIONDESIGNMGMT_URL install --file pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -DskipTests -P default -s $GITHUB_WORKSPACE/settings.xml
@@ -37,6 +37,10 @@ jobs:
 
   build_java_11:
     environment: MSB_1.5
+    env:
+      MSB_WEBSOCKET_INTERFACE_URL: ${{ secrets.MSB_WEBSOCKET_INTERFACE_URL }}
+      MSB_SMARTOBJECTMGMT_URL: ${{ secrets.MSB_SMARTOBJECTMGMT_URL }}
+      MSB_INTEGRATIONDESIGNMGMT_URL: ${{ secrets.MSB_INTEGRATIONDESIGNMGMT_URL }}
     runs-on: ubuntu-latest
 
     steps:
@@ -49,11 +53,7 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Build with Maven
-        run: mvn -B clean org.jacoco:jacoco-maven-plugin:prepare-agent install -q org.jacoco:jacoco-maven-plugin:report -Pcoverage --file pom.xml
-        env:
-          MSB_WEBSOCKET_INTERFACE_URL: ${{ secrets.MSB_WEBSOCKET_INTERFACE_URL }}
-          MSB_SMARTOBJECTMGMT_URL: ${{ secrets.MSB_SMARTOBJECTMGMT_URL }}
-          MSB_INTEGRATIONDESIGNMGMT_URL: ${{ secrets.MSB_INTEGRATIONDESIGNMGMT_URL }}
+        run: mvn -B -DMSB_WEBSOCKET_INTERFACE_URL=$MSB_WEBSOCKET_INTERFACE_URL -DMSB_SMARTOBJECTMGMT_URL=$MSB_SMARTOBJECTMGMT_URL -DMSB_INTEGRATIONDESIGNMGMT_URL=$MSB_INTEGRATIONDESIGNMGMT_URL clean org.jacoco:jacoco-maven-plugin:prepare-agent install -q org.jacoco:jacoco-maven-plugin:report -Pcoverage --file pom.xml
 
       - name: Build Sonar Report
         run: mvn sonar:sonar -Dsonar.projectKey=research-virtualfortknox_msb-client-websocket-java --file pom.xml
