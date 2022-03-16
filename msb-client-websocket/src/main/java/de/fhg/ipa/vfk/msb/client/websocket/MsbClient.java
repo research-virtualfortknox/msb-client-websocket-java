@@ -231,7 +231,7 @@ public class MsbClient implements AutoCloseable {
     /**
      * Sets reconnect interval, it must be greater than 3000 milliseconds.
      *
-     * @param millis the millis
+     * @param millis the reconnect interval millis
      */
     public void setReconnectInterval(int millis) {
         if (millis>MIN_RECONNECT_INTERVAL){
@@ -244,10 +244,28 @@ public class MsbClient implements AutoCloseable {
     /**
      * Gets reconnect interval.
      *
-     * @return the reconnect interval
+     * @return the reconnect interval millis
      */
     public int getReconnectInterval() {
         return clientHandler.getReconnectInterval();
+    }
+
+    /**
+     * Sets connect timeout.
+     *
+     * @param millis the connect timeout millis
+     */
+    public void setConnectTimeout(long millis) {
+        clientHandler.setConnectTimeout(millis);
+    }
+
+    /**
+     * Gets connect timeout.
+     *
+     * @return the connect timeout millis
+     */
+    public long getConnectTimeout() {
+        return clientHandler.getConnectTimeout();
     }
 
     /**
@@ -390,6 +408,7 @@ public class MsbClient implements AutoCloseable {
         private boolean reconnectEnabled = true;
         private boolean eventCacheEnabled = true;
         private int reconnectInterval = -1;
+        private long connectTimeout = -1;
         private boolean dataFormatValidationEnabled = false;
 
         /**
@@ -506,6 +525,17 @@ public class MsbClient implements AutoCloseable {
         }
 
         /**
+         * Sets connect timeout.
+         *
+         * @param millis the connect timeout millis
+         * @return the builder
+         */
+        public Builder connectTimeout(long millis) {
+            this.connectTimeout = millis;
+            return this;
+        }
+
+        /**
          * Enabled data format validation builder.
          *
          * @return the builder
@@ -543,6 +573,9 @@ public class MsbClient implements AutoCloseable {
             msbClient.setDataFormatValidation(dataFormatValidationEnabled);
             if(reconnectInterval>-1) {
                 msbClient.setReconnectInterval(reconnectInterval);
+            }
+            if(connectTimeout>-1) {
+                msbClient.setConnectTimeout(connectTimeout);
             }
             return msbClient;
         }

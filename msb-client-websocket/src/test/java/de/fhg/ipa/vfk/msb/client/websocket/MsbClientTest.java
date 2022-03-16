@@ -136,6 +136,7 @@ class MsbClientTest {
                 .eventCacheSize(1)
                 .websocketTextMessageSize(3)
                 .reconnectInterval(4)
+                .connectTimeout(10)
                 .build();
         Assertions.assertNotNull(msbClient.getClientHandler());
         Assertions.assertEquals("https://url/websocket/data",msbClient.getUrl());
@@ -146,6 +147,7 @@ class MsbClientTest {
         Assertions.assertFalse(msbClient.isEventCache());
         Assertions.assertEquals(1,msbClient.getEventCacheSize());
         Assertions.assertEquals(10000,msbClient.getReconnectInterval());
+        Assertions.assertEquals(10,msbClient.getConnectTimeout());
         Assertions.assertEquals(3,msbClient.getWebsocketTextMessageSize());
     }
 
@@ -189,6 +191,13 @@ class MsbClientTest {
         MsbClient msbClient = new MsbClient.Builder().url("url").build();
         msbClient.disconnect();
         msbClient.close();
+        Assertions.assertThrows(IllegalStateException.class, msbClient::connect);
+    }
+
+    @Test
+    void testStartedMsbClientConnect() {
+        MsbClient msbClient = new MsbClient.Builder().url("url").build();
+        msbClient.connect();
         Assertions.assertThrows(IllegalStateException.class, msbClient::connect);
     }
 
