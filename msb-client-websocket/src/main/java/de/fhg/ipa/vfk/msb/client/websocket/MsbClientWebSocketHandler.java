@@ -49,6 +49,7 @@ import de.fhg.ipa.vfk.msb.client.util.TypeMismatchException;
 import de.fhg.ipa.vfk.msb.client.util.WrongDataFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
@@ -80,12 +81,15 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -144,6 +148,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     private final Map<String, EventReference> addedEventMap = new LinkedHashMap<>();
 
     private SockJsClient sockJsClient;
+    private final ExecutorService executor = new ThreadPoolExecutor(1, 5, 1000, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
     private final ExecutorService functionCallExecutorService;
     private final SynchronizedWebSocketSessionWrapper sessionWrapper = new SynchronizedWebSocketSessionWrapper(null);
     private final List<FunctionCallsListener> functionCallsListeners = new ArrayList<>();
@@ -151,6 +156,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     private final List<ConfigurationListener> configurationListeners = new ArrayList<>();
     private Service selfDescription;
     private LimitedSizeQueue<TextMessage> eventCache = new LimitedSizeQueue<>(1000);
+    private FutureTask<Boolean> future;
 
     /**
      * Instantiates a new client web socket handler.
@@ -518,19 +524,22 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      *
      * @return the client handler
      */
-    protected CompletableFuture<Boolean> establishConnection() {
+    protected Future<Boolean> establishConnection() {
         LOG.info("establish connection to: {}", url);
         if(sockJsClient == null || state == INITIAL) {
             sockJsClient = createClient(url, trustStorePath, trustStorePwd);
         }
-        return CompletableFuture.supplyAsync(() -> {
-            if (!isConnected()) {
+
+        future = new FutureTask<>(() -> {
+            if (!sessionWrapper.isOpen()) {
                 state = STARTED;
                 WebSocketSession session = connect(sockJsClient, this, url, websocketTextMessageSize, connectTimeoutMillis, reconnectIntervalMillis);
                 return session.isOpen();
             }
             return isConnected();
         });
+        executor.execute(future);
+        return future;
     }
 
     /**
@@ -561,6 +570,11 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     protected void closeConnection() {
         LOG.info("close connection called");
         state = STOPPED;
+
+        if (future!=null){
+            future.cancel(true);
+        }
+
         closeSession(CloseStatus.NORMAL.withReason("client disconnected"));
         if(sockJsClient!=null) {
             sockJsClient.stop();
@@ -579,8 +593,9 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
             LOG.warn("MsbClientHandler close called");
             state = STOPPED;
             closeSession(CloseStatus.NORMAL.withReason("client closed"));
-            functionCallExecutorService.shutdown();
         }
+        functionCallExecutorService.shutdown();
+        executor.shutdownNow();
     }
 
     @Override
@@ -1108,16 +1123,16 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         return sslContext;
     }
 
-    private static WebSocketSession connect(WebSocketClient sockJsClient, WebSocketHandler webSocketHandler, String url, int websocketTextMessageSize, long connectTimeoutMillis, int reconnectIntervalMillis) {
+    private WebSocketSession connect(WebSocketClient sockJsClient, WebSocketHandler webSocketHandler, String url, int websocketTextMessageSize, long connectTimeoutMillis, int reconnectIntervalMillis) {
         // first connect
         WebSocketSession session = connect(sockJsClient, webSocketHandler, url, websocketTextMessageSize, connectTimeoutMillis);
         if(session == null) {
             // periodic re-try
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            while (session == null || !session.isOpen()) {
-                ScheduledFuture<WebSocketSession> future = scheduler.schedule(() -> connect(sockJsClient, webSocketHandler, url, websocketTextMessageSize, connectTimeoutMillis), reconnectIntervalMillis, TimeUnit.MILLISECONDS);
+            while ((session == null || !session.isOpen()) && !Thread.currentThread().isInterrupted()) {
+                ScheduledFuture<WebSocketSession> f = scheduler.schedule(() -> connect(sockJsClient, webSocketHandler, url, websocketTextMessageSize, connectTimeoutMillis), reconnectIntervalMillis, TimeUnit.MILLISECONDS);
                 try {
-                    session = future.get();
+                    session = f.get();
                 } catch (InterruptedException e) {
                     LOG.error("{}",e.getMessage(), e);
                     // Restore interrupted state...
@@ -1126,17 +1141,17 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                     LOG.error("{}",e.getMessage(), e);
                 }
             }
+            scheduler.shutdownNow();
         }
         return session;
     }
 
-    private static WebSocketSession connect(WebSocketClient sockJsClient, WebSocketHandler webSocketHandler, String url, int websocketTextMessageSize, long connectTimeoutMillis) {
+    private WebSocketSession connect(WebSocketClient sockJsClient, WebSocketHandler webSocketHandler, String url, int websocketTextMessageSize, long connectTimeoutMillis) {
         try {
-            CompletableFuture<WebSocketSession> f = sockJsClient.doHandshake(webSocketHandler, url).completable().thenApply(webSocketSession -> {
-                webSocketSession.setTextMessageSizeLimit(websocketTextMessageSize);
-                return webSocketSession;
-            });
-            return f.get(connectTimeoutMillis, TimeUnit.MILLISECONDS);
+            ListenableFuture<WebSocketSession> f = sockJsClient.doHandshake(webSocketHandler, url);
+            WebSocketSession session = f.get(connectTimeoutMillis, TimeUnit.MILLISECONDS);
+            session.setTextMessageSizeLimit(websocketTextMessageSize);
+            return session;
         } catch (Exception e) {
             LOG.error("Exception during connect", e);
             if(e instanceof InterruptedException){

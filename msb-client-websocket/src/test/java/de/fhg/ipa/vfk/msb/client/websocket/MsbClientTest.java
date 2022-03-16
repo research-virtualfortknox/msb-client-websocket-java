@@ -21,7 +21,6 @@ package de.fhg.ipa.vfk.msb.client.websocket;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -205,11 +204,7 @@ class MsbClientTest {
                 .trustStore("/path","password")
                 .disableHostnameVerification()
                 .build();
-        Future<MsbClientHandler> future = msbClient.connect();
-        try {
-            future.get(1000,TimeUnit.MILLISECONDS);
-        } catch (TimeoutException e){}
-        Assertions.assertFalse(future.isDone());
+        Assertions.assertThrows(TimeoutException.class, ()-> msbClient.connect().get(1000,TimeUnit.MILLISECONDS));
         msbClient.disconnect();
         Assertions.assertFalse(msbClient.isConnected());
         msbClient.close();
@@ -222,14 +217,15 @@ class MsbClientTest {
      */
     @Test
     void testReconnectMsbClient() throws Exception {
-        MsbClient msbClient = new MsbClient.Builder().url("url").disableAutoReconnect().build();
-        msbClient.connect();
+        MsbClient msbClient = new MsbClient.Builder().url("ws://localhost:8085").disableAutoReconnect().build();
+        Assertions.assertThrows(TimeoutException.class, ()-> msbClient.connect().get(1000,TimeUnit.MILLISECONDS));
         Assertions.assertFalse(msbClient.isConnected());
         msbClient.disconnect();
         Assertions.assertFalse(msbClient.isConnected());
-        msbClient.connect();
+        Assertions.assertThrows(TimeoutException.class, ()-> msbClient.connect().get(1000,TimeUnit.MILLISECONDS));
         Assertions.assertFalse(msbClient.isConnected());
         msbClient.close();
+        Assertions.assertFalse(msbClient.isConnected());
     }
 
 }

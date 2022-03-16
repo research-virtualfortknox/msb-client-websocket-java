@@ -21,8 +21,15 @@ package de.fhg.ipa.vfk.msb.client.websocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The type Client to establish a connection with an MSB instance.
@@ -40,17 +47,18 @@ public class MsbClient implements AutoCloseable {
     private static final int STOPPED = 2;
     private static final int CLOSED = 3;
 
-    private final Object lock = new Object();
-
     private long disconnectTimestamp;
     private int state = INITIAL;
+    private FutureTask<MsbClientHandler> future;
+    private final MsbClientWebSocketHandler clientHandler;
 
     /**
      * The constant hostnameVerification.
      */
     protected static boolean hostnameVerificationDisabled = false;
 
-    private final MsbClientWebSocketHandler clientHandler;
+    private final ExecutorService executor = new ThreadPoolExecutor(1, 5, 1000, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(0);
 
     /**
      * Instantiates a new Client.
@@ -270,26 +278,14 @@ public class MsbClient implements AutoCloseable {
         if(state == CLOSED){
             throw new IllegalStateException("The client is closed, create a new instance to connect.");
         }
-        LOG.info("connect client");
-
-        long waitingTime = getReconnectInterval() - (System.currentTimeMillis() - disconnectTimestamp);
-        if (state==STOPPED && waitingTime > 0 ){
-            LOG.debug("Client wait {} ms until connect client again", waitingTime);
-            try {
-                synchronized(lock) {
-                    while (System.currentTimeMillis() - disconnectTimestamp < waitingTime) {
-                        lock.wait(waitingTime);
-                    }
-                }
-            } catch (InterruptedException e) {
-                LOG.warn("Minimal wait time to restart client interrupted",e);
-                // Restore interrupted state...
-                Thread.currentThread().interrupt();
-            }
+        if(state == STARTED){
+            throw new IllegalStateException("The client already conneting.");
         }
+        LOG.info("connect client");
+        long waitingTime = getReconnectInterval() - (System.currentTimeMillis() - disconnectTimestamp);
 
-        CompletableFuture<MsbClientHandler> future = clientHandler.establishConnection().thenApply(aBoolean -> {
-            if (Boolean.TRUE.equals(aBoolean)) {
+        future = new FutureTask<>(() -> {
+            if(Boolean.TRUE.equals(clientHandler.establishConnection().get())) {
                 LOG.info("client connected");
                 return clientHandler;
             } else {
@@ -297,8 +293,17 @@ public class MsbClient implements AutoCloseable {
             }
         });
 
+        Executor e;
+        if (state==STOPPED && waitingTime > 0 ) {
+            LOG.debug("Client wait {} ms until connect client again", waitingTime);
+            e = delayedExecutor(waitingTime);
+        } else {
+            e = delayedExecutor(0);
+        }
+        e.execute(future);
+
         state=STARTED;
-        LOG.info("client connecting");
+
         return future;
     }
 
@@ -327,6 +332,11 @@ public class MsbClient implements AutoCloseable {
         LOG.info("disconnect client");
         disconnectTimestamp = System.currentTimeMillis();
         clientHandler.closeConnection();
+
+        if (future!=null){
+            future.cancel(true);
+        }
+
         state=STOPPED;
         LOG.info("client disconnected");
     }
@@ -347,6 +357,14 @@ public class MsbClient implements AutoCloseable {
             return DEFAULT_PROTOCOL+ "://" + url;
         }
         return url;
+    }
+
+    private Executor delayedExecutor(long delay) {
+        return delayedExecutor(delay, executor);
+    }
+
+    private Executor delayedExecutor(long delay, Executor executor) {
+        return runnable -> scheduler.schedule(() -> executor.execute(runnable), delay, TimeUnit.MILLISECONDS);
     }
 
     /**
