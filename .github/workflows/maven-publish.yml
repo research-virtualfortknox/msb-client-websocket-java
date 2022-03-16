@@ -60,3 +60,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Prepare Coveralls Agent
+        run: bash <(curl -s https://codecov.io/bash)
+
+      - name: Build Coveralls Report
+        run: mvn test jacoco:report coveralls:report -DrepoToken=$COVERALLS_TOKEN
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
