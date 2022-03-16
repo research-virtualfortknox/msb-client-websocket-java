@@ -39,7 +39,6 @@ import de.fhg.ipa.vfk.msb.client.api.messages.EventPriority;
 import de.fhg.ipa.vfk.msb.client.api.messages.FunctionCallMessage;
 import de.fhg.ipa.vfk.msb.client.listener.ConfigurationListener;
 import de.fhg.ipa.vfk.msb.client.listener.ConnectionAdapter;
-import de.fhg.ipa.vfk.msb.client.listener.ConnectionListener;
 import de.fhg.ipa.vfk.msb.client.listener.FunctionCallsListener;
 import de.fhg.ipa.vfk.msb.client.listener.PublishingError;
 import de.fhg.ipa.vfk.msb.client.listener.RegistrationError;
@@ -58,6 +57,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.util.concurrent.SettableListenableFuture;
 import org.springframework.web.socket.CloseStatus;
@@ -80,6 +81,7 @@ import java.util.concurrent.CompletableFuture;
  * @author des
  */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.WARN)
 class MsbClientWebSocketHandlerTest {
 
     @Mock
@@ -93,7 +95,7 @@ class MsbClientWebSocketHandlerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        //MockitoAnnotations.initMocks(this);
+        //MockitoAnnotations.openMocks(this);
     }
 
     /**
