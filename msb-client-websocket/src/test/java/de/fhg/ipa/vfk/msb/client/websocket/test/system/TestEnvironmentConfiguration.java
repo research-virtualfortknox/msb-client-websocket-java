@@ -22,14 +22,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
@@ -56,6 +54,7 @@ public class TestEnvironmentConfiguration {
     private static final int RETRY_TIME = 1500;
 
     private String ownerUuid;
+    private final HttpHeaders headers = new HttpHeaders();
 
     private final String urlSmartObjMgmtHttp;
     private final String urlIntegrationDesignMgmtHttp;
@@ -68,6 +67,8 @@ public class TestEnvironmentConfiguration {
         LOG.info("Looking for system property testEnvUrl defining the test environment to use.");
         String testEnvUrl = System.getProperty("TESTENV_CUSTOMIP");
         String testEnvOwnerUuid = System.getProperty("TESTENV_OWNER_UUID");
+        String testEnvUsername = System.getProperty("TESTENV_USERNAME");
+        String testEnvPassword = System.getProperty("TESTENV_PASSWORD");
         String testEnvWebsocketUrl = System.getProperty("MSB_WEBSOCKET_INTERFACE_URL");
         String testEnvSmartObjectUrl = System.getProperty("MSB_SMARTOBJECTMGMT_URL");
         String testEnvIntegrationDesignUrl = System.getProperty("MSB_INTEGRATIONDESIGNMGMT_URL");
@@ -85,6 +86,10 @@ public class TestEnvironmentConfiguration {
             this.ownerUuid = OWNER_UUID;
         }
         LOG.info("Test Env Owner Uuid: {}", ownerUuid);
+
+        if (testEnvUsername != null && !"".equalsIgnoreCase(testEnvUsername)) {
+            headers.setBasicAuth(testEnvUsername, testEnvPassword, StandardCharsets.US_ASCII);
+        }
 
         if (testEnvSmartObjectUrl != null && !"".equalsIgnoreCase(testEnvSmartObjectUrl)) {
             this.urlSmartObjMgmtHttp = testEnvSmartObjectUrl;
@@ -106,6 +111,10 @@ public class TestEnvironmentConfiguration {
             this.urlInterfaceWebSocket = "wss://" + testEnvUrl + ":8084";
         }
         LOG.info("Test Env WebSocket Url: {}", urlInterfaceWebSocket);
+    }
+
+    private HttpHeaders getHeaders(){
+        return headers;
     }
 
     /**
@@ -284,7 +293,7 @@ public class TestEnvironmentConfiguration {
                     Map<String, Object> uriVariables = new HashMap<>();
                     uriVariables.put("serviceUuid", serviceUuid);
                     try {
-                        entity = restTemplate.exchange(getUrlSmartObjMgmtHttp() + SERVICE_PATH + "/{serviceUuid}", HttpMethod.GET, null, ObjectNode.class, uriVariables);
+                        entity = restTemplate.exchange(getUrlSmartObjMgmtHttp() + SERVICE_PATH + "/{serviceUuid}", HttpMethod.GET, new HttpEntity<Void>(getHeaders()), ObjectNode.class, uriVariables);
                         statusCode = entity.getStatusCode();
                     } catch (HttpClientErrorException e) {
                         LOG.error("get service not yet possible", e);
@@ -311,7 +320,7 @@ public class TestEnvironmentConfiguration {
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("serviceUuid", uuid);
         try {
-            return restTemplate.exchange(getUrlSmartObjMgmtHttp() + SERVICE_PATH + "/{serviceUuid}", HttpMethod.GET, null, ObjectNode.class, uriVariables);
+            return restTemplate.exchange(getUrlSmartObjMgmtHttp() + SERVICE_PATH + "/{serviceUuid}", HttpMethod.GET, new HttpEntity<Void>(getHeaders()), ObjectNode.class, uriVariables);
         } catch (HttpClientErrorException.NotFound e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -328,7 +337,7 @@ public class TestEnvironmentConfiguration {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("serviceUuid", uuid);
-        return restTemplate.exchange(getUrlSmartObjMgmtHttp() + SERVICE_PATH + "/{serviceUuid}", HttpMethod.DELETE, null, Void.class, uriVariables);
+        return restTemplate.exchange(getUrlSmartObjMgmtHttp() + SERVICE_PATH + "/{serviceUuid}", HttpMethod.DELETE, new HttpEntity<Void>(getHeaders()), Void.class, uriVariables);
     }
 
     /**
@@ -342,7 +351,7 @@ public class TestEnvironmentConfiguration {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("ownerUuid", ownerUuid);
-        return restTemplate.exchange(getUrlSmartObjMgmtHttp() + TOKEN_PATH + "/{ownerUuid}", HttpMethod.POST, null, ObjectNode.class, uriVariables);
+        return restTemplate.exchange(getUrlSmartObjMgmtHttp() + TOKEN_PATH + "/{ownerUuid}", HttpMethod.POST, new HttpEntity<Void>(getHeaders()), ObjectNode.class, uriVariables);
     }
 
     /**
@@ -355,7 +364,7 @@ public class TestEnvironmentConfiguration {
     public ResponseEntity<ObjectNode> createAndDeployFlow(String integrationFlow) throws IOException {
         LOG.debug("createAndDeploy - integrationFlow: {}", integrationFlow);
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + FLOW_PATH + "/create/deploy", HttpMethod.POST, new HttpEntity<>(new ObjectMapper().readTree(integrationFlow)), ObjectNode.class);
+        return restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + FLOW_PATH + "/create/deploy", HttpMethod.POST, new HttpEntity<>(new ObjectMapper().readTree(integrationFlow), getHeaders()), ObjectNode.class);
     }
 
     /**
@@ -370,7 +379,7 @@ public class TestEnvironmentConfiguration {
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("flowId", flowId);
         try {
-            return restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + FLOW_PATH + "/{flowId}", HttpMethod.GET, null, ObjectNode.class, uriVariables);
+            return restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + FLOW_PATH + "/{flowId}", HttpMethod.GET, new HttpEntity<Void>(getHeaders()), ObjectNode.class, uriVariables);
         } catch (HttpClientErrorException.NotFound e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -387,7 +396,7 @@ public class TestEnvironmentConfiguration {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("flowId", flowId);
-        return restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + FLOW_PATH + "/{flowId}", HttpMethod.DELETE, null, Void.class, uriVariables);
+        return restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + FLOW_PATH + "/{flowId}", HttpMethod.DELETE, new HttpEntity<Void>(getHeaders()), Void.class, uriVariables);
     }
 
 }
