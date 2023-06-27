@@ -14,9 +14,11 @@ import de.fhg.ipa.vfk.msb.client.api.ConnectionFormat;
 import de.fhg.ipa.vfk.msb.client.api.ConnectionState;
 import de.fhg.ipa.vfk.msb.client.api.ConnectionType;
 import de.fhg.ipa.vfk.msb.client.api.Event;
+import de.fhg.ipa.vfk.msb.client.api.Function;
 import de.fhg.ipa.vfk.msb.client.api.Gateway;
 import de.fhg.ipa.vfk.msb.client.api.ParameterValue;
 import de.fhg.ipa.vfk.msb.client.api.SmartObject;
+import de.fhg.ipa.vfk.msb.client.util.DataFormatParser;
 import de.fhg.ipa.vfk.msb.client.websocket.MsbClient;
 import de.fhg.ipa.vfk.msb.client.websocket.MsbClientHandler;
 import org.slf4j.Logger;
@@ -69,6 +71,8 @@ public class GatewayTestClient {
         Configuration configuration = new Configuration();
         configuration.setParameters(parameters);
         gateway.setConfiguration(configuration);
+        // add function to the gateway
+        gateway.addFunction(new Function("restart", "restart gateway", "restart the gateway", DataFormatParser.parse("args", String[].class)));
         // add the self-description of a sub service to the gateway
         SmartObject smartObject1 = new SmartObject(SERVICE_UUID, "Test client", "Test Client", "55e741c9bcd8");
         smartObject1.setConnection(new Connection(ConnectionState.CONNECTED, ConnectionType.REST, ConnectionFormat.JSON, new Date()));

@@ -66,6 +66,8 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.websocket.ContainerProvider;
+import javax.websocket.WebSocketContainer;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -128,6 +130,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
 
     private String url = "wss://localhost:8084"+ DEFAULT_URL_PATH;
     private int websocketTextMessageSize = 1_000_000;
+    private int bufferSizeLimit = 5_000_000;
     private int functionCallExecutorPoolSize = 10;
     private boolean invokeFunctionCallEnabled = true;
     private boolean eventCacheEnabled = true;
@@ -196,13 +199,19 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      * @param url                      the url
      * @param eventCacheSize           the event cache size
      * @param websocketTextMessageSize the websocket text message size
+     * @param bufferSizeLimit          the buffer size limit
      */
-    protected MsbClientWebSocketHandler(String url, int eventCacheSize, int websocketTextMessageSize) {
+    protected MsbClientWebSocketHandler(String url, int eventCacheSize, int websocketTextMessageSize, int bufferSizeLimit) {
         this(url, eventCacheSize);
         if(websocketTextMessageSize <= 0 ) {
             throw new IllegalArgumentException("websocket text message size <= 0 is not allowed");
         } else {
             this.websocketTextMessageSize = websocketTextMessageSize;
+        }
+        if(bufferSizeLimit <= 0 ) {
+            throw new IllegalArgumentException("websocket buffer size limit <= 0 is not allowed");
+        } else {
+            this.bufferSizeLimit = bufferSizeLimit;
         }
     }
 
@@ -212,11 +221,11 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
      * @param url                          the url
      * @param eventCacheSize               the event cache size
      * @param websocketTextMessageSize     the websocket text message size
+     * @param bufferSizeLimit              the buffer size limit
      * @param functionCallExecutorPoolSize the function call executor pool size
      */
-    protected MsbClientWebSocketHandler(String url, int eventCacheSize, int websocketTextMessageSize, int functionCallExecutorPoolSize) {
-        this(url, eventCacheSize);
-        this.websocketTextMessageSize = websocketTextMessageSize;
+    protected MsbClientWebSocketHandler(String url, int eventCacheSize, int websocketTextMessageSize, int bufferSizeLimit, int functionCallExecutorPoolSize) {
+        this(url, eventCacheSize, websocketTextMessageSize, bufferSizeLimit);
         if(functionCallExecutorPoolSize <= 0 ) {
             throw new IllegalArgumentException("function call executor pool size <= 0 is not allowed");
         } else {
@@ -391,6 +400,15 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     }
 
     /**
+     * Gets buffer size limit.
+     *
+     * @return the buffer size limit
+     */
+    protected int getBufferSizeLimit() {
+        return bufferSizeLimit;
+    }
+
+    /**
      * Sets trust store.
      *
      * @param trustStorePath the trust store path
@@ -527,7 +545,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
     protected Future<Boolean> establishConnection() {
         LOG.info("establish connection to: {}", url);
         if(sockJsClient == null || state == INITIAL) {
-            sockJsClient = createClient(url, trustStorePath, trustStorePwd);
+            sockJsClient = createClient(url, trustStorePath, trustStorePwd, bufferSizeLimit);
         }
 
         future = new FutureTask<>(() -> {
@@ -1083,11 +1101,14 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         }
     }
 
-    protected SockJsClient createClient(String url, String trustStorePath, String trustStorePwd) {
-        StandardWebSocketClient simpleWebSocketClient = new StandardWebSocketClient();
+    protected SockJsClient createClient(String url, String trustStorePath, String trustStorePwd, int bufferSizeLimit) {
+        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        container.setDefaultMaxBinaryMessageBufferSize(bufferSizeLimit);
+        container.setDefaultMaxTextMessageBufferSize(bufferSizeLimit);
+        StandardWebSocketClient simpleWebSocketClient = new StandardWebSocketClient(container);
         if ((url.startsWith("wss://") || url.startsWith("https://"))) {
             Map<String, Object> userProperties = new HashMap<>();
-            if(trustStorePath != null && trustStorePwd != null){
+            if (trustStorePath != null && trustStorePwd != null) {
                 userProperties.put("org.apache.tomcat.websocket.SSL_TRUSTSTORE", trustStorePath);
                 userProperties.put("org.apache.tomcat.websocket.SSL_TRUSTSTORE_PWD", trustStorePwd);
             }
@@ -1097,10 +1118,10 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
                     SSLContext sslContext = loadSSLContext();
                     userProperties.put("org.apache.tomcat.websocket.SSL_CONTEXT", sslContext);
                     SSLContext.setDefault(sslContext);
-                } catch (NoSuchAlgorithmException e){
+                } catch (NoSuchAlgorithmException e) {
                     LOG.error("NoSuchAlgorithmException", e);
                 } catch (KeyManagementException e) {
-                    LOG.error("KeyManagementException",e);
+                    LOG.error("KeyManagementException", e);
                 }
             }
             simpleWebSocketClient.setUserProperties(userProperties);
@@ -1108,7 +1129,7 @@ public class MsbClientWebSocketHandler extends TextWebSocketHandler implements M
         List<Transport> transports = new ArrayList<>(1);
         WebSocketTransport w = new WebSocketTransport(simpleWebSocketClient);
         transports.add(w);
-       return new SockJsClient(transports);
+        return new SockJsClient(transports);
     }
 
     private static SSLContext loadSSLContext() throws NoSuchAlgorithmException, KeyManagementException {

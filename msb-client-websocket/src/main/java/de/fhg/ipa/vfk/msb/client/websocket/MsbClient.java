@@ -88,9 +88,9 @@ public class MsbClient implements AutoCloseable {
      * @param eventCacheSize           the event cache size
      * @param websocketTextMessageSize the websocket text message size
      */
-    public MsbClient(String url, int eventCacheSize, int websocketTextMessageSize) {
+    public MsbClient(String url, int eventCacheSize, int websocketTextMessageSize, int bufferSizeLimit) {
         url = checkUrl(url);
-        this.clientHandler = new MsbClientWebSocketHandler(url, eventCacheSize, websocketTextMessageSize);
+        this.clientHandler = new MsbClientWebSocketHandler(url, eventCacheSize, websocketTextMessageSize, bufferSizeLimit);
     }
 
     /**
@@ -101,9 +101,9 @@ public class MsbClient implements AutoCloseable {
      * @param websocketTextMessageSize     the websocket text message size
      * @param functionCallExecutorPoolSize the function call executor pool size
      */
-    public MsbClient(String url, int eventCacheSize, int websocketTextMessageSize, int functionCallExecutorPoolSize) {
+    public MsbClient(String url, int eventCacheSize, int websocketTextMessageSize, int bufferSizeLimit, int functionCallExecutorPoolSize) {
         url = checkUrl(url);
-        this.clientHandler = new MsbClientWebSocketHandler(url, eventCacheSize, websocketTextMessageSize,functionCallExecutorPoolSize);
+        this.clientHandler = new MsbClientWebSocketHandler(url, eventCacheSize, websocketTextMessageSize, bufferSizeLimit, functionCallExecutorPoolSize);
     }
 
     /**
@@ -163,6 +163,15 @@ public class MsbClient implements AutoCloseable {
      */
     public int getWebsocketTextMessageSize() {
         return clientHandler.getWebsocketTextMessageSize();
+    }
+
+    /**
+     * Gets buffer size limit.
+     *
+     * @return the buffer size limit
+     */
+    public int getBufferSizeLimit() {
+        return clientHandler.getBufferSizeLimit();
     }
 
     /**
@@ -400,6 +409,7 @@ public class MsbClient implements AutoCloseable {
         private String url = "";
         private int eventCacheSize = -1;
         private int websocketTextMessageSize = -1;
+        private int bufferSizeLimit = -1;
         private int functionCallExecutorPoolSize = -1;
         private boolean hostnameVerification = false;
         private String trustStorePath = "";
@@ -441,6 +451,17 @@ public class MsbClient implements AutoCloseable {
          */
         public Builder websocketTextMessageSize(int websocketTextMessageSize){
             this.websocketTextMessageSize = websocketTextMessageSize;
+            return this;
+        }
+
+        /**
+         * Set buffer size limit.
+         *
+         * @param bufferSizeLimit the websocket buffer size limit
+         * @return the builder
+         */
+        public Builder bufferSizeLimit(int bufferSizeLimit){
+            this.bufferSizeLimit = bufferSizeLimit;
             return this;
         }
 
@@ -552,12 +573,19 @@ public class MsbClient implements AutoCloseable {
          */
         public MsbClient build(){
             MsbClient msbClient;
+            if(websocketTextMessageSize > -1 && bufferSizeLimit == -1){
+                bufferSizeLimit = websocketTextMessageSize;
+                LOG.info("bufferSizeLimit is not explicit defined, will be set to the same value as websocketTextMessageSize");
+            }else if(websocketTextMessageSize == -1 && bufferSizeLimit > -1){
+                websocketTextMessageSize = bufferSizeLimit;
+                LOG.info("websocketTextMessageSize is not explicit defined, will be set to the same value as bufferSizeLimit");
+            }
             if ("".equals(url)){
                 throw new IllegalStateException("url is required");
-            } else if(eventCacheSize >-1 && websocketTextMessageSize > -1 && functionCallExecutorPoolSize > -1) {
-                msbClient = new MsbClient(url, eventCacheSize,websocketTextMessageSize,functionCallExecutorPoolSize);
-            } else if(eventCacheSize >-1 && websocketTextMessageSize > -1) {
-                msbClient = new MsbClient(url, eventCacheSize,websocketTextMessageSize);
+            } else if(eventCacheSize >-1 && (websocketTextMessageSize > -1 || bufferSizeLimit > -1) && functionCallExecutorPoolSize > -1) {
+                msbClient = new MsbClient(url, eventCacheSize, websocketTextMessageSize, bufferSizeLimit, functionCallExecutorPoolSize);
+            } else if(eventCacheSize >-1 && (websocketTextMessageSize > -1 || bufferSizeLimit > -1)) {
+                msbClient = new MsbClient(url, eventCacheSize, websocketTextMessageSize, bufferSizeLimit);
             } else if(eventCacheSize >-1){
                 msbClient = new MsbClient(url, eventCacheSize);
             } else {

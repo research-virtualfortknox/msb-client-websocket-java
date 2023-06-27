@@ -586,7 +586,7 @@ class MsbClientWebSocketHandlerTest {
     @Test
     void testConnectionListener() throws Exception {
         Mockito.when(sockJsClient.doHandshake(Mockito.same(msbClientWebSocketHandler),Mockito.anyString(), Mockito.any())).thenReturn(new AsyncResult<>(mockSession));
-        Mockito.when(msbClientWebSocketHandler.createClient(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(sockJsClient);
+        Mockito.when(msbClientWebSocketHandler.createClient(Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.anyInt())).thenReturn(sockJsClient);
 
         ConnectionAdapter connectionListener = Mockito.mock(ConnectionAdapter.class);
         msbClientWebSocketHandler.addConnectionListener(connectionListener);
@@ -741,7 +741,7 @@ class MsbClientWebSocketHandlerTest {
         Mockito.when(mockSession.isOpen()).thenReturn(true);
         SettableListenableFuture<WebSocketSession> connectFuture = new SettableListenableFuture<>();
         Mockito.when(sockJsClient.doHandshake(Mockito.same(msbClientWebSocketHandler),Mockito.anyString(), Mockito.any())).thenReturn(connectFuture);
-        Mockito.when(msbClientWebSocketHandler.createClient(Mockito.anyString(),Mockito.any(),Mockito.any())).thenReturn(sockJsClient);
+        Mockito.when(msbClientWebSocketHandler.createClient(Mockito.anyString(),Mockito.any(),Mockito.any(),Mockito.anyInt())).thenReturn(sockJsClient);
 
         msbClientWebSocketHandler.afterConnectionEstablished(mockSession);
         msbClientWebSocketHandler.handleTextMessage(mockSession,new TextMessage("IO_CONNECTED"));

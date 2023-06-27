@@ -65,6 +65,7 @@ class MsbClientTest {
         Assertions.assertEquals(1000,msbClient.getEventCacheSize());
         Assertions.assertEquals(10000,msbClient.getReconnectInterval());
         Assertions.assertEquals(1000000,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertEquals(5000000,msbClient.getBufferSizeLimit());
     }
 
     /**
@@ -91,6 +92,7 @@ class MsbClientTest {
         Assertions.assertEquals(1000,msbClient.getEventCacheSize());
         Assertions.assertEquals(10000,msbClient.getReconnectInterval());
         Assertions.assertEquals(1000000,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertEquals(5000000,msbClient.getBufferSizeLimit());
     }
 
     /**
@@ -118,6 +120,7 @@ class MsbClientTest {
         Assertions.assertEquals(1,msbClient.getEventCacheSize());
         Assertions.assertEquals(10000,msbClient.getReconnectInterval());
         Assertions.assertEquals(1000000,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertEquals(5000000,msbClient.getBufferSizeLimit());
     }
 
     /**
@@ -149,6 +152,7 @@ class MsbClientTest {
         Assertions.assertEquals(10000,msbClient.getReconnectInterval());
         Assertions.assertEquals(10,msbClient.getConnectTimeout());
         Assertions.assertEquals(3,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertEquals(3,msbClient.getBufferSizeLimit());
     }
 
     /**
@@ -167,6 +171,7 @@ class MsbClientTest {
                 .eventCacheSize(1)
                 .reconnectInterval(20000)
                 .websocketTextMessageSize(3)
+                .bufferSizeLimit(5)
                 .functionCallExecutorPoolSize(1)
                 .build();
         Assertions.assertNotNull(msbClient.getClientHandler());
@@ -179,6 +184,7 @@ class MsbClientTest {
         Assertions.assertEquals(1,msbClient.getEventCacheSize());
         Assertions.assertEquals(20000,msbClient.getReconnectInterval());
         Assertions.assertEquals(3,msbClient.getWebsocketTextMessageSize());
+        Assertions.assertEquals(5,msbClient.getBufferSizeLimit());
     }
 
     /**
