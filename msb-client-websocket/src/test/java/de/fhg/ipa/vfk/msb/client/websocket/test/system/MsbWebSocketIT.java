@@ -69,7 +69,9 @@ public class MsbWebSocketIT {
     void testRegisterSmartObjectViaWebsocketInterfaceAndVerifyViaSmartObjectMgmtRest() throws Exception {
         LOG.info("start test register SmartObject via WebsocketInterface and verify via SmartObjectMgmtRest");
         // Setup self-description for a smart object.
-        TestClient4Websocket testClient = new TestClient4Websocket(testEnv.getUrlInterfaceWebSocket(), UUID.randomUUID().toString());
+        ResponseEntity<ObjectNode> token = testEnv.getNewToken(testEnv.getOwnerUuid());
+        assertTrue(token.hasBody(), "get token has no response body");
+        TestClient4Websocket testClient = new TestClient4Websocket(testEnv.getUrlInterfaceWebSocket(), token.getBody().get("token").asText());
         // Start the client - it connects to the WebSocket interface.
         CountDownLatch registered = new CountDownLatch(1);
         testClient.startClient(registered);
@@ -86,7 +88,7 @@ public class MsbWebSocketIT {
         assertNotNull(returnedSelfDescription, "returned self-description is null");
         assertEquals(testClient.getName(), returnedSelfDescription.get("name").asText(), "returned self-description name not equals");
         assertEquals(testClient.getUuid(), returnedSelfDescription.get("uuid").asText(), "returned self-description uuid not equals");
-        assertEquals("REGISTRATED", returnedSelfDescription.get("lifecycleState").asText(), "returned self-description lifecycle state is not registered");
+        assertEquals("VERIFIED", returnedSelfDescription.get("lifecycleState").asText(), "returned self-description lifecycle state is not registered");
 
         // Remove our client from the MSB.
         CountDownLatch closed = new CountDownLatch(1);
