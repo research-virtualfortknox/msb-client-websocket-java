@@ -51,7 +51,7 @@
 
 		<spring.version>5.3.27</spring.version>
 		<tomcat.version>9.0.74</tomcat.version>
-		<jackson.version>2.13.2</jackson.version>
+		<jackson.version>2.15.2</jackson.version>
 		<jackson-databind.version>2.13.4</jackson-databind.version>
 		<swagger.version>2.2.9</swagger.version>
 		<swagger.parser.version>2.1.13</swagger.parser.version>
