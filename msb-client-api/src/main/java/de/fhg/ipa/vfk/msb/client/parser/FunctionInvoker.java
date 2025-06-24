@@ -65,6 +65,7 @@ public final class FunctionInvoker {
 		if (method != null && functionHandler != null) {
 			Map<String, Object> objects = convertToClassType(functionCall.getFunctionParameters(), callback);
 			if (!objects.values().isEmpty()) {
+				// TODO: make sure that the parameters are passed in the correct order
 				Object[] objectArray = objects.values().toArray();
 				LOG.debug("call {} with parameters {}", functionCall.getFunctionId(), objectArray);
                 return method.invoke(functionHandler, objectArray);

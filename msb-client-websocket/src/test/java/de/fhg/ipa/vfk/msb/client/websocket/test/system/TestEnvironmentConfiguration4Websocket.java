@@ -57,9 +57,9 @@ public class TestEnvironmentConfiguration4Websocket extends TestEnvironmentConfi
         final CountDownLatch doneSig = new CountDownLatch(3);
         final int timeOutMinutes = 4;
 
+        waitForInterfaceWebsocket(startSig, doneSig);
         waitForSmartObjectMgmtRest(startSig, doneSig);
         waitForIntegrationDesignMgmtRest(startSig, doneSig);
-        waitForInterfaceWebsocket(startSig, doneSig);
 
         startSig.countDown();
         boolean success = doneSig.await(timeOutMinutes, TimeUnit.MINUTES);

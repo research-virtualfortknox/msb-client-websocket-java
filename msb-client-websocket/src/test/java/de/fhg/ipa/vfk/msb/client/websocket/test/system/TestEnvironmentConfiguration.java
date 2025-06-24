@@ -20,17 +20,27 @@ package de.fhg.ipa.vfk.msb.client.websocket.test.system;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -197,7 +207,7 @@ public class TestEnvironmentConfiguration {
      * @param doneSignal  the done signal
      */
     public void waitForSmartObjectMgmtRest(final CountDownLatch startSignal, final CountDownLatch doneSignal) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplate();
         final Object lock = new Object();
         new Thread(() -> {
             try {
@@ -238,7 +248,7 @@ public class TestEnvironmentConfiguration {
      * @param doneSignal  the done signal
      */
     public void waitForIntegrationDesignMgmtRest(final CountDownLatch startSignal, final CountDownLatch doneSignal) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplate();
         final Object lock = new Object();
         new Thread(() -> {
             try {
@@ -279,7 +289,7 @@ public class TestEnvironmentConfiguration {
      * @return the future
      */
     public Future<ResponseEntity<ObjectNode>> waitAndGetService(String serviceUuid) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplate();
         final Object lock = new Object();
         return CompletableFuture.supplyAsync(() -> {
             ResponseEntity<ObjectNode> entity = null;
@@ -316,7 +326,7 @@ public class TestEnvironmentConfiguration {
      */
     public ResponseEntity<ObjectNode> getService(String uuid) {
         LOG.debug("getService - uuid: {}", uuid);
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplate();
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("serviceUuid", uuid);
         try {
@@ -334,7 +344,7 @@ public class TestEnvironmentConfiguration {
      */
     public ResponseEntity<Void> deleteService(String uuid) {
         LOG.debug("deleteService - uuid: {}", uuid);
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplate();
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("serviceUuid", uuid);
         return restTemplate.exchange(getUrlSmartObjMgmtHttp() + SERVICE_PATH + "/{serviceUuid}", HttpMethod.DELETE, new HttpEntity<Void>(getHeaders()), Void.class, uriVariables);
@@ -348,7 +358,7 @@ public class TestEnvironmentConfiguration {
      */
     public ResponseEntity<ObjectNode> getNewToken(String ownerUuid) {
         LOG.debug("getNewToken - ownerUuid: {}", ownerUuid);
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplate();
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("ownerUuid", ownerUuid);
         return restTemplate.exchange(getUrlSmartObjMgmtHttp() + TOKEN_PATH + "/{ownerUuid}", HttpMethod.POST, new HttpEntity<Void>(getHeaders()), ObjectNode.class, uriVariables);
@@ -363,7 +373,7 @@ public class TestEnvironmentConfiguration {
      */
     public ResponseEntity<ObjectNode> createAndDeployFlow(String integrationFlow) throws IOException {
         LOG.debug("createAndDeploy - integrationFlow: {}", integrationFlow);
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplate();
         return restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + FLOW_PATH + "/create/deploy", HttpMethod.POST, new HttpEntity<>(new ObjectMapper().readTree(integrationFlow), getHeaders()), ObjectNode.class);
     }
 
@@ -375,7 +385,7 @@ public class TestEnvironmentConfiguration {
      */
     public ResponseEntity<ObjectNode> getFlow(long flowId) {
         LOG.debug("get - flowId: {}", flowId);
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplate();
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("flowId", flowId);
         try {
@@ -393,10 +403,30 @@ public class TestEnvironmentConfiguration {
      */
     public ResponseEntity<Void> deleteFlow(long flowId) {
         LOG.debug("delete - flowId: {}", flowId);
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplate();
         Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("flowId", flowId);
         return restTemplate.exchange(getUrlIntegrationDesignMgmtHttp() + FLOW_PATH + "/{flowId}", HttpMethod.DELETE, new HttpEntity<Void>(getHeaders()), Void.class, uriVariables);
+    }
+
+    private RestTemplate restTemplate() {
+        try {
+        TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
+        SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
+                    .loadTrustMaterial(null, acceptingTrustStrategy)
+                    .build();
+        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setSSLSocketFactory(csf)
+                .build();
+        HttpComponentsClientHttpRequestFactory requestFactory =
+                new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setHttpClient(httpClient);
+        return new RestTemplate(requestFactory);
+        } catch (Exception e) {
+            LOG.error("Exception",e);
+        }
+        return new RestTemplate();
     }
 
 }
