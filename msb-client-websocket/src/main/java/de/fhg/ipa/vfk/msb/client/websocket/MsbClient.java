@@ -87,6 +87,7 @@ public class MsbClient implements AutoCloseable {
      * @param url                      the url
      * @param eventCacheSize           the event cache size
      * @param websocketTextMessageSize the websocket text message size
+     * @param bufferSizeLimit          the websocket buffer size limit
      */
     public MsbClient(String url, int eventCacheSize, int websocketTextMessageSize, int bufferSizeLimit) {
         url = checkUrl(url);
@@ -99,6 +100,7 @@ public class MsbClient implements AutoCloseable {
      * @param url                          the url
      * @param eventCacheSize               the event cache size
      * @param websocketTextMessageSize     the websocket text message size
+     * @param bufferSizeLimit              the websocket buffer size limit
      * @param functionCallExecutorPoolSize the function call executor pool size
      */
     public MsbClient(String url, int eventCacheSize, int websocketTextMessageSize, int bufferSizeLimit, int functionCallExecutorPoolSize) {
