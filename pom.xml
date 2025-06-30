@@ -78,6 +78,7 @@
 		<jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
 		<coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
 		<dependency-check-maven.version>5.0.0</dependency-check-maven.version>
+		<central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
 
 		<sonar.organization>research-virtualfortknox</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -217,9 +218,9 @@
 			<id>release</id>
 			<distributionManagement>
 				<repository>
-					<id>ossrh</id>
+					<id>central</id>
 					<name>Maven Central</name>
-					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+					<url>https://central.sonatype.com</url>
 				</repository>
 			</distributionManagement>
 
@@ -246,6 +247,17 @@
 								</configuration>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>${central-publishing-maven-plugin.version}</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>central</publishingServerId>
+							<autoPublish>true</autoPublish>
+							<waitUntil>published</waitUntil>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
