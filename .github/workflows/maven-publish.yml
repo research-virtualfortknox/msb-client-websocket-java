@@ -38,7 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Build Sonar Report
-        run: mvn sonar:sonar -Dsonar.projectKey=research-virtualfortknox_msb-client-websocket-java --file pom.xml
+        run: mvn org.sonarsource.scanner.maven:sonar-maven-plugin:5.1.0.4751:sonar -Dsonar.projectKey=research-virtualfortknox_msb-client-websocket-java --file pom.xml
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
