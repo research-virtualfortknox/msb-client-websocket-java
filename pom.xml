@@ -50,7 +50,7 @@
 		<maven.compiler.target>11</maven.compiler.target>
 
 		<spring.version>5.3.39</spring.version>
-		<tomcat.version>9.0.106</tomcat.version>
+		<tomcat.version>9.0.110</tomcat.version>
 		<jackson.version>2.16.2</jackson.version>
 		<jackson-databind.version>2.16.2</jackson-databind.version>
 		<swagger.version>2.2.26</swagger.version>
